@@ -22,6 +22,7 @@ public class EnemyGroup
 	{
 		this.xp = xp;
 	}
+
 	
 	
 	public int getXP()

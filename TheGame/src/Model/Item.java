@@ -85,5 +85,5 @@ public abstract class Item
 	
 	public abstract void takeEffect(ArrayList<Warrior> warriors);
 	public abstract void normalEffect(String effectType, HashMap<String, Integer> warriorData);
-	public abstract void percentEffect(String effectType, HashMap<String, Integer> warriorData);
+	public abstract void percentEffect(String effectType, HashMap<String, Integer> warriorData, boolean isMaxPercent);
 }

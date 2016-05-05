@@ -120,9 +120,4 @@ public class NonInstantEffectItem extends Item
 		
 		warriorData.put(effectType, dataAmount + effectAmount);
 	}
-
-	@Override
-	public void percentEffect(String effectType, HashMap<String, Integer> warriorData) {
-
-	}
 }
