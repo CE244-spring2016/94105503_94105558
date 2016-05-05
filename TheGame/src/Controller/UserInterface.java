@@ -26,6 +26,11 @@ public class UserInterface
 	private HashMap<String, ArrayList<String>> bossEnemySpecialConditions;
 	private HashMap<String, ArrayList<String>> bossEnemyEarlyTurnEffects;
 	
+	private ArrayList<String> itemNames;
+	private HashMap<String, HashMap<String, Integer>> itemDatas;
+	private HashMap<String, String> itemTargets;
+	private ArrayList<String> itemAttributes;                         // must make this fully in the constructor
+	private ArrayList<String> possibleItemTargets;                    // must make this fully in the constructor
 	
 	public void checkCustom(Scanner in)
 	{
@@ -324,13 +329,81 @@ public class UserInterface
 		
 		bossEnemyDatas.put(bossName, bossData);
 		
-		
+		// Must handle Condition and early effects
 	}
 	
 	
 	private void createItem(Scanner in)
 	{
+		String itemName, itemTarget;
+		HashMap<String, Integer> itemData;
 		
+		while(true)
+		{
+			System.out.print("Please enter the name of the item you want to make: ");
+			itemName = in.next();
+			
+			System.out.println("Are you sure?(Enter the right number)");
+			
+			if(yesNoQuestion(in))
+			{
+				itemNames.add(itemName);
+				break;
+			}
+		}
+		
+		while(true)
+		{
+			System.out.println("Please enter the name of the attribute that you want this item to affect it");
+			showItemAttributes();
+			String attributeName = in.next();
+			
+			if(!itemAttributes.contains(attributeName))
+			{
+				// invalid input
+				continue;
+			}
+			
+			while(true)
+			{
+				System.out.println("Please enter the amount of effect: ");
+				String attributeAmount = in.next();
+				
+				if(attributeAmount.matches("[0-9]+") && attributeAmount.length() < 8)
+				{
+					int attributeAmountNum = Integer.parseInt(attributeAmount);
+					itemData.put(attributeName, attributeAmountNum);
+					break;
+				}
+				else
+				{
+					// Invalid Input
+				}
+			}
+			
+			System.out.println("Do you want any other effect for this item?")
+			
+			if(!yesNoQuestion(in))
+			{
+				break;
+			}
+		}
+		
+		while(true)
+		{
+			System.out.println("Please enter the target of this item");
+			showPossibleItemTargets();
+			itemTarget = in.next();
+			
+			if(itemTargets.contains(itemTarget))
+			{
+				break;
+			}
+			
+			//invalid input
+		}
+		
+		System.out.println("Item was made!");
 	}
 	
 	
@@ -424,6 +497,15 @@ public class UserInterface
 		for(String heroClassName : heroClassNames)
 		{
 			System.out.println(heroClassName);
+		}
+	}
+	
+	
+	private void showItemAttributes()
+	{
+		for(int i = 0; i < itemAttributes.size(); i++)
+		{
+			System.out.println(itemAttributes.get(i));
 		}
 	}
 }
