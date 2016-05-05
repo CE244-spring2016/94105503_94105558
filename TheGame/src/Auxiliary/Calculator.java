@@ -2,12 +2,8 @@ package Auxiliary;
 
 import java.util.ArrayList;
 import java.util.EmptyStackException;
-import java.util.Scanner;
 import java.util.Stack;
 
-/**
- * Created by Vahid on 5/5/2016.
- */
 public class Calculator {
     private String unprocessed;
     private String infix;
@@ -22,10 +18,6 @@ public class Calculator {
     private Stack<Character> parenthesis;
     private Stack<BinaryTree<String>> binstack;
 
-    /**Constructs a calculator
-     *
-     * @param exp Expression in string
-     */
     public Calculator(String exp)
     {
         unprocessed = toInteger(exp);
@@ -35,11 +27,6 @@ public class Calculator {
         opstack = new Stack<Character>();
         parenthesis = new Stack<Character>();
     }
-    /**Converts the decimal to just integer
-     *
-     * @param exp
-     * @return the integer expression
-     */
     private String toInteger(String exp) {
         //char[] exper = exp.toCharArray();
         ArrayList<Character> exper = new ArrayList<>();
@@ -61,33 +48,21 @@ public class Calculator {
         return result.toString();
     }
 
-    /**Returns the original expression
-     *
-     * @return Unprocessed expression
-     */
     public String getOriginal()
     {
         return unprocessed;
     }
-    /**Returns the checked infix version of expression
-     *
-     * @return Infix Expression
-     */
+
     public String getInfix()
     {
         return infix;
     }
-    /**Returns the converted postfix expression
-     *
-     * @return Postfix expression
-     */
+
     public String getPostfix()
     {
         return postfix;
     }
-    /**
-     * Check if expression is valid
-     */
+
     public void preprocessor()
     {
         StringBuffer buffer = new StringBuffer();
@@ -147,11 +122,6 @@ public class Calculator {
             infix = buffer.toString();
     }
 
-    /**Returns the precedence of operator
-     *
-     * @param token Operator
-     * @return Number of precedence
-     */
     private int precedence(char token)
     {
         int result = 0;
@@ -166,10 +136,7 @@ public class Calculator {
 
         return result;
     }
-    /**Process operator
-     *
-     * @param op Operator
-     */
+
     private void processOp(char op)
     {
         if(opstack.empty() || op=='(')
@@ -204,20 +171,12 @@ public class Calculator {
             }
         }
     }
-    /**Checks if character is an operator
-     *
-     * @param op Character
-     * @return true if character is an operator
-     *           false otherwise
-     */
+
     private boolean isOp(char op)
     {
         return OPS.indexOf(op)!=-1;
     }
 
-    /**
-     * Converts infix to postfix
-     */
     public void infix2postfix()
     {
         boolean error = false;
@@ -285,10 +244,7 @@ public class Calculator {
             }
         }
     }
-    /**Returns a binary tree of the expression
-     *
-     * @return
-     */
+
     public BinaryTree<String> buildExpressionTree()
     {
         if(!postfix.equals("NA"))
@@ -322,11 +278,7 @@ public class Calculator {
 
     }
 
-    /**Evaluates expression tree
-     *
-     * @param eTree a binary tree
-     * @return result
-     */
+
     public double evalExpressionTree(BinaryTree<String> eTree)
     {
         if(eTree == null)
@@ -345,13 +297,7 @@ public class Calculator {
         }
     }
 
-    /**Evaluates two numbers and returns result
-     *
-     * @param op operator
-     * @param left number
-     * @param right number
-     * @return result
-     */
+
     private double evaluate(char op, double left,double right)
     {
         double result = 0;
