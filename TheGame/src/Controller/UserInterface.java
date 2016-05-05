@@ -6,12 +6,25 @@ import java.util.*;
 public class UserInterface
 {
 	private boolean customed;
+	
 	private ArrayList<String> heroClassNames; // new it in the constructor
 	private HashMap<String, HashMap<String, Integer>> heroClassDatas; // new it in the constructor
 	private HashMap<String, String> heroClassAbilities;
-	private ArrayList<String> abilityNames;
-	private ArrayList<String> attributes; // must make this fully in the constructor
 	
+	private ArrayList<String> abilityNames;
+	private ArrayList<String> heroAttributes;                         // must make this fully in the constructor
+	
+	private HashMap<String, String> herosAndTheirClasses;
+	private HashMap<String, ArrayList<String>> herosAndTheirAbilities;
+	
+	private ArrayList<String> normalEnemyNames;
+	private HashMap<String, ArrayList<EnemyVersion>> normalEnemyDatas;
+	private ArrayList<String> enemyAttributes;                        // must make this fully in the constructor
+	
+	private ArrayList<String> bossEnemyNames;
+	private HashMap<String, HashMap<String, Integer>> bossEnemyDatas;
+	private HashMap<String, ArrayList<String>> bossEnemySpecialConditions;
+	private HashMap<String, ArrayList<String>> bossEnemyEarlyTurnEffects;
 	
 	
 	public void checkCustom(Scanner in)
@@ -97,20 +110,20 @@ public class UserInterface
 			
 			if(yesNoQuestion(in))
 			{
-				//heroClassNames.add(heroClassName);
+				heroClassNames.add(heroClassName);
 				break;
 			}
 		}
 		
 		System.out.println("Please enter the amount you want for each attribute");
 		
-		for(int i = 0; i < attributes.size(); i++)
+		for(int i = 0; i < heroAttributes.size(); i++)
 		{
 			while(true)
 			{
-				String attributeName = attributes.get(i);
+				String attributeName = heroAttributes.get(i);
 				
-				System.out.print(attributes.get(i) + ": ");
+				System.out.print(attributeName + ": ");
 				
 				String attributeAmount = in.next();
 				if(attributeAmount.matches("[0-9]+") && attributeAmount.length() < 8)
@@ -148,7 +161,7 @@ public class UserInterface
 			}
 			
 			System.out.println("Do you want to add any other ability?(Enter the right number)");
-			if(yesNoQuestion(in))
+			if(!yesNoQuestion(in))
 			{
 				break;
 			}
@@ -160,18 +173,157 @@ public class UserInterface
 	
 	private void createHero(Scanner in)
 	{
+		String heroName, heroClassName;
+		ArrayList<String> abilityList = new ArrayList<>();
 		
+		while(true)
+		{
+			System.out.print("Please enter the name of the hero you want to make: ");
+			heroName = in.next();
+			
+			System.out.println("Are you sure?(Enter the right number)");
+			
+			if(yesNoQuestion(in))
+			{
+				//heroClassNames.add(heroClassName);
+				break;
+			}
+		}
+		
+		while(true)
+		{
+			System.out.println("Please choose a class for this hero: ");
+			showHeroClasses();
+			
+			heroClassName = in.next();
+			if(heroClassNames.contains(heroClassName))
+			{
+				System.out.println("Are you sure?(Enter the right number)");
+				
+				if(yesNoQuestion(in))
+				{
+					herosAndTheirClasses.put(heroName, heroClassName);
+					break;
+				}
+			}
+			else
+			{
+				// invalid input
+			}
+		}
+		
+		System.out.println("Please enter the name of the abilities you want this hero to have:");
+		showAbilityNames();
+		while(true)
+		{
+			String abilityName = in.next();
+			if(abilityNames.contains(abilityName))
+			{
+				abilityList.add(abilityName);
+			}
+			else
+			{
+				//invalid input
+				continue;
+			}
+			
+			System.out.println("Do you want to add any other ability?(Enter the right number)");
+			if(!yesNoQuestion(in))
+			{
+				break;
+			}
+			
+			System.out.println("Please enter the name of the next ability you want this hero to have: ")
+		}
+		herosAndTheirAbilities.put(heroName, abilityList);
+		
+		System.out.println("Hero was made!");
 	}
 	
 	
 	private void createNormalEnemy(Scanner in)
 	{
+		String enemyName;
+		ArrayList<EnemyVersion> enemyVersions = new ArrayList<>();
 		
+		while(true)
+		{
+			System.out.print("Please enter the name of the enemy you want to make: ");
+			enemyName = in.next();
+			
+			System.out.println("Are you sure?(Enter the right number)");
+			
+			if(yesNoQuestion(in))
+			{
+				normalEnemyNames.add(enemyName);
+				break;
+			}
+		}
+		
+		System.out.println("How many versions do you want to make for this enemy?")
+		//check invalid input
+		int versionNum = in.nextInt();
+		
+		for(int i = 0; i < versionNum; i++)
+		{
+			EnemyVersion enemyVersion = makeEnemyVersion(in);
+			enemyVersions.add(enemyVersion);
+			
+			System.out.println("Version added!");
+		}
+		normalEnemyDatas.put(enemyName, enemyVersions);
+		
+		System.out.println("Enemy was made!");
 	}
 	
 	
 	private void createBossEnemy(Scanner in)
 	{
+		String bossName;
+		ArrayList<String> specialConditions = new ArrayList<>();
+		ArrayList<String> earlySpecialEffects = new ArrayList<>();
+		HashMap<String, Integer> bossData;
+		
+		while(true)
+		{
+			System.out.print("Please enter the name of the boss enemy you want to make: ");
+			bossName = in.next();
+			
+			System.out.println("Are you sure?(Enter the right number)");
+			
+			if(yesNoQuestion(in))
+			{
+				bossEnemyNames.add(bossName);
+				break;
+			}
+		}
+		
+		System.out.println("Please enter the amount you want for each attribute");
+		
+		for(int i = 0; i < enemyAttributes.size(); i++)
+		{
+			while(true)
+			{
+				String attributeName = enemyAttributes.get(i); // It will be nice if it goes up
+				
+				System.out.print(attributeName + ": ");
+				
+				String attributeAmount = in.next();
+				if(attributeAmount.matches("[0-9]+") && attributeAmount.length() < 8)
+				{
+					int attributeAmountNum = Integer.parseInt(attributeAmount);
+					bossData.put(attributeName, attributeAmountNum);
+					break;
+				}
+				else
+				{
+					// Invalid Input
+				}
+			}
+		}
+		
+		bossEnemyDatas.put(bossName, bossData);
+		
 		
 	}
 	
@@ -186,6 +338,56 @@ public class UserInterface
 	{
 		
 	}
+	
+	
+	private EnemyVersion makeEnemyVersion(Scanner in)
+	{
+		String versionName;
+		HashMap<String, Integer> versionData = new HashMap<>();
+		
+		while(true)
+		{
+			System.out.print("Please enter the name of the version you want to make: ");
+			versionName = in.next();
+			
+			System.out.println("Are you sure?(Enter the right number)");
+			
+			if(yesNoQuestion(in))
+			{
+				break;
+			}
+		}
+		
+		System.out.println("Please enter the amount you want for each attribute");
+		
+		for(int i = 0; i < enemyAttributes.size(); i++)
+		{
+			while(true)
+			{
+				String attributeName = enemyAttributes.get(i); // It will be nice if it goes up
+				
+				System.out.print(attributeName + ": ");
+				
+				String attributeAmount = in.next();
+				if(attributeAmount.matches("[0-9]+") && attributeAmount.length() < 8)
+				{
+					int attributeAmountNum = Integer.parseInt(attributeAmount);
+					
+					versionData.put(attributeName, attributeAmountNum);
+					break;
+				}
+				else
+				{
+					// Invalid Input
+				}
+			}
+		}
+		
+		EnemyVersion enemyVersion = new EnemyVersion(versionName, versionData);
+		
+		return enemyVersion;
+	}
+	
 	
 	private boolean yesNoQuestion(Scanner in)
 	{
@@ -213,6 +415,15 @@ public class UserInterface
 		for(int i = 0; i < abilityNames.size(); i++)
 		{
 			System.out.println(abilityNames.get(i));
+		}
+	}
+	
+	
+	private void showHeroClasses()
+	{
+		for(String heroClassName : heroClassNames)
+		{
+			System.out.println(heroClassName);
 		}
 	}
 }
