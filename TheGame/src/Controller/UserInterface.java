@@ -1,692 +1,808 @@
 import java.util.*;
 
-import Auxiliary.Formula;
-import Model.EnemyVersion;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
-
 /*
-    We need init here!
+	We need init here!
 	
 	We could divide this class to 5-6 other classes
 */
 
-public class UserInterface {
-
-    private boolean customed;
-
-    private ArrayList<String> heroClassNames; // new it in the constructor
-    private HashMap<String, HashMap<String, Integer>> heroClassDatas; // new it in the constructor
-    private HashMap<String, String> heroClassAbilities;
-
-    //private ArrayList<String> abilityNames;
-    private ArrayList<String> heroAttributes;                         // must make this fully in the constructor
-
-    private HashMap<String, String> herosAndTheirClasses;
-    private HashMap<String, ArrayList<String>> herosAndTheirAbilities;
-
-    private ArrayList<String> normalEnemyNames;
-    private HashMap<String, ArrayList<EnemyVersion>> normalEnemyDatas;
-    private ArrayList<String> enemyAttributes;                        // must make this fully in the constructor
-
-    private ArrayList<String> bossEnemyNames;
-    private HashMap<String, HashMap<String, Integer>> bossEnemyDatas;
-    private HashMap<String, ArrayList<String>> bossEnemySpecialConditions;
-    private HashMap<String, ArrayList<String>> bossEnemyEarlyTurnEffects;
-
-    private ArrayList<String> itemNames;
-    private HashMap<String, HashMap<String, Integer>> itemDatas;
-    private HashMap<String, String> itemTargets;
-    private ArrayList<String> itemAttributes;                         // must make this fully in the constructor
-    private ArrayList<String> possibleItemTargets;                    // must make this fully in the constructor
-
-    private ArrayList<String> abilityNames;
-    private HashMap<String, HashMap<String, ArrayList<Formula>>> allAbiliyFormulas; // Even non targeted enemy share and cooldown is handled here
-    private HashMap<String, String> abilityTargets;
-    private ArrayList<String> possibleAbilityTargets;                 // must make this fully in the constructor
-    private HashMap<String, ArrayList<Integer>> allAbilityUpgradeXPs;
-    private ArrayList<String> abilityAttributes;                      // must make this fully in the constructor
-    private HashMap<String, ArrayList<HashMap<String, Integer>>> allRequieredAbilities;
-    private HashMap<String, ArrayList<Integer>> abilityLuckPercents;
-
-
-    public void checkCustom(Scanner in) {
-        System.out.println("How do you want to start?(Enter the right number)");
-        System.out.println("1- Start normal game");
-        System.out.println("2- Start custom game(you can create your own game here)");
-
-        String input = in.next();
-        // Check wrong input
-        if (input.equals("2")) {
-            this.customed = true;
-            startCreating(in);
-        } else {
-            this.customed = false;
-            init();
-        }
-    }
-
-    public void init() {
-        HashMap<String, Integer> fighterData = new HashMap<>();
-        fighterData.put("attack", 120);
-
-        fighterData.put("max health", 200);
-        fighterData.put("current health", 200);
-        fighterData.put("health refill", 10);
-        fighterData.put("max magic", 120);
-        fighterData.put("current magic", 120);
-        fighterData.put("magic refill", 5);
-        fighterData.put("max EP", 6);
-        fighterData.put("current EP", 6);
-        heroClassDatas.put("fighter", fighterData);
-
-        /*************/
-
-        HashMap<String, Integer> supporterData = new HashMap<>();
-        supporterData.put("max health", 220);
-        supporterData.put("current health", 220);
-        supporterData.put("health refill", 5);
-        supporterData.put("max magic", 200);
-        supporterData.put("current magic", 200);
-        supporterData.put("magic refill", 10);
-        supporterData.put("attack", 80);
-        supporterData.put("max EP", 5);
-        supporterData.put("current EP", 5);
-        heroClassDatas.put("supporter", supporterData);
-
-        //khode hero ha mundan
-
-        /*************/
-
-        HashMap<String, Integer> weakThugData = new HashMap<>();
-        weakThugData.put("attack", 50);
-        weakThugData.put("max health", 200);
-
-        HashMap<String, Integer> ableThugData = new HashMap<>();
-        ableThugData.put("attack", 90);
-        ableThugData.put("max health", 300);
-
-        HashMap<String, Integer> mightyThugData = new HashMap<>();
-        mightyThugData.put("attack", 150);
-        mightyThugData.put("max health", 400);
-
-        ArrayList<EnemyVersion> thugEnemyVersion = new ArrayList<>();
-        thugEnemyVersion.add(new EnemyVersion("weakThug", weakThugData));
-        thugEnemyVersion.add(new EnemyVersion("ableThug", ableThugData));
-        thugEnemyVersion.add(new EnemyVersion("mightyThug", mightyThugData));
-        normalEnemyDatas.put("thug", thugEnemyVersion);
-
-        /*************/
-
-        HashMap<String, Integer> weakAngelData = new HashMap<>();
-        weakThugData.put("heal", 100);
-        weakThugData.put("max health", 150);
-
-        HashMap<String, Integer> ableAngelData = new HashMap<>();
-        ableThugData.put("heal", 150);
-        ableThugData.put("max health", 250);
-
-        ArrayList<EnemyVersion> angelEnemyVersion = new ArrayList<>();
-        angelEnemyVersion.add(new EnemyVersion("weakAngel", weakAngelData));
-        angelEnemyVersion.add(new EnemyVersion("ableAngel", ableAngelData));
-        normalEnemyDatas.put("angel", angelEnemyVersion);
-
-        /*************/
-
-        HashMap<String, Integer> weakTankData = new HashMap<>();
-        weakThugData.put("attack", 30);
-        weakThugData.put("max health", 400);
-
-        HashMap<String, Integer> ableTankData = new HashMap<>();
-        ableThugData.put("attack", 90);
-        ableThugData.put("max health", 500);
-
-        ArrayList<EnemyVersion> tankEnemyVersion = new ArrayList<>();
-        tankEnemyVersion.add(new EnemyVersion("weakTank", weakTankData));
-        tankEnemyVersion.add(new EnemyVersion("ableTank", ableTankData));
-        normalEnemyDatas.put("tank", tankEnemyVersion);
-
-        /*************/
-
-        //boss must be init
-
-        /*************/
-        //Items
-        //ItemData
-        HashMap<String, Integer> toughenData = new HashMap<>();
-        toughenData.put("max health", 20);
-        itemDatas.put("toughen", toughenData);
-
-        HashMap<String, Integer> guideData = new HashMap<>();
-        guideData.put("max magic", 20);
-        itemDatas.put("guide", guideData);
-
-        HashMap<String, Integer> defyData = new HashMap<>();
-        defyData.put("attack", 8);
-        itemDatas.put("defy", defyData);
-
-        HashMap<String, Integer> swordData = new HashMap<>();
-        swordData.put("attack", 80);
-        itemDatas.put("sword", swordData);
-
-        HashMap<String, Integer> energyBootsData = new HashMap<>();
-        energyBootsData.put("current EP", 1);
-        itemDatas.put("energyBoots", energyBootsData);
-
-        HashMap<String, Integer> armorData = new HashMap<>();
-        armorData.put("max health", 200);
-        itemDatas.put("armor", armorData);
-
-        HashMap<String, Integer> magicStickData = new HashMap<>();
-        magicStickData.put("max magic", 150);
-        itemDatas.put("magicStick", magicStickData);
-
-        HashMap<String, Integer> healthPotionData = new HashMap<>();
-        healthPotionData.put("current health", 100);
-        itemDatas.put("healthPotion", healthPotionData);
-
-        HashMap<String, Integer> magicPotionData = new HashMap<>();
-        magicPotionData.put("current magic", 50);
-        itemDatas.put("magicPotion", magicPotionData);
-
-        //item targets and etc remains
-        /*************/
-        //ABILITIES
-        //names
-        abilityNames.add("fightTraining");
-        abilityNames.add("workOut");
-        abilityNames.add("quickAsBunny");
-        abilityNames.add("magicLessons");
-        abilityNames.add("overPoweredAttack");
-        abilityNames.add("swirlingAttack");
-        abilityNames.add("sacrifice");
-        abilityNames.add("criticalStrike");
-        abilityNames.add("elixir");
-        abilityNames.add("caretaker");
-        abilityNames.add("boots");
-        abilityNames.add("manaBeam");
-        //targets
-        abilityTargets.put("fightTraining", "himself");
-        abilityTargets.put("workOut", "himself");
-        abilityTargets.put("quickAsBunny", "himself");
-        abilityTargets.put("magicLessons", "himself");
-        abilityTargets.put("overPoweredAttack", "an enemy");//target is enemy
-        abilityTargets.put("swirlingAttack", "an enemy");//target is a enemy but it has tasire janebi
-        abilityTargets.put("sacrifice", "all enemy");
-        abilityTargets.put("criticalStrike", "an enemy");
-        abilityTargets.put("elixir", "himself or an ally");
-        abilityTargets.put("caretaker", "an ally");
-        abilityTargets.put("boots", "himself or an ally");
-        abilityTargets.put("manaBeam", "himself or an ally");
-        //upgradeXP
-        ArrayList<Integer> fightTrainingXP = new ArrayList<>();
-        fightTrainingXP.add(2);
-        fightTrainingXP.add(3);
-        fightTrainingXP.add(4);
-        allAbilityUpgradeXPs.put("fightTraining", fightTrainingXP);
-
-        ArrayList<Integer> workOutXP = new ArrayList<>();
-        workOutXP.add(2);
-        workOutXP.add(3);
-        workOutXP.add(4);
-        allAbilityUpgradeXPs.put("workOut", workOutXP);
-
-        ArrayList<Integer> quickAsBunnyXP = new ArrayList<>();
-        quickAsBunnyXP.add(2);
-        quickAsBunnyXP.add(3);
-        quickAsBunnyXP.add(4);
-        allAbilityUpgradeXPs.put("quickAsBunny", quickAsBunnyXP);
-
-        ArrayList<Integer> magicLessonsXP = new ArrayList<>();
-        magicLessonsXP.add(2);
-        magicLessonsXP.add(3);
-        magicLessonsXP.add(4);
-        allAbilityUpgradeXPs.put("magicLessons", magicLessonsXP);
-
-        ArrayList<Integer> overPoweredAttackXP = new ArrayList<>();
-        overPoweredAttackXP.add(2);
-        overPoweredAttackXP.add(4);
-        overPoweredAttackXP.add(6);
-        allAbilityUpgradeXPs.put("overPoweredAttack", overPoweredAttackXP);
-
-        ArrayList<Integer> swirlingAttackXP = new ArrayList<>();
-        swirlingAttackXP.add(2);
-        swirlingAttackXP.add(3);
-        swirlingAttackXP.add(4);
-        allAbilityUpgradeXPs.put("swirlingAttack", swirlingAttackXP);
-
-        ArrayList<Integer> sacrificeXP = new ArrayList<>();
-        sacrificeXP.add(2);
-        sacrificeXP.add(3);
-        sacrificeXP.add(4);
-        allAbilityUpgradeXPs.put("sacrifice", sacrificeXP);
-
-        ArrayList<Integer> criticalStrikeXP = new ArrayList<>();
-        criticalStrikeXP.add(2);
-        criticalStrikeXP.add(3);
-        criticalStrikeXP.add(4);
-        allAbilityUpgradeXPs.put("criticalStrike", criticalStrikeXP);
-
-        ArrayList<Integer> elixirXP = new ArrayList<>();
-        elixirXP.add(2);
-        elixirXP.add(3);
-        elixirXP.add(5);
-        allAbilityUpgradeXPs.put("elixir", elixirXP);
-
-        ArrayList<Integer> caretakerXP = new ArrayList<>();
-        caretakerXP.add(2);
-        caretakerXP.add(3);
-        caretakerXP.add(5);
-        allAbilityUpgradeXPs.put("caretaker", caretakerXP);
-
-        ArrayList<Integer> bootsXP = new ArrayList<>();
-        bootsXP.add(2);
-        bootsXP.add(3);
-        bootsXP.add(5);
-        allAbilityUpgradeXPs.put("boots", bootsXP);
-
-        ArrayList<Integer> manaBeamXP = new ArrayList<>();
-        manaBeamXP.add(2);
-        manaBeamXP.add(3);
-        manaBeamXP.add(4);
-        allAbilityUpgradeXPs.put("manaBeam", manaBeamXP);
-        //luckPercent
-
-        ArrayList<Integer> criticalStrikePercent = new ArrayList<>();
-        criticalStrikePercent.add(20);
-        criticalStrikePercent.add(30);
-        criticalStrikePercent.add(40);
-        abilityLuckPercents.put("criticalStrike", criticalStrikePercent);
-
-        //abilityRequired
-
-
-        // allRequieredAbilities.put()
-
-
-    }
-
-
-    public void startCreating(Scanner in) {
-        System.out.println("Welcome!");
-        while (true) {
-            System.out.println("What do you want to create?(Enter the right number)");
-            System.out.println("1- Hero Class");
-            System.out.println("2- Hero");
-            System.out.println("3- Normal Enemy");
-            System.out.println("4- Boss Enemy");
-            System.out.println("5- Item");
-            System.out.println("6- Ability");
-
-            String input = in.next();
-            if (input.equals("1")) {
-                creatHeroClass(in);
-            } else if (input.equals("2")) {
-                createHero(in);
-            } else if (input.equals("3")) {
-                createNormalEnemy(in);
-            } else if (input.equals("4")) {
-                createBossEnemy(in);
-            } else if (input.equals("5")) {
-                createItem(in);
-            } else if (input.equals("6")) {
-                createAbility(in);
-            }
-
-            System.out.println("Want to create anything else?(Enter the right number)");
-
-            if (!yesNoQuestion(in)) {
-                break;
-            }
-        }
-    }
-
-
-    private void creatHeroClass(Scanner in) {
-        String heroClassName;
-        HashMap<String, Integer> heroClassData = new HashMap<>();
-
-        while (true) {
-            System.out.print("Please enter the name of the class you want to make: ");
-            heroClassName = in.next();
-
-            System.out.println("Are you sure?(Enter the right number)");
-
-            if (yesNoQuestion(in)) {
-                heroClassNames.add(heroClassName);
-                break;
-            }
-        }
-
-        System.out.println("Please enter the amount you want for each attribute");
-
-        for (int i = 0; i < heroAttributes.size(); i++) {
-            while (true) {
-                String attributeName = heroAttributes.get(i);
-
-                System.out.print(attributeName + ": ");
-
-                String attributeAmount = in.next();
-                if (attributeAmount.matches("[0-9]+") && attributeAmount.length() < 8) {
-                    int attributeAmountNum = Integer.parseInt(attributeAmount);
-
-                    heroClassData.put(attributeName, attributeAmountNum);
-                    break;
-                } else {
-                    // Invalid Input
-                }
-            }
-        }
-
-        System.out.println("How many abilities do you want to give to this class?");
-        //check invalid input
-
-        int abilityNum = in.nextInt();
-
-        System.out.println("Please enter the name of the abilities you want this class to have:");
-        showAbilityNames();
-        while (true) {
-            String abilityName = in.next();
-            if (abilityNames.contains(abilityName)) {
-                heroClassAbilities.put(heroClassName, abilityName);
-            } else {
-                //invalid input
-                continue;
-            }
-
-            System.out.println("Do you want to add any other ability?(Enter the right number)");
-            if (!yesNoQuestion(in)) {
-                break;
-            }
-        }
-
-        System.out.println("Hero Class was made!");
-    }
-
-
-    private void createHero(Scanner in) {
-        String heroName, heroClassName;
-        ArrayList<String> abilityList = new ArrayList<>();
-
-        while (true) {
-            System.out.print("Please enter the name of the hero you want to make: ");
-            heroName = in.next();
-
-            System.out.println("Are you sure?(Enter the right number)");
-
-            if (yesNoQuestion(in)) {
-                //heroClassNames.add(heroClassName);
-                break;
-            }
-        }
-
-        while (true) {
-            System.out.println("Please choose a class for this hero: ");
-            showHeroClasses();
-
-            heroClassName = in.next();
-            if (heroClassNames.contains(heroClassName)) {
-                System.out.println("Are you sure?(Enter the right number)");
-
-                if (yesNoQuestion(in)) {
-                    herosAndTheirClasses.put(heroName, heroClassName);
-                    break;
-                }
-            } else {
-                // invalid input
-            }
-        }
-
-        System.out.println("Please enter the name of the abilities you want this hero to have:");
-        showAbilityNames();
-        while (true) {
-            String abilityName = in.next();
-            if (abilityNames.contains(abilityName)) {
-                abilityList.add(abilityName);
-            } else {
-                //invalid input
-                continue;
-            }
-
-            System.out.println("Do you want to add any other ability?(Enter the right number)");
-            if (!yesNoQuestion(in)) {
-                break;
-            }
-
-            System.out.println("Please enter the name of the next ability you want this hero to have: ");
-        }
-        herosAndTheirAbilities.put(heroName, abilityList);
-
-        System.out.println("Hero was made!");
-    }
-
-
-    private void createNormalEnemy(Scanner in) {
-        String enemyName;
-        ArrayList<EnemyVersion> enemyVersions = new ArrayList<>();
-
-        while (true) {
-            System.out.print("Please enter the name of the enemy you want to make: ");
-            enemyName = in.next();
-
-            System.out.println("Are you sure?(Enter the right number)");
-
-            if (yesNoQuestion(in)) {
-                normalEnemyNames.add(enemyName);
-                break;
-            }
-        }
-
-        System.out.println("How many versions do you want to make for this enemy?");
-        //check invalid input
-        int versionNum = in.nextInt();
-
-        for (int i = 0; i < versionNum; i++) {
-            EnemyVersion enemyVersion = makeEnemyVersion(in);
-            enemyVersions.add(enemyVersion);
-
-            System.out.println("Version added!");
-        }
-        normalEnemyDatas.put(enemyName, enemyVersions);
-
-        System.out.println("Enemy was made!");
-    }
-
-
-    private void createBossEnemy(Scanner in) {
-        String bossName;
-        ArrayList<String> specialConditions = new ArrayList<>();
-        ArrayList<String> earlySpecialEffects = new ArrayList<>();
-        HashMap<String, Integer> bossData = new HashMap<>();
-
-        while (true) {
-            System.out.print("Please enter the name of the boss enemy you want to make: ");
-            bossName = in.next();
-
-            System.out.println("Are you sure?(Enter the right number)");
-
-            if (yesNoQuestion(in)) {
-                bossEnemyNames.add(bossName);
-                break;
-            }
-        }
-
-        System.out.println("Please enter the amount you want for each attribute");
-
-        for (int i = 0; i < enemyAttributes.size(); i++) {
-            while (true) {
-                String attributeName = enemyAttributes.get(i); // It will be nice if it goes up
-
-                System.out.print(attributeName + ": ");
-
-                String attributeAmount = in.next();
-                if (attributeAmount.matches("[0-9]+") && attributeAmount.length() < 8) {
-                    int attributeAmountNum = Integer.parseInt(attributeAmount);
-                    bossData.put(attributeName, attributeAmountNum);
-                    break;
-                } else {
-                    // Invalid Input
-                }
-            }
-        }
-
-        bossEnemyDatas.put(bossName, bossData);
-
-        // Must handle Condition and early effects
-    }
-
-
-    private void createItem(Scanner in) {
-        String itemName, itemTarget;
-        HashMap<String, Integer> itemData = new HashMap<>();
-
-        while (true) {
-            System.out.print("Please enter the name of the item you want to make: ");
-            itemName = in.next();
-
-            System.out.println("Are you sure?(Enter the right number)");
-
-            if (yesNoQuestion(in)) {
-                itemNames.add(itemName);
-                break;
-            }
-        }
-
-        while (true) {
-            System.out.println("Please enter the name of the attribute that you want this item to affect it");
-            showItemAttributes();
-            String attributeName = in.next();
-
-            if (!itemAttributes.contains(attributeName)) {
-                // invalid input
-                continue;
-            }
-
-            while (true) {
-                System.out.println("Please enter the amount of effect: ");
-                String attributeAmount = in.next();
-
-                if (attributeAmount.matches("[0-9]+") && attributeAmount.length() < 8) {
-                    int attributeAmountNum = Integer.parseInt(attributeAmount);
-                    itemData.put(attributeName, attributeAmountNum);
-                    break;
-                } else {
-                    // Invalid Input
-                }
-            }
-
-            System.out.println("Do you want any other effect for this item?");
-
-            if (!yesNoQuestion(in)) {
-                break;
-            }
-        }
-
-        while (true) {
-            System.out.println("Please enter the target of this item");
-            showPossibleItemTargets();
-            itemTarget = in.next();
-
-            if (itemTargets.containsKey(itemTarget)) {
-                itemTargets.put(itemName, itemTarget);
-                break;
-            }
-
-            //invalid input
-        }
-
-        System.out.println("Item was made!");
-    }
-
-
-    private void createAbility(Scanner in) {
-
-    }
-
-
-    private EnemyVersion makeEnemyVersion(Scanner in) {
-        String versionName;
-        HashMap<String, Integer> versionData = new HashMap<>();
-
-        while (true) {
-            System.out.print("Please enter the name of the version you want to make: ");
-            versionName = in.next();
-
-            System.out.println("Are you sure?(Enter the right number)");
-
-            if (yesNoQuestion(in)) {
-                break;
-            }
-        }
-
-        System.out.println("Please enter the amount you want for each attribute");
-
-        for (int i = 0; i < enemyAttributes.size(); i++) {
-            while (true) {
-                String attributeName = enemyAttributes.get(i); // It will be nice if it goes up
-
-                System.out.print(attributeName + ": ");
-
-                String attributeAmount = in.next();
-                if (attributeAmount.matches("[0-9]+") && attributeAmount.length() < 8) {
-                    int attributeAmountNum = Integer.parseInt(attributeAmount);
-
-                    versionData.put(attributeName, attributeAmountNum);
-                    break;
-                } else {
-                    // Invalid Input
-                }
-            }
-        }
-
-        EnemyVersion enemyVersion = new EnemyVersion(versionName, versionData);
-
-        return enemyVersion;
-    }
-
-
-    private boolean yesNoQuestion(Scanner in) {
-        System.out.println("1- Yes");
-        System.out.println("2- No");
-        while (true) {
-            String input = in.next();
-            if (input.equals("1")) {
-                return true;
-            } else if (input.equals("2")) {
-                return false;
-            }
-
-            System.out.println("Invalid input! Please try again.");
-        }
-    }
-
-
-    private void showAbilityNames() {
-        for (int i = 0; i < abilityNames.size(); i++) {
-            System.out.println(abilityNames.get(i));
-        }
-    }
-
-
-    private void showHeroClasses() {
-        for (String heroClassName : heroClassNames) {
-            System.out.println(heroClassName);
-        }
-    }
-
-
-    private void showItemAttributes() {
-        for (int i = 0; i < itemAttributes.size(); i++) {
-            System.out.println(itemAttributes.get(i));
-        }
-    }
-
-
-    private void showPossibleItemTargets() {
-        for (int i = 0; i < possibleItemTargets.size(); i++) {
-            System.out.println(possibleItemTargets.get(i));
-        }
-    }
+public class UserInterface
+{
+	private boolean customed;
+	
+	private ArrayList<String> heroClassNames; // new it in the constructor
+	private HashMap<String, HashMap<String, Integer>> heroClassDatas; // new it in the constructor
+	private HashMap<String, String> heroClassAbilities;
+	
+	//private ArrayList<String> abilityNames;
+	private ArrayList<String> heroAttributes;                         // must make this fully in the constructor
+	
+	private HashMap<String, String> herosAndTheirClasses;
+	private HashMap<String, ArrayList<String>> herosAndTheirAbilities;
+	
+	private ArrayList<String> normalEnemyNames;
+	private HashMap<String, ArrayList<EnemyVersion>> normalEnemyDatas;
+	private ArrayList<String> enemyAttributes;                        // must make this fully in the constructor
+	
+	private ArrayList<String> bossEnemyNames;
+	private HashMap<String, HashMap<String, Integer>> bossEnemyDatas;
+	private HashMap<String, ArrayList<String>> bossEnemySpecialConditions;
+	private HashMap<String, ArrayList<String>> bossEnemyEarlyTurnEffects;
+	
+	private ArrayList<String> itemNames;
+	private HashMap<String, HashMap<String, Integer>> itemDatas;
+	private HashMap<String, String> itemTargets;
+	private ArrayList<String> itemAttributes;                         // must make this fully in the constructor
+	private ArrayList<String> possibleItemTargets;                    // must make this fully in the constructor
+	
+	private ArrayList<String> abilityNames;
+	private HashMap<String, HashMap<String, ArrayList<Formula>>> allAbiliyFormulas; // Even non targeted enemy share and cooldown is handled here
+	private HashMap<String, String> abilityTargets;
+	private ArrayList<String> possibleAbilityTargets;                 // must make this fully in the constructor
+	private HashMap<String, ArrayList<Integer>> allAbilityUpgradeXPs;
+	private ArrayList<String> abilityAttributes;                      // must make this fully in the constructor
+	private HashMap<String, ArrayList<HashMap<String, Integer>>> allRequieredAbilities;
+	private HashMap<String, ArrayList<Integer>> abilityLuckPercents;
+	private HashMap<String, String> primaryVariableNames;
+	private HashMap<String, ArrayList<Integer>> secondaryTargetShares;
+	
+	
+	public void checkCustom(Scanner in)
+	{
+		System.out.println("How do you want to start?(Enter the right number)");
+		System.out.println("1- Start normal game");
+		System.out.println("2- Start custom game(you can create your own game here)");
+		
+		String input = in.next();
+		// Check wrong input
+		if(input.equals("2"))
+		{
+			this.customed = true;
+			startCreating(in);
+		}
+		else
+		{
+			this.customed = false;
+		}
+	}
+	
+	
+	public void startCreating(Scanner in)
+	{
+		System.out.println("Welcome!");
+		while(true)
+		{
+			System.out.println("What do you want to create?(Enter the right number)");
+			System.out.println("1- Hero Class");
+			System.out.println("2- Hero");
+			System.out.println("3- Normal Enemy");
+			System.out.println("4- Boss Enemy");
+			System.out.println("5- Item");
+			System.out.println("6- Ability");
+			
+			String input = in.next();
+			if(input.equals("1"))
+			{
+				creatHeroClass(in);
+			}
+			else if(input.equals("2"))
+			{
+				createHero(in);
+			}
+			else if(input.equals("3"))
+			{
+				createNormalEnemy(in);
+			}
+			else if(input.equals("4"))
+			{
+				createBossEnemy(in);
+			}
+			else if(input.equals("5"))
+			{
+				createItem(in);
+			}
+			else if(input.equals("6"))
+			{
+				createAbility(in);
+			}
+			
+			System.out.println("Want to create anything else?(Enter the right number)");
+			
+			if(!yesNoQuestion(in))
+			{
+				break;
+			}
+		}
+	}
+	
+	
+	private void creatHeroClass(Scanner in)
+	{
+		String heroClassName;
+		HashMap<String, Integer> heroClassData = new HashMap<>();
+		
+		while(true)
+		{
+			System.out.print("Please enter the name of the class you want to make: ");
+			heroClassName = in.next();
+			
+			System.out.println("Are you sure?(Enter the right number)");
+			
+			if(yesNoQuestion(in))
+			{
+				heroClassNames.add(heroClassName);
+				break;
+			}
+		}
+		
+		System.out.println("Please enter the amount you want for each attribute");
+		
+		for(int i = 0; i < heroAttributes.size(); i++)
+		{
+			while(true)
+			{
+				String attributeName = heroAttributes.get(i);
+				
+				System.out.print(attributeName + ": ");
+				
+				String attributeAmount = in.next();
+				if(attributeAmount.matches("[0-9]+") && attributeAmount.length() < 8)
+				{
+					int attributeAmountNum = Integer.parseInt(attributeAmount);
+					
+					heroClassData.put(attributeName, attributeAmountNum);
+					break;
+				}
+				else
+				{
+					// Invalid Input
+				}
+			}
+		}
+		
+		System.out.println("How many abilities do you want to give to this class?");
+		//check invalid input
+		
+		int abilityNum = in.nextInt();
+		
+		System.out.println("Please enter the name of the abilities you want this class to have:");
+		showAbilityNames();
+		while(true)
+		{
+			String abilityName = in.next();
+			if(abilityNames.contains(abilityName))
+			{
+				heroClassAbilities.put(heroClassName, abilityName);
+			}
+			else
+			{
+				//invalid input
+				continue;
+			}
+			
+			System.out.println("Do you want to add any other ability?(Enter the right number)");
+			if(!yesNoQuestion(in))
+			{
+				break;
+			}
+		}
+		
+		System.out.println("Hero Class was made!");
+	}
+	
+	
+	private void createHero(Scanner in)
+	{
+		String heroName, heroClassName;
+		ArrayList<String> abilityList = new ArrayList<>();
+		
+		while(true)
+		{
+			System.out.print("Please enter the name of the hero you want to make: ");
+			heroName = in.next();
+			
+			System.out.println("Are you sure?(Enter the right number)");
+			
+			if(yesNoQuestion(in))
+			{
+				//heroClassNames.add(heroClassName);
+				break;
+			}
+		}
+		
+		while(true)
+		{
+			System.out.println("Please choose a class for this hero: ");
+			showHeroClasses();
+			
+			heroClassName = in.next();
+			if(heroClassNames.contains(heroClassName))
+			{
+				System.out.println("Are you sure?(Enter the right number)");
+				
+				if(yesNoQuestion(in))
+				{
+					herosAndTheirClasses.put(heroName, heroClassName);
+					break;
+				}
+			}
+			else
+			{
+				// invalid input
+			}
+		}
+		
+		System.out.println("Please enter the name of the abilities you want this hero to have:");
+		showAbilityNames();
+		while(true)
+		{
+			String abilityName = in.next();
+			if(abilityNames.contains(abilityName))
+			{
+				abilityList.add(abilityName);
+			}
+			else
+			{
+				//invalid input
+				continue;
+			}
+			
+			System.out.println("Do you want to add any other ability?(Enter the right number)");
+			if(!yesNoQuestion(in))
+			{
+				break;
+			}
+			
+			System.out.println("Please enter the name of the next ability you want this hero to have: ");
+		}
+		herosAndTheirAbilities.put(heroName, abilityList);
+		
+		System.out.println("Hero was made!");
+	}
+	
+	
+	private void createNormalEnemy(Scanner in)
+	{
+		String enemyName;
+		ArrayList<EnemyVersion> enemyVersions = new ArrayList<>();
+		
+		while(true)
+		{
+			System.out.print("Please enter the name of the enemy you want to make: ");
+			enemyName = in.next();
+			
+			System.out.println("Are you sure?(Enter the right number)");
+			
+			if(yesNoQuestion(in))
+			{
+				normalEnemyNames.add(enemyName);
+				break;
+			}
+		}
+		
+		System.out.println("How many versions do you want to make for this enemy?");
+		//check invalid input
+		int versionNum = in.nextInt();
+		
+		for(int i = 0; i < versionNum; i++)
+		{
+			EnemyVersion enemyVersion = makeEnemyVersion(in);
+			enemyVersions.add(enemyVersion);
+			
+			System.out.println("Version added!");
+		}
+		normalEnemyDatas.put(enemyName, enemyVersions);
+		
+		System.out.println("Enemy was made!");
+	}
+	
+	
+	private void createBossEnemy(Scanner in)
+	{
+		String bossName;
+		ArrayList<String> specialConditions = new ArrayList<>();
+		ArrayList<String> earlySpecialEffects = new ArrayList<>();
+		HashMap<String, Integer> bossData;
+		
+		while(true)
+		{
+			System.out.print("Please enter the name of the boss enemy you want to make: ");
+			bossName = in.next();
+			
+			System.out.println("Are you sure?(Enter the right number)");
+			
+			if(yesNoQuestion(in))
+			{
+				bossEnemyNames.add(bossName);
+				break;
+			}
+		}
+		
+		System.out.println("Please enter the amount you want for each attribute");
+		
+		for(int i = 0; i < enemyAttributes.size(); i++)
+		{
+			while(true)
+			{
+				String attributeName = enemyAttributes.get(i); // It will be nice if it goes up
+				
+				System.out.print(attributeName + ": ");
+				
+				String attributeAmount = in.next();
+				if(attributeAmount.matches("[0-9]+") && attributeAmount.length() < 8)
+				{
+					int attributeAmountNum = Integer.parseInt(attributeAmount);
+					bossData.put(attributeName, attributeAmountNum);
+					break;
+				}
+				else
+				{
+					// Invalid Input
+				}
+			}
+		}
+		
+		bossEnemyDatas.put(bossName, bossData);
+		
+		// Must handle Condition and early effects
+	}
+	
+	
+	private void createItem(Scanner in)
+	{
+		String itemName, itemTarget;
+		HashMap<String, Integer> itemData;
+		
+		while(true)
+		{
+			System.out.print("Please enter the name of the item you want to make: ");
+			itemName = in.next();
+			
+			System.out.println("Are you sure?(Enter the right number)");
+			
+			if(yesNoQuestion(in))
+			{
+				itemNames.add(itemName);
+				break;
+			}
+		}
+		
+		while(true)
+		{
+			System.out.println("Please enter the name of the attribute that you want this item to affect it");
+			showItemAttributes();
+			String attributeName = in.next();
+			
+			if(!itemAttributes.contains(attributeName))
+			{
+				// invalid input
+				continue;
+			}
+			
+			while(true)
+			{
+				System.out.println("Please enter the amount of effect: ");
+				String attributeAmount = in.next();
+				
+				if(attributeAmount.matches("[0-9]+") && attributeAmount.length() < 8)
+				{
+					int attributeAmountNum = Integer.parseInt(attributeAmount);
+					itemData.put(attributeName, attributeAmountNum);
+					break;
+				}
+				else
+				{
+					// Invalid Input
+				}
+			}
+			
+			System.out.println("Do you want any other effect for this item?");
+			
+			if(!yesNoQuestion(in))
+			{
+				break;
+			}
+		}
+		
+		while(true)
+		{
+			System.out.println("Please enter the target of this item");
+			showPossibleItemTargets();
+			itemTarget = in.next();
+			
+			if(itemTargets.containsKey(itemTarget))
+			{
+				itemTargets.put(itemName, itemTarget);
+				break;
+			}
+			
+			//invalid input
+		}
+		
+		System.out.println("Item was made!");
+	}
+	
+	
+	private void createAbility(Scanner in)
+	{
+		String abilityName, abilityTarget;
+		int upgradeNum;
+		HashMap<String, ArrayList<Formula>> formulas = new HashMap<>();
+		ArrayList<Integer> abilityUpgradeXPs = new ArrayList<>();
+		HashMap<String, ArrayList<Double>> extraVariables = new HashMap<>();
+		
+		while(true)
+		{
+			System.out.print("Please enter the name of the ability you want to make: ");
+			abilityName = in.next();
+			
+			System.out.println("Are you sure?(Enter the right number)");
+			
+			if(yesNoQuestion(in))
+			{
+				abilityNames.add(abilityName);
+				break;
+			}
+		}
+		
+		System.out.println("How many upgrades does this ability have?");
+		//check Invalid input
+		upgradeNum = in.nextInt();
+		
+		for(int i = 0; i < upgradeNum; i++)
+		{
+			System.out.print("Please enter how much xp is needed to get this upgrade: ");
+			//check invalid input
+			int upgradeXP = in.nextInt();
+			
+			abilityUpgradeXPs.add(upgradeXP);
+		}
+		
+		System.out.println("For creating a formula do you need any extra variables?");
+		
+		if(yesNoQuestion(in))
+		{
+			System.out.println("How many?");
+			//check invalid input
+			int variableNum = in.nextInt();
+			
+			for(int i = 0; i < variableNum; i++)
+			{
+				ArrayList<Double> variableValues = new ArrayList<>();
+				System.out.print("Enter variable name(don't use numbers): ");
+				//check invalid input
+				String variableName = in.next();
+				System.out.println("Please enter its value for each upgrade");
+				for(int j = 0; j < upgradeNum; j++)
+				{
+					System.out.print((j + 1) + ": ");
+					//check invalid input.. NOT MORE THAN ONE FLOATING POINT
+					double variableValue = in.nextDouble();
+					variableValues.add(variableValue);
+				}
+				
+				extraVariables.put(variableName, variableValues);
+			}
+		}
+		
+		System.out.println("Please enter the formula for this ability");
+		showAllVariables(extraVariables.keySet());
+		String formulaString = getFormulaString(in);
+		ArrayList<Formula> differentUpgradeFormulas = new ArrayList<>();
+		
+		for(int i = 0; i < upgradeNum; i++)
+		{
+			HashMap<String, Double> formulaData = new HashMap<>();
+			for(String variableName : extraVariables.keySet())
+			{
+				double variableValue = extraVariables.get(variableName).get(i); // might need more explanation
+				formulaData.put(variableName, variableValue);
+			}
+			Formula formula = new Formula(formulaString, formulaData);
+			differentUpgradeFormulas.add(formula);
+		}
+		
+		formulas.put("normal", differentUpgradeFormulas);
+		
+		System.out.println("In some abilities there is a chance for the ability to work differently");
+		System.out.println("Is this ability affected by luck?");
+		
+		if(yesNoQuestion(in))
+		{
+			System.out.println("Please enter the luck formula for this ability");
+			showAllVariables(extraVariables.keySet());
+			showNormalDamageFormula(formulaString);
+			String luckFormulaString = getFormulaString(in);
+			ArrayList<Formula> differentUpgradeFormulas = new ArrayList<>();
+			ArrayList<Integer> luckPercents = new ArrayList<>();
+			
+			for(int i = 0; i < upgradeNum; i++)
+			{
+				HashMap<String, Double> formulaData = new HashMap<>();
+				for(String variableName : extraVariables.keySet())
+				{
+					double variableValue = extraVariables.get(variableName).get(i); // might need more explanation
+					formulaData.put(variableName, variableValue);
+				}
+				Formula formula = new Formula(luckFormulaString, formulaData);
+				differentUpgradeFormulas.add(formula);
+				
+				System.out.print("Please enter the percent of this luck: ");
+				int luckPercent = in.nextInt();
+				luckPercents.add(luckPercent);
+			}
+			
+			abilityLuckPercents.put(abilityName, luckPercents);
+			formulas.put("luck", differentUpgradeFormulas);
+		}
+		
+		System.out.println("Is it required to have an upgrade of any other ability before getting any of the upgrades of this ability?");
+		
+		if(yesNoQuestion(in))
+		{
+			ArrayList<HashMap<String, Integer>> requieredAbilities = new ArrayList<>();
+			for(int i = 0; i < upgradeNum; i++)
+			{
+				System.out.println("Does upgrade" + (i + 1) + " require any other abilities?");
+				HashMap<String, Integer> requieredAbilityForUpgrade = new HashMap<>();
+				if(yesNoQuestion(in))
+				{
+					while(true)
+					{
+						System.out.println("Which ability?");
+						String requieredAbilityName = getRequieredAbilityName(in, abilityName);
+						System.out.println("Which Upgrade?");
+						int requieredAbilityUpgrade = getRequieredAbilityUpgrade(in, requieredAbilityName);
+						
+						requieredAbilityForUpgrade.put(requieredAbilityName, requieredAbilityUpgrade);
+						
+						System.out.println("Does this upgrade need more requiered abilities?");
+						if(!yesNoQuestion(in))
+						{
+							break;
+						}
+					}
+				}
+				
+				requieredAbilities.add(requieredAbilityForUpgrade);
+			}
+			allRequieredAbilities.put(abilityName, requieredAbilities);
+		}
+		
+		
+		while(true)
+		{
+			System.out.println("Please enter the target of this item");
+			showPossibleAbilityTargets();
+			abilityTarget = in.next();
+			
+			if(abilityTargets.containsKey(abilityTarget))
+			{
+				abilityTargets.put(abilityName, abilityTarget);
+				if(isMultipuleTarget(abilityTarget))
+				{
+					System.out.println("We will choose one of the targets as the main one");
+					ArrayList<Integer> secondaryTargetShare = new ArrayList<>();
+					for(int i = 0; i < upgradeNum; i++)
+					{
+						System.out.println("How much do you want the percent share of other targets be in upgrade " + (i + 1) + "?");
+						System.out.println("(obviously if you want all of the targets to be the same, enter 100");
+						System.out.print("Share: ");
+						//check valid input
+						int secondaryTargetShareAmount = in.nextInt();
+						secondaryTargetShare.add(secondaryTargetShareAmount);
+					}
+					
+					secondaryTargetShares.put(abilityName, secondaryTargetShare);
+				}
+				break;
+			}
+			//invalid input
+		}
+		
+		System.out.println("Ability was freaking finally made!");
+	}
+	
+	
+	private EnemyVersion makeEnemyVersion(Scanner in)
+	{
+		String versionName;
+		HashMap<String, Integer> versionData = new HashMap<>();
+		
+		while(true)
+		{
+			System.out.print("Please enter the name of the version you want to make: ");
+			versionName = in.next();
+			
+			System.out.println("Are you sure?(Enter the right number)");
+			
+			if(yesNoQuestion(in))
+			{
+				break;
+			}
+		}
+		
+		System.out.println("Please enter the amount you want for each attribute");
+		
+		for(int i = 0; i < enemyAttributes.size(); i++)
+		{
+			while(true)
+			{
+				String attributeName = enemyAttributes.get(i); // It will be nice if it goes up
+				
+				System.out.print(attributeName + ": ");
+				
+				String attributeAmount = in.next();
+				if(attributeAmount.matches("[0-9]+") && attributeAmount.length() < 8)
+				{
+					int attributeAmountNum = Integer.parseInt(attributeAmount);
+					
+					versionData.put(attributeName, attributeAmountNum);
+					break;
+				}
+				else
+				{
+					// Invalid Input
+				}
+			}
+		}
+		
+		EnemyVersion enemyVersion = new EnemyVersion(versionName, versionData);
+		
+		return enemyVersion;
+	}
+	
+	
+	private boolean yesNoQuestion(Scanner in)
+	{
+		System.out.println("1- Yes");
+		System.out.println("2- No");
+		while(true)
+		{
+			String input = in.next();
+			if(input.equals("1"))
+			{
+				return true;
+			}
+			else if(input.equals("2"))
+			{
+				return false;
+			}
+			
+			System.out.println("Invalid input! Please try again.");
+		}
+	}
+	
+	
+	private void showAbilityNames()
+	{
+		for(int i = 0; i < abilityNames.size(); i++)
+		{
+			System.out.println(abilityNames.get(i));
+		}
+	}
+	
+	
+	private void showHeroClasses()
+	{
+		for(String heroClassName : heroClassNames)
+		{
+			System.out.println(heroClassName);
+		}
+	}
+	
+	
+	private void showItemAttributes()
+	{
+		for(int i = 0; i < itemAttributes.size(); i++)
+		{
+			System.out.println(itemAttributes.get(i));
+		}
+	}
+	
+	
+	private void showPossibleItemTargets()
+	{
+		for(int i = 0; i < possibleItemTargets.size(); i++)
+		{
+			System.out.println(possibleItemTargets.get(i));
+		}
+	}
+	
+	
+	private void showAllVariables(Set<String> variables)
+	{
+		System.out.println("Available variables:");
+		
+		for(String variableName : variables)
+		{
+			System.out.println(variableName);
+		}
+		for(String variableName : primaryVariableNames.keySet())
+		{
+			System.out.println(variableName);
+		}
+	}
+	
+	
+	private String getFormulaString(Scanner in)
+	{
+		
+		
+		return ;
+	}
+	
+	
+	private void showNormalDamageFormula(String formula)
+	{
+		System.out.println("Normal damage formula: " + formula);
+	}
+	
+	
+	private String getRequieredAbilityName(Scanner in, String mainAbilityName)
+	{
+		String requiredAbility;
+		
+		while(true)
+		{
+			System.out.println("List of available abilities:");
+			for(int i = 0; i < abilityNames.size(); i++)
+			{
+				if(abilityNames.get(i).equals(mainAbilityName))
+				{
+					continue;
+				}
+				System.out.println(abilityNames.get(i));
+			}
+			
+			requiredAbility = in.next();
+			
+			if(!requiredAbility.equals(mainAbilityName) && abilityNames.contains(requiredAbility))
+			{
+				return requiredAbility;
+			}
+			else
+			{
+				System.out.println("Invalid input! Please try again");
+			}
+		}
+	}
+	
+	
+	private int getRequieredAbilityUpgrade(Scanner in, String requiredAbilityName)
+	{
+		int upgradeNum = allAbilityUpgradeXPs.get(requiredAbilityName).size(), requiredUpgrade;
+		System.out.println(upgradeNum + " upgrades are available");
+		System.out.print("Upgrade num: ");
+		while(true)
+		{
+			requiredUpgrade = in.nextInt();
+			if(requiredUpgrade > 0 && requiredUpgrade <= upgradeNum)
+			{
+				return requiredUpgrade;
+			}
+			System.out.println("Invalid input! Please try again");
+		}
+	}
+	
+	
+	private void showPossibleAbilityTargets()
+	{
+		System.out.println("Available targets for an ability:");
+		
+		for(int i = 0; i < possibleAbilityTargets.size(); i++)
+		{
+			System.out.println(possibleAbilityTargets);
+		}
+	}
+	
+	
+	private boolean isMultipuleTarget(String abilityTarget)
+	{
+		if(abilityTarget.equals("all enemy") || abilityTarget.equals("all ally"))
+		{
+			return true;
+		}
+		return false;
+	}
 }
