@@ -486,7 +486,7 @@ public class UserInterface
 		}
 		
 		System.out.println("Please enter the formula for this ability");
-		showAllVariables();
+		showAllVariables(extraVariables.keySet());
 		String formulaString = getFormulaString(in);
 		ArrayList<Formula> differentUpgradeFormulas = new ArrayList<>();
 		
@@ -510,9 +510,9 @@ public class UserInterface
 		if(yesNoQuestion(in))
 		{
 			System.out.println("Please enter the luck formula for this ability");
-			showAllVariables();
-			showNormalDamageFormula();
-			String formulaString = getFormulaString(in);
+			showAllVariables(extraVariables.keySet());
+			showNormalDamageFormula(formulaString);
+			String luckFormulaString = getFormulaString(in);
 			ArrayList<Formula> differentUpgradeFormulas = new ArrayList<>();
 			ArrayList<Integer> luckPercents = new ArrayList<>();
 			
@@ -524,7 +524,7 @@ public class UserInterface
 					double variableValue = extraVariables.get(variableName).get(i); // might need more explanation
 					formulaData.put(variableName, variableValue);
 				}
-				Formula formula = new Formula(formulaString, formulaData);
+				Formula formula = new Formula(luckFormulaString, formulaData);
 				differentUpgradeFormulas.add(formula);
 				
 				System.out.print("Please enter the percent of this luck: ");
@@ -536,7 +536,7 @@ public class UserInterface
 			formulas.put("luck", differentUpgradeFormulas);
 		}
 		
-		System.out.println("Is it requiered to have an upgrade of any other ability before getting any of the upgrades of this ability?");
+		System.out.println("Is it required to have an upgrade of any other ability before getting any of the upgrades of this ability?");
 		
 		if(yesNoQuestion(in))
 		{
@@ -545,7 +545,7 @@ public class UserInterface
 			{
 				System.out.println("Does upgrade" + (i + 1) + " require any other abilities?");
 				HashMap<String, Integer> requieredAbilityForUpgrade = new HashMap<>();
-				if(yesNoQuestion)
+				if(yesNoQuestion(in))
 				{
 					while(true)
 					{
@@ -557,7 +557,7 @@ public class UserInterface
 						requieredAbilityForUpgrade.put(requieredAbilityName, requieredAbilityUpgrade);
 						
 						System.out.println("Does this upgrade need more requiered abilities?");
-						if(!yesNoQuestion)
+						if(!yesNoQuestion(in))
 						{
 							break;
 						}
@@ -566,9 +566,9 @@ public class UserInterface
 				
 				requieredAbilities.add(requieredAbilityForUpgrade);
 			}
+			allRequieredAbilities.put(abilityName, requieredAbilities);
 		}
 		
-		allRequieredAbilities.put(abilityName, requieredAbilities);
 		
 		while(true)
 		{
@@ -600,7 +600,7 @@ public class UserInterface
 			//invalid input
 		}
 		
-		System.out.println("Ability was freaking finally made!")
+		System.out.println("Ability was freaking finally made!");
 	}
 	
 	
@@ -707,5 +707,102 @@ public class UserInterface
 		{
 			System.out.println(possibleItemTargets.get(i));
 		}
+	}
+	
+	
+	private void showAllVariables(Set<String> variables)
+	{
+		System.out.println("Available variables:");
+		
+		for(String variableName : variables)
+		{
+			System.out.println(variableName);
+		}
+		for(String variableName : primaryVariableNames.keySet())
+		{
+			System.out.println(variableName);
+		}
+	}
+	
+	
+	private String getFormulaString(Scanner in)
+	{
+		
+		
+		return ;
+	}
+	
+	
+	private void showNormalDamageFormula(String formula)
+	{
+		System.out.println("Normal damage formula: " + formula);
+	}
+	
+	
+	private String getRequieredAbilityName(Scanner in, String mainAbilityName)
+	{
+		String requiredAbility;
+		
+		while(true)
+		{
+			System.out.println("List of available abilities:");
+			for(int i = 0; i < abilityNames.size(); i++)
+			{
+				if(abilityNames.get(i).equals(mainAbilityName))
+				{
+					continue;
+				}
+				System.out.println(abilityNames.get(i));
+			}
+			
+			requiredAbility = in.next();
+			
+			if(!requiredAbility.equals(mainAbilityName) && abilityNames.contains(requiredAbility))
+			{
+				return requiredAbility;
+			}
+			else
+			{
+				System.out.println("Invalid input! Please try again");
+			}
+		}
+	}
+	
+	
+	private int getRequieredAbilityUpgrade(Scanner in, String requiredAbilityName)
+	{
+		int upgradeNum = allAbilityUpgradeXPs.get(requiredAbilityName).size(), requiredUpgrade;
+		System.out.println(upgradeNum + " upgrades are available");
+		System.out.print("Upgrade num: ");
+		while(true)
+		{
+			requiredUpgrade = in.nextInt();
+			if(requiredUpgrade > 0 && requiredUpgrade <= upgradeNum)
+			{
+				return requiredUpgrade;
+			}
+			System.out.println("Invalid input! Please try again");
+		}
+	}
+	
+	
+	private void showPossibleAbilityTargets()
+	{
+		System.out.println("Available targets for an ability:");
+		
+		for(int i = 0; i < possibleAbilityTargets.size(); i++)
+		{
+			System.out.println(possibleAbilityTargets);
+		}
+	}
+	
+	
+	private boolean isMultipuleTarget(String abilityTarget)
+	{
+		if(abilityTarget.equals("all enemy") || abilityTarget.equals("all ally"))
+		{
+			return true;
+		}
+		return false;
 	}
 }
