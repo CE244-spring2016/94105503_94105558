@@ -14,6 +14,7 @@ import java.util.Scanner;
 */
 
 public class UserInterface {
+    
     private boolean customed;
 
     private ArrayList<String> heroClassNames; // new it in the constructor
