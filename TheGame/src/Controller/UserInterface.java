@@ -1,6 +1,9 @@
 import java.util.*;
+
 /*
 	We need init here!
+	
+	We could divide this class to 5-6 other classes
 */
 
 public class UserInterface
@@ -11,7 +14,7 @@ public class UserInterface
 	private HashMap<String, HashMap<String, Integer>> heroClassDatas; // new it in the constructor
 	private HashMap<String, String> heroClassAbilities;
 	
-	private ArrayList<String> abilityNames;
+	//private ArrayList<String> abilityNames;
 	private ArrayList<String> heroAttributes;                         // must make this fully in the constructor
 	
 	private HashMap<String, String> herosAndTheirClasses;
@@ -31,6 +34,16 @@ public class UserInterface
 	private HashMap<String, String> itemTargets;
 	private ArrayList<String> itemAttributes;                         // must make this fully in the constructor
 	private ArrayList<String> possibleItemTargets;                    // must make this fully in the constructor
+	
+	private ArrayList<String> abilityNames;
+	private HashMap<String, HashMap<String, ArrayList<Formula>>> allAbiliyFormulas; // Even non targeted enemy share and cooldown is handled here
+	private HashMap<String, String> abilityTargets;
+	private ArrayList<String> possibleAbilityTargets;                 // must make this fully in the constructor
+	private HashMap<String, ArrayList<Integer>> abilityUpgradeXPs;
+	private ArrayList<String> abilityAttributes;                      // must make this fully in the constructor
+	private HashMap<String, HashMap<String, Integer>> allRequieredAbilities;
+	private HashMap<String, Integer> abilityLuckPercents;
+	
 	
 	public void checkCustom(Scanner in)
 	{
@@ -238,7 +251,7 @@ public class UserInterface
 				break;
 			}
 			
-			System.out.println("Please enter the name of the next ability you want this hero to have: ")
+			System.out.println("Please enter the name of the next ability you want this hero to have: ");
 		}
 		herosAndTheirAbilities.put(heroName, abilityList);
 		
@@ -265,7 +278,7 @@ public class UserInterface
 			}
 		}
 		
-		System.out.println("How many versions do you want to make for this enemy?")
+		System.out.println("How many versions do you want to make for this enemy?");
 		//check invalid input
 		int versionNum = in.nextInt();
 		
@@ -381,7 +394,7 @@ public class UserInterface
 				}
 			}
 			
-			System.out.println("Do you want any other effect for this item?")
+			System.out.println("Do you want any other effect for this item?");
 			
 			if(!yesNoQuestion(in))
 			{
@@ -395,8 +408,9 @@ public class UserInterface
 			showPossibleItemTargets();
 			itemTarget = in.next();
 			
-			if(itemTargets.contains(itemTarget))
+			if(itemTargets.containsKey(itemTarget))
 			{
+				itemTargets.put(itemName, itemTarget);
 				break;
 			}
 			
@@ -506,6 +520,15 @@ public class UserInterface
 		for(int i = 0; i < itemAttributes.size(); i++)
 		{
 			System.out.println(itemAttributes.get(i));
+		}
+	}
+	
+	
+	private void showPossibleItemTargets()
+	{
+		for(int i = 0; i < possibleItemTargets.size(); i++)
+		{
+			System.out.println(possibleItemTargets.get(i));
 		}
 	}
 }
