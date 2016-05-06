@@ -1,4 +1,4 @@
-package Controller;
+import java.util.*;
 
 import Auxiliary.Formula;
 import Model.EnemyVersion;
@@ -48,7 +48,7 @@ public class UserInterface {
     private ArrayList<String> possibleAbilityTargets;                 // must make this fully in the constructor
     private HashMap<String, ArrayList<Integer>> allAbilityUpgradeXPs;
     private ArrayList<String> abilityAttributes;                      // must make this fully in the constructor
-    private HashMap<String,ArrayList<HashMap<String, Integer>>>  allRequieredAbilities;
+    private HashMap<String, ArrayList<HashMap<String, Integer>>> allRequieredAbilities;
     private HashMap<String, ArrayList<Integer>> abilityLuckPercents;
 
 
@@ -157,7 +157,7 @@ public class UserInterface {
         //ItemData
         HashMap<String, Integer> toughenData = new HashMap<>();
         toughenData.put("max health", 20);
-        itemDatas.put("toughen", toughenData );
+        itemDatas.put("toughen", toughenData);
 
         HashMap<String, Integer> guideData = new HashMap<>();
         guideData.put("max magic", 20);
@@ -220,18 +220,18 @@ public class UserInterface {
         abilityTargets.put("caretaker", "an ally");
         abilityTargets.put("boots", "himself or an ally");
         abilityTargets.put("manaBeam", "himself or an ally");
-         //upgradeXP
+        //upgradeXP
         ArrayList<Integer> fightTrainingXP = new ArrayList<>();
         fightTrainingXP.add(2);
         fightTrainingXP.add(3);
         fightTrainingXP.add(4);
-        allAbilityUpgradeXPs.put("fightTraining", fightTrainingXP );
+        allAbilityUpgradeXPs.put("fightTraining", fightTrainingXP);
 
         ArrayList<Integer> workOutXP = new ArrayList<>();
         workOutXP.add(2);
         workOutXP.add(3);
         workOutXP.add(4);
-        allAbilityUpgradeXPs.put("workOut", workOutXP );
+        allAbilityUpgradeXPs.put("workOut", workOutXP);
 
         ArrayList<Integer> quickAsBunnyXP = new ArrayList<>();
         quickAsBunnyXP.add(2);
@@ -243,86 +243,67 @@ public class UserInterface {
         magicLessonsXP.add(2);
         magicLessonsXP.add(3);
         magicLessonsXP.add(4);
-        allAbilityUpgradeXPs.put("magicLessons",magicLessonsXP);
+        allAbilityUpgradeXPs.put("magicLessons", magicLessonsXP);
 
         ArrayList<Integer> overPoweredAttackXP = new ArrayList<>();
         overPoweredAttackXP.add(2);
         overPoweredAttackXP.add(4);
         overPoweredAttackXP.add(6);
-        allAbilityUpgradeXPs.put("overPoweredAttack",overPoweredAttackXP);
+        allAbilityUpgradeXPs.put("overPoweredAttack", overPoweredAttackXP);
 
         ArrayList<Integer> swirlingAttackXP = new ArrayList<>();
         swirlingAttackXP.add(2);
         swirlingAttackXP.add(3);
         swirlingAttackXP.add(4);
-        allAbilityUpgradeXPs.put("swirlingAttack",swirlingAttackXP);
+        allAbilityUpgradeXPs.put("swirlingAttack", swirlingAttackXP);
 
         ArrayList<Integer> sacrificeXP = new ArrayList<>();
         sacrificeXP.add(2);
         sacrificeXP.add(3);
         sacrificeXP.add(4);
-        allAbilityUpgradeXPs.put("sacrifice",sacrificeXP);
+        allAbilityUpgradeXPs.put("sacrifice", sacrificeXP);
 
         ArrayList<Integer> criticalStrikeXP = new ArrayList<>();
         criticalStrikeXP.add(2);
         criticalStrikeXP.add(3);
         criticalStrikeXP.add(4);
-        allAbilityUpgradeXPs.put("criticalStrike",criticalStrikeXP);
+        allAbilityUpgradeXPs.put("criticalStrike", criticalStrikeXP);
 
         ArrayList<Integer> elixirXP = new ArrayList<>();
         elixirXP.add(2);
         elixirXP.add(3);
         elixirXP.add(5);
-        allAbilityUpgradeXPs.put("elixir",elixirXP);
+        allAbilityUpgradeXPs.put("elixir", elixirXP);
 
         ArrayList<Integer> caretakerXP = new ArrayList<>();
         caretakerXP.add(2);
         caretakerXP.add(3);
         caretakerXP.add(5);
-        allAbilityUpgradeXPs.put("caretaker",caretakerXP);
+        allAbilityUpgradeXPs.put("caretaker", caretakerXP);
 
         ArrayList<Integer> bootsXP = new ArrayList<>();
         bootsXP.add(2);
         bootsXP.add(3);
         bootsXP.add(5);
-        allAbilityUpgradeXPs.put("boots",bootsXP);
+        allAbilityUpgradeXPs.put("boots", bootsXP);
 
         ArrayList<Integer> manaBeamXP = new ArrayList<>();
         manaBeamXP.add(2);
         manaBeamXP.add(3);
         manaBeamXP.add(4);
-        allAbilityUpgradeXPs.put("manaBeam",manaBeamXP);
+        allAbilityUpgradeXPs.put("manaBeam", manaBeamXP);
         //luckPercent
 
         ArrayList<Integer> criticalStrikePercent = new ArrayList<>();
         criticalStrikePercent.add(20);
         criticalStrikePercent.add(30);
         criticalStrikePercent.add(40);
-        abilityLuckPercents.put("criticalStrike", criticalStrikePercent );
+        abilityLuckPercents.put("criticalStrike", criticalStrikePercent);
 
         //abilityRequired
 
-        
-       // allRequieredAbilities.put()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        // allRequieredAbilities.put()
 
 
 

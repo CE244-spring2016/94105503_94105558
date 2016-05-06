@@ -2,6 +2,7 @@ package Model;
 
 import java.util.*;
 
+
 public class EnemyVersion
 {
 	String name;
