@@ -1,6 +1,9 @@
-/*
+package Model;/*
 	Must check with teammate
 */
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class Item
 {
@@ -50,9 +53,9 @@ public abstract class Item
 	}
 	
 	
-	public void addEffect(String, Integer)
+	public void addEffect(String name, Integer size)
 	{
-		effects.put(String, Integer);
+		effects.put(name, size);
 	}
 	
 	// ??
@@ -80,7 +83,7 @@ public abstract class Item
 	}
 	
 	
-	public abstract void takeEffect(ArrayList<Warrior>);
+	public abstract void takeEffect(ArrayList<Warrior> warriors);
 	public abstract void normalEffect(String effectType, HashMap<String, Integer> warriorData);
-	public abstract void percentEffect(String effectType, HashMap<String, Integer> warriorData);
+	public abstract void percentEffect(String effectType, HashMap<String, Integer> warriorData, boolean isMaxPercent);
 }

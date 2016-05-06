@@ -1,6 +1,9 @@
-/*
+package Model;/*
 	HashMap in the constructor?
 */
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class NonInflationedItem extends InstantEffectItem
 {

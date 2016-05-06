@@ -1,3 +1,7 @@
+package Model;
+
+import java.util.ArrayList;
+
 public class EnemyGroup
 {
 	private ArrayList<Enemy> enemies;
@@ -18,6 +22,7 @@ public class EnemyGroup
 	{
 		this.xp = xp;
 	}
+
 	
 	
 	public int getXP()
@@ -38,7 +43,7 @@ public class EnemyGroup
 	}
 	
 	
-	public int setBattleNum(int battleNum)
+	public void setBattleNum(int battleNum)
 	{
 		this.battleNum = battleNum;
 	}

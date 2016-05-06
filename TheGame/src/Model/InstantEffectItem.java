@@ -1,8 +1,11 @@
-/*
+package Model;/*
 	InstantEffectItems are only for Heros
 	
 	It is probobly done
 */
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class InstantEffectItem extends Item
 {
@@ -16,13 +19,13 @@ public class InstantEffectItem extends Item
 			{
 				//classData in the UML :| probobly should change the name
 				HashMap<String, Integer> warriorData = ((Hero)warrior).getData();
-				if(effectType.startsWith("percent")
+				if(effectType.startsWith("percent"))
 				{
 					percentEffect(effectType, warriorData/*, true*/);
 				}
 				else
 				{
-					increasingEffect(effectType, warriorData);
+					normalEffect(effectType, warriorData);
 				}
 			}
 		}

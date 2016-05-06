@@ -1,4 +1,4 @@
-/*
+package Model;/*
 	MAIN PROBLEM
 	
 	Not being able to handle stuff like:
@@ -10,6 +10,9 @@
 	
 	I think it's fixed
 */
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class NonInstantEffectItem extends Item
 {
@@ -58,28 +61,29 @@ public class NonInstantEffectItem extends Item
 			for(Warrior warrior : targets)        // Check every Warrior
 			{
 				//classData in the UML :| probobly should change the name
+				HashMap<String, Integer> warriorData = new HashMap<String, Integer>();
 				if(warrior instanceof Hero)
 				{
-					HashMap<String, Integer> warriorData = ((Hero)warrior).getData();
+					warriorData = ((Hero)warrior).getData();
 				}
 				else if(warrior instanceof Enemy)
 				{
-					HashMap<String, Integer> warriorData = ((Enemy)warrior).getData(); // maybe we should put data on the enemy class?
+					warriorData = ((Enemy)warrior).getData(); // maybe we should put data on the enemy class?
 				}
 				
-				if(effectType.startsWith("max percent")
+				if(effectType.startsWith("max percent"))
 				{
 					//effectType = effectType.substring(7);     // removing the "reduce " from the begining
 					
-					percentEffect(effectType, warriorData, true);
+					percentEffect(effectType, warriorData , true);
 				}
-				else if(effectType.startsWith("percent")
+				else if(effectType.startsWith("percent"))
 				{
 					percentEffect(effectType, warriorData, false);
 				}
 				else
 				{
-					increasingEffect(effectType, warriorData);
+					normalEffect(effectType, warriorData);
 				}
 			}
 		}
@@ -90,7 +94,7 @@ public class NonInstantEffectItem extends Item
 	{
 		HashMap<String, Integer> effects = getEffects();
 		Integer effectAmount = effects.get(effectType);
-		
+		String helper;
 		if(isMaxPercent)
 		{
 			effectType = effectType.substring(12);

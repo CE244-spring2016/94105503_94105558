@@ -1,3 +1,5 @@
+package Model;
+
 public class InflationedItem extends InstantEffectItem
 {
 	// DEALING WITH COST!!!

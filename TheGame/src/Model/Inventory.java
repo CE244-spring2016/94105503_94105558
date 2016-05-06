@@ -1,3 +1,9 @@
+package Model;
+
+import Model.Item;
+
+import java.util.ArrayList;
+
 public class Inventory
 {
 	private int maxSize;
@@ -40,7 +46,7 @@ public class Inventory
 	}
 	
 	
-	public void getItem(String itemName)
+	public Item getItem(String itemName)
 	{
 		for(Item item : items)
 		{
