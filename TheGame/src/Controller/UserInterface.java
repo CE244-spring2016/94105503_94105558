@@ -1228,8 +1228,234 @@ public class UserInterface {
     }
 
 
-    private void createAbility(Scanner in) {
-
+    private void createAbility(Scanner in)
+	{
+		String abilityName, abilityTarget;
+		int upgradeNum;
+		HashMap<String, ArrayList<Formula>> formulas = new HashMap<>();
+		ArrayList<Integer> abilityUpgradeXPs = new ArrayList<>();
+		//HashMap<String, ArrayList<Double>> extraVariables = new HashMap<>();
+		
+		while(true) // Ability name
+		{
+			System.out.print("Please enter the name of the ability you want to make: ");
+			abilityName = in.next();
+			
+			System.out.println("Are you sure?(Enter the right number)");
+			
+			if(yesNoQuestion(in))
+			{
+				abilityNames.add(abilityName);
+				break;
+			}
+		}
+		
+		System.out.println("How many upgrades does this ability have?");
+		//check Invalid input
+		upgradeNum = in.nextInt();
+		
+		for(int i = 0; i < upgradeNum; i++) // Ability upgrade XPs
+		{
+			System.out.print("Please enter how much xp is needed to get this upgrade: ");
+			//check invalid input
+			int upgradeXP = in.nextInt();
+			
+			abilityUpgradeXPs.add(upgradeXP);
+		}
+		
+		for(int i = 0; i < abilityAttributes.size(); i++)
+		{
+			HashMap<String, ArrayList<Double>> extraVariables = new HashMap<>();
+			String abilityAttribute = abilityAttributes.get(i);
+			System.out.println("Does this ability have any effect on " + abilityAttribute);
+			
+			if(!yesNoQuestion(in))
+			{
+				continue;
+			}
+			
+			System.out.println("For creating a formula for the effect on " + abilityAttribute + " do you need any extra variables?");
+			
+			if(yesNoQuestion(in))
+			{
+				System.out.println("How many?");
+				//check invalid input
+				int variableNum = in.nextInt();
+				
+				for(int j = 0; j < variableNum; j++)
+				{
+					ArrayList<Double> variableValues = new ArrayList<>();
+					System.out.print("Enter variable name(don't use numbers): ");
+					//check invalid input
+					String variableName = in.next();
+					System.out.println("Please enter its value for each upgrade");
+					for(int k = 0; k < upgradeNum; k++)
+					{
+						System.out.print("Upgrade" + (k + 1) + ": ");
+						//check invalid input.. NOT MORE THAN ONE FLOATING POINT
+						double variableValue = in.nextDouble();
+						variableValues.add(variableValue);
+					}
+					
+					extraVariables.put(variableName, variableValues);
+				}
+			}
+			
+			System.out.println("Please enter the formula");
+			showAllVariables(extraVariables.keySet());
+			String formulaString = getFormulaString(in);
+			ArrayList<Formula> differentUpgradeFormulas = new ArrayList<>();
+			
+			for(int j = 0; j < upgradeNum; j++)
+			{
+				HashMap<String, Double> formulaData = new HashMap<>();
+				for(String variableName : extraVariables.keySet())
+				{
+					double variableValue = extraVariables.get(variableName).get(j); // might need more explanation
+					formulaData.put(variableName, variableValue);
+				}
+				Formula formula = new Formula(formulaString, formulaData);
+				differentUpgradeFormulas.add(formula);
+			}
+			
+			formulas.put(abilityAttribute, differentUpgradeFormulas);
+			
+			System.out.println("In some abilities there is a chance for the ability to work differently");
+			System.out.println("Is this ability affected by this kind of luck?");
+			
+			if(yesNoQuestion(in))
+			{
+				System.out.println("Please enter the luck formula");
+				showAllVariables(extraVariables.keySet());
+				showNormalDamageFormula(formulaString);
+				String luckFormulaString = getFormulaString(in);
+				ArrayList<Formula> differentLuckUpgradeFormulas = new ArrayList<>();
+//				ArrayList<Integer> luckPercents = new ArrayList<>();
+				
+				for(int j = 0; j < upgradeNum; j++)
+				{
+					HashMap<String, Double> formulaData = new HashMap<>();
+					for(String variableName : extraVariables.keySet())
+					{
+						double variableValue = extraVariables.get(variableName).get(j); // might need more explanation
+						formulaData.put(variableName, variableValue);
+					}
+					Formula formula = new Formula(luckFormulaString, formulaData);
+					differentLuckUpgradeFormulas.add(formula);
+					
+//					System.out.print("Please enter the percent of this luck: ");
+//					int luckPercent = in.nextInt();
+//					luckPercents.add(luckPercent);
+				}
+				
+//				abilityLuckPercents.put(abilityName, luckPercents);
+				formulas.put("luck " + abilityAttribute, differentLuckUpgradeFormulas);
+			}
+		}
+		
+		// Check if luck exists for this ability or not
+		System.out.println("Please enter the percent chance of luck for each upgrade");
+		ArrayList<Integer> luckPercents = new ArrayList<>();
+		for(int i = 0; i < upgradeNum; i++)
+		{
+			System.out.print("Upgrade " + (i + 1) + ": ");
+			// check invalid input
+			int luckPercent = in.nextInt();
+			luckPercents.add(luckPercent);
+		}
+		abilityLuckPercents.put(abilityName, luckPercents);
+		
+		System.out.println("Is it required to have an upgrade of any other ability before getting any of the upgrades of this ability?");
+		
+		if(yesNoQuestion(in))
+		{
+			ArrayList<HashMap<String, Integer>> requieredAbilities = new ArrayList<>();
+			for(int i = 0; i < upgradeNum; i++)
+			{
+				System.out.println("Does upgrade" + (i + 1) + " require any other abilities?");
+				HashMap<String, Integer> requieredAbilityForUpgrade = new HashMap<>();
+				if(yesNoQuestion(in))
+				{
+					while(true)
+					{
+						System.out.println("Which ability?");
+						String requieredAbilityName = getRequieredAbilityName(in, abilityName);
+						System.out.println("Which Upgrade?");
+						int requieredAbilityUpgrade = getRequieredAbilityUpgrade(in, requieredAbilityName);
+						
+						requieredAbilityForUpgrade.put(requieredAbilityName, requieredAbilityUpgrade);
+						
+						System.out.println("Does this upgrade need more requiered abilities?");
+						if(!yesNoQuestion(in))
+						{
+							break;
+						}
+					}
+				}
+				
+				requieredAbilities.add(requieredAbilityForUpgrade);
+			}
+			allRequieredAbilities.put(abilityName, requieredAbilities);
+		}
+		
+		
+		while(true)
+		{
+			System.out.println("Please enter the target of this ability");
+			showPossibleAbilityTargets();
+			abilityTarget = in.next();
+			
+			if(abilityTargets.containsKey(abilityTarget))
+			{
+				abilityTargets.put(abilityName, abilityTarget);
+				if(isMultipuleTarget(abilityTarget))
+				{
+					System.out.println("We will choose one of the targets as the main one");
+					ArrayList<Integer> secondaryTargetShare = new ArrayList<>();
+					for(int i = 0; i < upgradeNum; i++)
+					{
+						System.out.println("How much do you want the percent share of other targets be in upgrade " + (i + 1) + "?");
+						System.out.println("(obviously if you want all of the targets to be the same, enter 100");
+						System.out.print("Share: ");
+						//check valid input
+						int secondaryTargetShareAmount = in.nextInt();
+						secondaryTargetShare.add(secondaryTargetShareAmount);
+					}
+					
+					secondaryTargetShares.put(abilityName, secondaryTargetShare);
+				}
+				break;
+			}
+			//invalid input
+		}
+		
+		System.out.println("How many cooldown turns does this ability have for each upgrade?");
+		System.out.println("(enter 0 if it doesn't have a cooldown)");
+		ArrayList<Integer> cooldowns = new ArrayList<>();
+		for(int i = 0; i < upgradeNum; i++)
+		{
+			System.out.print("Upgrade " + (i + 1) + ": ");
+			//Check invalid input
+			int cooldownNum = in.nextInt();
+			cooldowns.add(cooldownNum);
+		}
+		allAbilityCooldowns.put(abilityName, cooldowns);
+		
+		System.out.println("Does this ability take effect exactly after upgrading?");
+		
+		if(yesNoQuestion(in))
+		{
+			instantEffectConditionAbilities.add(abilityName);
+		}
+		else
+		{
+			System.out.println("How many times can this item be used before finishing?");
+			//check invalid input
+			int useLimit = in.nextInt();
+			nonInstantEffectItemsUseLimit.put(abilityName, useLimit);
+		}
+		
+		System.out.println("Ability was freaking finally made!");
     }
 
 
