@@ -14,6 +14,7 @@ import java.util.Scanner;
 */
 
 public class UserInterface {
+
     private boolean customed;
 
     private ArrayList<String> heroClassNames; // new it in the constructor
@@ -47,8 +48,12 @@ public class UserInterface {
     private ArrayList<String> possibleAbilityTargets;                 // must make this fully in the constructor
     private HashMap<String, ArrayList<Integer>> allAbilityUpgradeXPs;
     private ArrayList<String> abilityAttributes;                      // must make this fully in the constructor
-    private HashMap<String,ArrayList<HashMap<String, Integer>>>  allRequieredAbilities;
+    private HashMap<String, ArrayList<HashMap<String, Integer>>> allRequiredAbilities;
     private HashMap<String, ArrayList<Integer>> abilityLuckPercents;
+    private HashMap<String, String> primaryVariableNames;
+    private HashMap<String, ArrayList<Integer>> secondaryTargetShares;
+    private HashMap<String, ArrayList<Integer>> allAbilityCooldowns;
+    private HashMap<String, Boolean> instantEffectCondition;
 
 
     public void checkCustom(Scanner in) {
@@ -156,7 +161,7 @@ public class UserInterface {
         //ItemData
         HashMap<String, Integer> toughenData = new HashMap<>();
         toughenData.put("max health", 20);
-        itemDatas.put("toughen", toughenData );
+        itemDatas.put("toughen", toughenData);
 
         HashMap<String, Integer> guideData = new HashMap<>();
         guideData.put("max magic", 20);
@@ -219,18 +224,18 @@ public class UserInterface {
         abilityTargets.put("caretaker", "an ally");
         abilityTargets.put("boots", "himself or an ally");
         abilityTargets.put("manaBeam", "himself or an ally");
-         //upgradeXP
+        //upgradeXP
         ArrayList<Integer> fightTrainingXP = new ArrayList<>();
         fightTrainingXP.add(2);
         fightTrainingXP.add(3);
         fightTrainingXP.add(4);
-        allAbilityUpgradeXPs.put("fightTraining", fightTrainingXP );
+        allAbilityUpgradeXPs.put("fightTraining", fightTrainingXP);
 
         ArrayList<Integer> workOutXP = new ArrayList<>();
         workOutXP.add(2);
         workOutXP.add(3);
         workOutXP.add(4);
-        allAbilityUpgradeXPs.put("workOut", workOutXP );
+        allAbilityUpgradeXPs.put("workOut", workOutXP);
 
         ArrayList<Integer> quickAsBunnyXP = new ArrayList<>();
         quickAsBunnyXP.add(2);
@@ -242,87 +247,218 @@ public class UserInterface {
         magicLessonsXP.add(2);
         magicLessonsXP.add(3);
         magicLessonsXP.add(4);
-        allAbilityUpgradeXPs.put("magicLessons",magicLessonsXP);
+        allAbilityUpgradeXPs.put("magicLessons", magicLessonsXP);
 
         ArrayList<Integer> overPoweredAttackXP = new ArrayList<>();
         overPoweredAttackXP.add(2);
         overPoweredAttackXP.add(4);
         overPoweredAttackXP.add(6);
-        allAbilityUpgradeXPs.put("overPoweredAttack",overPoweredAttackXP);
+        allAbilityUpgradeXPs.put("overPoweredAttack", overPoweredAttackXP);
 
         ArrayList<Integer> swirlingAttackXP = new ArrayList<>();
         swirlingAttackXP.add(2);
         swirlingAttackXP.add(3);
         swirlingAttackXP.add(4);
-        allAbilityUpgradeXPs.put("swirlingAttack",swirlingAttackXP);
+        allAbilityUpgradeXPs.put("swirlingAttack", swirlingAttackXP);
 
         ArrayList<Integer> sacrificeXP = new ArrayList<>();
         sacrificeXP.add(2);
         sacrificeXP.add(3);
         sacrificeXP.add(4);
-        allAbilityUpgradeXPs.put("sacrifice",sacrificeXP);
+        allAbilityUpgradeXPs.put("sacrifice", sacrificeXP);
 
         ArrayList<Integer> criticalStrikeXP = new ArrayList<>();
         criticalStrikeXP.add(2);
         criticalStrikeXP.add(3);
         criticalStrikeXP.add(4);
-        allAbilityUpgradeXPs.put("criticalStrike",criticalStrikeXP);
+        allAbilityUpgradeXPs.put("criticalStrike", criticalStrikeXP);
 
         ArrayList<Integer> elixirXP = new ArrayList<>();
         elixirXP.add(2);
         elixirXP.add(3);
         elixirXP.add(5);
-        allAbilityUpgradeXPs.put("elixir",elixirXP);
+        allAbilityUpgradeXPs.put("elixir", elixirXP);
 
         ArrayList<Integer> caretakerXP = new ArrayList<>();
         caretakerXP.add(2);
         caretakerXP.add(3);
         caretakerXP.add(5);
-        allAbilityUpgradeXPs.put("caretaker",caretakerXP);
+        allAbilityUpgradeXPs.put("caretaker", caretakerXP);
 
-        ArrayList<Integer> bootsXP = new ArrayList<>();
-        bootsXP.add(2);
-        bootsXP.add(3);
-        bootsXP.add(5);
-        allAbilityUpgradeXPs.put("boots",bootsXP);
+        ArrayList<Integer> boostXP = new ArrayList<>();
+        boostXP.add(2);
+        boostXP.add(3);
+        boostXP.add(5);
+        allAbilityUpgradeXPs.put("boost", boostXP);
 
         ArrayList<Integer> manaBeamXP = new ArrayList<>();
         manaBeamXP.add(2);
         manaBeamXP.add(3);
         manaBeamXP.add(4);
-        allAbilityUpgradeXPs.put("manaBeam",manaBeamXP);
+        allAbilityUpgradeXPs.put("manaBeam", manaBeamXP);
         //luckPercent
 
         ArrayList<Integer> criticalStrikePercent = new ArrayList<>();
         criticalStrikePercent.add(20);
         criticalStrikePercent.add(30);
         criticalStrikePercent.add(40);
-        abilityLuckPercents.put("criticalStrike", criticalStrikePercent );
+        abilityLuckPercents.put("criticalStrike", criticalStrikePercent);
 
         //abilityRequired
 
+
+        HashMap<String, Integer> overPoweredAttackUpgradeRequirement1 = new HashMap<>();
+        overPoweredAttackUpgradeRequirement1.put("fightTraining", 1);
+        HashMap<String, Integer> overPoweredAttackUpgradeRequirement2 = new HashMap<>();
+        overPoweredAttackUpgradeRequirement2.put("fightTraining", 2);
+        HashMap<String, Integer> overPoweredAttackUpgradeRequirement3 = new HashMap<>();
+        overPoweredAttackUpgradeRequirement3.put("fightTraining", 3);
+        ArrayList<HashMap<String, Integer>> overPoweredAttackUpgradeRequirements = new ArrayList<>();
+        overPoweredAttackUpgradeRequirements.add(overPoweredAttackUpgradeRequirement1);
+        overPoweredAttackUpgradeRequirements.add(overPoweredAttackUpgradeRequirement2);
+        overPoweredAttackUpgradeRequirements.add(overPoweredAttackUpgradeRequirement3);
+        allRequiredAbilities.put("overPoweredAttack", overPoweredAttackUpgradeRequirements);
+
+        HashMap<String, Integer> swirlingAttackUpgradeRequirement1 = new HashMap<>();
+        swirlingAttackUpgradeRequirement1.put("workOut", 1);
+        ArrayList<HashMap<String, Integer>> swirlingAttackUpgradeRequirements = new ArrayList<>();
+        swirlingAttackUpgradeRequirements.add(swirlingAttackUpgradeRequirement1);
+        allRequiredAbilities.put("swirlingAttack", swirlingAttackUpgradeRequirements);
+
+        HashMap<String, Integer> sacrificeUpgradeRequirement1 = new HashMap<>();
+        sacrificeUpgradeRequirement1.put("workOut", 1);
+        HashMap<String, Integer> sacrificeUpgradeRequirement2 = new HashMap<>();
+        sacrificeUpgradeRequirement2.put("workOut", 2);
+        HashMap<String, Integer> sacrificeUpgradeRequirement3 = new HashMap<>();
+        sacrificeUpgradeRequirement3.put("workOut", 3);
+        ArrayList<HashMap<String, Integer>> sacrificeUpgradeRequirements = new ArrayList<>();
+        sacrificeUpgradeRequirements.add(sacrificeUpgradeRequirement1);
+        sacrificeUpgradeRequirements.add(sacrificeUpgradeRequirement2);
+        sacrificeUpgradeRequirements.add(sacrificeUpgradeRequirement3);
+        allRequiredAbilities.put("sacrifice", sacrificeUpgradeRequirements);
+
+        HashMap<String, Integer> criticalStrikeUpgradeRequirement1 = new HashMap<>();
+        criticalStrikeUpgradeRequirement1.put("fightTraining", 1);
+        ArrayList<HashMap<String, Integer>> criticalStrikeUpgradeRequirements = new ArrayList<>();
+        criticalStrikeUpgradeRequirements.add(criticalStrikeUpgradeRequirement1);
+        allRequiredAbilities.put("criticalStrike", criticalStrikeUpgradeRequirements);
+
+        HashMap<String, Integer> elixirUpgradeRequirement1 = new HashMap<>();
+        HashMap<String, Integer> elixirUpgradeRequirement2 = new HashMap<>();
+        elixirUpgradeRequirement2.put("magicLessons", 1);
+        HashMap<String, Integer> elixirUpgradeRequirement3 = new HashMap<>();
+        elixirUpgradeRequirement3.put("magicLessons", 2);
+        ArrayList<HashMap<String, Integer>> elixirUpgradeRequirements = new ArrayList<>();
+        elixirUpgradeRequirements.add(elixirUpgradeRequirement1);
+        elixirUpgradeRequirements.add(elixirUpgradeRequirement2);
+        elixirUpgradeRequirements.add(elixirUpgradeRequirement3);
+        allRequiredAbilities.put("sacrifice", elixirUpgradeRequirements);
+
+        HashMap<String, Integer> caretakerUpgradeRequirement1 = new HashMap<>();
+        caretakerUpgradeRequirement1.put("quickAsBunny", 1);
+        HashMap<String, Integer> caretakerUpgradeRequirement2 = new HashMap<>();
+        caretakerUpgradeRequirement2.put("quickAsBunny", 2);
+        HashMap<String, Integer> caretakerUpgradeRequirement3 = new HashMap<>();
+        caretakerUpgradeRequirement3.put("quickAsBunny", 3);
+        ArrayList<HashMap<String, Integer>> caretakerUpgradeRequirements = new ArrayList<>();
+        caretakerUpgradeRequirements.add(caretakerUpgradeRequirement1);
+        caretakerUpgradeRequirements.add(caretakerUpgradeRequirement2);
+        caretakerUpgradeRequirements.add(caretakerUpgradeRequirement3);
+        allRequiredAbilities.put("caretaker", caretakerUpgradeRequirements);
+
+        HashMap<String, Integer> manaBeamUpgradeRequirement1 = new HashMap<>();
+        manaBeamUpgradeRequirement1.put("magicLessons", 1);
+        HashMap<String, Integer> manaBeamUpgradeRequirement2 = new HashMap<>();
+        manaBeamUpgradeRequirement2.put("magicLessons", 2);
+        HashMap<String, Integer> manaBeamUpgradeRequirement3 = new HashMap<>();
+        manaBeamUpgradeRequirement3.put("magicLessons", 3);
+        ArrayList<HashMap<String, Integer>> manaBeamUpgradeRequirements = new ArrayList<>();
+        manaBeamUpgradeRequirements.add(manaBeamUpgradeRequirement1);
+        manaBeamUpgradeRequirements.add(manaBeamUpgradeRequirement2);
+        manaBeamUpgradeRequirements.add(manaBeamUpgradeRequirement3);
+        allRequiredAbilities.put("manaBeam", manaBeamUpgradeRequirements);
+        //I think requirements are finished but Im not sure
+
+        //secondaryTarget
+        ArrayList<Integer> swirlingAttackNonTargetShareUpgrades = new ArrayList<>();
+        swirlingAttackNonTargetShareUpgrades.add(10);
+        swirlingAttackNonTargetShareUpgrades.add(20);
+        swirlingAttackNonTargetShareUpgrades.add(30);
+        secondaryTargetShares.put("swirlingAttack", swirlingAttackNonTargetShareUpgrades);
+
+        //formula
+
+        //private HashMap<String, HashMap<String, ArrayList<Formula>>> allAbiliyFormulas
+
+        //fightTraining
+        HashMap<String, ArrayList<Formula>> fightTrainingFormula = new HashMap<>();
+        Formula fightTrainingEffectFormulaUpgrade1 = new Formula("attack + 30", null);
+        Formula fightTrainingEffectFormulaUpgrade2 = new Formula("attack + 30", null);
+        Formula fightTrainingEffectFormulaUpgrade3 = new Formula("attack + 30", null);
+        ArrayList<Formula> fightTrainingEffectFormulaUpgrades = new ArrayList<>();
+        fightTrainingEffectFormulaUpgrades.add(fightTrainingEffectFormulaUpgrade1);
+        fightTrainingEffectFormulaUpgrades.add(fightTrainingEffectFormulaUpgrade2);
+        fightTrainingEffectFormulaUpgrades.add(fightTrainingEffectFormulaUpgrade3);
+        fightTrainingFormula.put("attack", fightTrainingEffectFormulaUpgrades);
+        allAbiliyFormulas.put("fightTraining", fightTrainingFormula);
+
+        //instant
         
-       // allRequieredAbilities.put()
+        //workOut
+        HashMap<String, ArrayList<Formula>> workOutFormula = new HashMap<>();
+        Formula workOutEffectFormulaUpgrade1 = new Formula("max health + 50", null);
+        Formula workOutEffectFormulaUpgrade2 = new Formula("max health + 50", null);
+        Formula workOutEffectFormulaUpgrade3 = new Formula("max health + 50", null);
+        ArrayList<Formula> workOutEffectFormulaUpgrades = new ArrayList<>();
+        workOutEffectFormulaUpgrades.add(workOutEffectFormulaUpgrade1);
+        workOutEffectFormulaUpgrades.add(workOutEffectFormulaUpgrade2);
+        workOutEffectFormulaUpgrades.add(workOutEffectFormulaUpgrade3);
+        workOutFormula.put("max health", workOutEffectFormulaUpgrades);
+        allAbiliyFormulas.put("workOut", workOutFormula);
 
 
+        //quickAsBunny
+
+        HashMap<String, ArrayList<Formula>> quickAsBunnyFormula = new HashMap<>();
+        Formula quickAsBunnyEffectFormulaUpgrade1 = new Formula("EP + 1", null);
+        Formula quickAsBunnyEffectFormulaUpgrade2 = new Formula("EP + 1", null);
+        Formula quickAsBunnyEffectFormulaUpgrade3 = new Formula("EP + 1", null);
+        ArrayList<Formula> quickAsBunnyEffectFormulaUpgrades = new ArrayList<>();
+        quickAsBunnyEffectFormulaUpgrades.add(quickAsBunnyEffectFormulaUpgrade1);
+        quickAsBunnyEffectFormulaUpgrades.add(quickAsBunnyEffectFormulaUpgrade2);
+        quickAsBunnyEffectFormulaUpgrades.add(quickAsBunnyEffectFormulaUpgrade3);
+        quickAsBunnyFormula.put("EP", quickAsBunnyEffectFormulaUpgrades);
+        allAbiliyFormulas.put("quickAsBunny", quickAsBunnyFormula);
+
+        //magicLessons
+
+        HashMap<String, ArrayList<Formula>> magicLessonsFormula = new HashMap<>();
+        Formula magicLessonsEffectFormulaUpgrade1 = new Formula("max magic + 50", null);
+        Formula magicLessonsEffectFormulaUpgrade2 = new Formula("max magic + 50", null);
+        Formula magicLessonsEffectFormulaUpgrade3 = new Formula("max magic + 50", null);
+        ArrayList<Formula> magicLessonsEffectFormulaUpgrades = new ArrayList<>();
+        magicLessonsEffectFormulaUpgrades.add(magicLessonsEffectFormulaUpgrade1);
+        magicLessonsEffectFormulaUpgrades.add(magicLessonsEffectFormulaUpgrade2);
+        magicLessonsEffectFormulaUpgrades.add(magicLessonsEffectFormulaUpgrade3);
+        magicLessonsFormula.put("max magic", magicLessonsEffectFormulaUpgrades);
+        allAbiliyFormulas.put("magicLessons", magicLessonsFormula);
+
+        //overPoweredAttack
 
 
+        //swirlingAttack
 
+        //sacrifice
 
+        //criticalStrike
 
+        //elixir
 
+        //caretaker
 
+        //boost
 
-
-
-
-
-
-
-
-
-
-
+        //manaBeam
 
     }
 
