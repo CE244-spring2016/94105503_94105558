@@ -907,65 +907,86 @@ public class UserInterface {
     }
 
 
-    private void creatHeroClass(Scanner in) {
+    private void creatHeroClass(Scanner in) 
+	{
         String heroClassName;
-        HashMap<String, Integer> heroClassData = new HashMap<>();
-
-        while (true) {
-            System.out.print("Please enter the name of the class you want to make: ");
-            heroClassName = in.next();
-
-            System.out.println("Are you sure?(Enter the right number)");
-
-            if (yesNoQuestion(in)) {
-                heroClassNames.add(heroClassName);
-                break;
-            }
-        }
-
-        System.out.println("Please enter the amount you want for each attribute");
-
-        for (int i = 0; i < heroAttributes.size(); i++) {
-            while (true) {
-                String attributeName = heroAttributes.get(i);
-
-                System.out.print(attributeName + ": ");
-
-                String attributeAmount = in.next();
-                if (attributeAmount.matches("[0-9]+") && attributeAmount.length() < 8) {
-                    int attributeAmountNum = Integer.parseInt(attributeAmount);
-
-                    heroClassData.put(attributeName, attributeAmountNum);
-                    break;
-                } else {
-                    // Invalid Input
-                }
-            }
-        }
-
-        System.out.println("How many abilities do you want to give to this class?");
-        //check invalid input
-
-        int abilityNum = in.nextInt();
-
-        System.out.println("Please enter the name of the abilities you want this class to have:");
-        showAbilityNames();
-        while (true) {
-            String abilityName = in.next();
-            if (abilityNames.contains(abilityName)) {
-                heroClassAbilities.put(heroClassName, abilityName);
-            } else {
-                //invalid input
-                continue;
-            }
-
-            System.out.println("Do you want to add any other ability?(Enter the right number)");
-            if (!yesNoQuestion(in)) {
-                break;
-            }
-        }
-
-        System.out.println("Hero Class was made!");
+		HashMap<String, Integer> heroClassData = new HashMap<>();
+		
+		while(true)
+		{
+			System.out.print("Please enter the name of the class you want to make: ");
+			heroClassName = in.next();
+			
+			System.out.println("Are you sure?(Enter the right number)");
+			
+			if(yesNoQuestion(in))
+			{
+				heroClassNames.add(heroClassName);
+				break;
+			}
+		}
+		
+		System.out.println("Please enter the amount you want for each attribute");
+		
+		for(int i = 0; i < heroAttributes.size(); i++)
+		{
+			while(true)
+			{
+				String attributeName = heroAttributes.get(i);
+				
+				System.out.print(attributeName + ": ");
+				
+				String attributeAmount = in.next();
+				if(attributeAmount.matches("[0-9]+") && attributeAmount.length() < 8)
+				{
+					int attributeAmountNum = Integer.parseInt(attributeAmount);
+					
+					heroClassData.put(attributeName, attributeAmountNum);
+					break;
+				}
+				else
+				{
+					// Invalid Input
+				}
+			}
+		}
+		
+		System.out.println("How many abilities do you want to give to this class?");
+		//check invalid input
+		
+		int abilityNum = in.nextInt();
+		
+		System.out.println("Please enter the name of the abilities you want this class to have:");
+		showAbilityNames();
+		ArrayList<String> thisClassAbilities = new ArrayList<>();
+		
+		while(true)
+		{
+			String abilityName = in.next();
+			if(abilityNames.contains(abilityName))
+			{
+				thisClassAbilities.add(abilityName);
+			}
+			else
+			{
+				//invalid input
+				continue;
+			}
+			
+			System.out.println("Do you want to add any other ability?(Enter the right number)");
+			if(!yesNoQuestion(in))
+			{
+				break;
+			}
+		}
+		heroClassAbilities.put(heroClassName, thisClassAbilities);
+		
+		System.out.println("Please enter the size of the inventory of the heros in this class: ");
+		//check invalid input
+		int inventorySize = in.nextInt();
+		heroClassInventorySizes.put(heroClassName, inventorySize);
+		
+		System.out.println("Hero Class was made!");
     }
 
 
