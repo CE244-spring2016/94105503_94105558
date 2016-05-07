@@ -14,33 +14,13 @@ public class GameScenario
 
 	StringParser stringParser;
 	ArrayList<Warrior> warrior; // Is this needed?
-	/******/
-	// Init is needed for these stuff
-	
-	HashMap<String, HashMap<String, Integer>> heroClassDatas;
-	HashMap<String, ArrayList<EnemyVersion>> enemyDatas;
-	// Boss Data needed
-	HashMap<String, Integer> itemDatas;
-	HashMap<String, ArrayList<HashMap<String, Formula>>> abilityDatas;
-	
-	/******/
 	
 	public GameScenario(UserInterface userInterface, StringParser stringParser)
 	{
 		this.userInterface = userInterface;
 		this.stringParser = stringParser;
-		heroClassDatas = new HashMap<>();
-		enemyDatas = new HashMap<>();
-		itemDatas = new HashMap<>();
 		//creating objects like hero , enemy ,...
-		if(!userInterface.isCustom())
-		{
-			init(); // I think we need this for any kind of start :\
-		}	
-		else
-		{
-			
-		}
+
 	}
 
 

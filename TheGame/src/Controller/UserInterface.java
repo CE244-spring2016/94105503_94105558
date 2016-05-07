@@ -47,6 +47,7 @@ public class UserInterface {
     private ArrayList<String> possibleItemTargets;                    // must make this fully in the constructor
     private ArrayList<String> inflationItems;
     private ArrayList<String> instantEffectItems;
+    private HashMap<String, Integer> nonInstantEffectItemsUseLimit;
 
     private ArrayList<String> abilityNames;
     private HashMap<String, HashMap<String, ArrayList<Formula>>> allAbiliyFormulas; // Even non targeted enemy share and cooldown is handled here
@@ -59,7 +60,6 @@ public class UserInterface {
     private HashMap<String, String> primaryVariableNames;
     private HashMap<String, ArrayList<Integer>> secondaryTargetShares;
     private HashMap<String, ArrayList<Integer>> allAbilityCooldowns;
-    private HashMap<String, Boolean> instantEffectCondition;// paiini ro ba in avaz kon
     private ArrayList<String> instantEffectConditionAbilities;
 
     private ArrayList<String> shopItemNames;
@@ -88,11 +88,96 @@ public class UserInterface {
     }
 
     public void init() {
+        //storyEnemyGroups
+        ArrayList<String> storyEnemyGroups1 = new ArrayList<>();
+        ArrayList<String> storyEnemyGroups2 = new ArrayList<>();
+        ArrayList<String> storyEnemyGroups3 = new ArrayList<>();
+        ArrayList<String> storyEnemyGroups4 = new ArrayList<>();
+        ArrayList<String> storyEnemyGroups5 = new ArrayList<>();
+        storyEnemyGroups1.add("weak thug");
+        storyEnemyGroups1.add("weak thug");
+        storyEnemyGroups1.add("weak thug");
+        storyEnemyGroups1.add("weak angel");
+        storyEnemyGroups2.add("able thug");
+        storyEnemyGroups2.add("able thug");
+        storyEnemyGroups2.add("weak angel");
+        storyEnemyGroups2.add("weak tank");
+        storyEnemyGroups3.add("able thug");
+        storyEnemyGroups3.add("mighty thug");
+        storyEnemyGroups3.add("able angel");
+        storyEnemyGroups3.add("weak tank");
+        storyEnemyGroups4.add("mighty thug");
+        storyEnemyGroups4.add("mighty thug");
+        storyEnemyGroups4.add("able angel");
+        storyEnemyGroups4.add("able tank");
+        storyEnemyGroups4.add("able tank");
+        storyEnemyGroups5.add("collector");
+
+        storyEnemyGroups.add(storyEnemyGroups1);
+        storyEnemyGroups.add(storyEnemyGroups2);
+        storyEnemyGroups.add(storyEnemyGroups3);
+        storyEnemyGroups.add(storyEnemyGroups4);
+        storyEnemyGroups.add(storyEnemyGroups5);
+
+        //enemyGroupXP
+        enemyGroupXPs.add(20);
+        enemyGroupXPs.add(25);
+        enemyGroupXPs.add(30);
+        enemyGroupXPs.add(35);
+        //enemyGroupMoneys
+        enemyGroupMoneys.add(50);
+        enemyGroupMoneys.add(60);
+        enemyGroupMoneys.add(70);
+        enemyGroupMoneys.add(80);
+        //gameStory
+        gameStory.add("You’ve entered the castle, it takes a while for your eyes to get used to " +
+                "the darkness but the horrifying halo of your enemies is vaguely visible. " +
+                "Angel’s unsettling presence and the growling of thugs tell you that your first battle has BEGUN!");
+        gameStory.add("As you wander into the hall you realize the surrounding doors can lead your" +
+                " destiny to something far worse than you expected. You know what’s anticipating you" +
+                " behind the only open door but there’s no other choice.");
+        gameStory.add("The door behind you is shut with a thunderous sound and you progress into " +
+                "the next hall holding the first key that you’ve found, hoping to seek the second one.");
+        gameStory.add("Running with the second key in your hand, you unlock the door back to the first hall " +
+                "and use the first key to burst into your most terrifying nightmares.");
+        gameStory.add("You feel hopeless and exhausted as you stalk to the final door. What’s behind that door makes" +
+                " your hearts pound and your spines shake with fear, but you came here to do one thing and backing down" +
+                " is not an option.");
+        gameStory.add("The collector falls down on his knees, he’s strained and desperate but still tries to drag himself" +
+                " toward Epoch. He knows his era has come to an end. The ancient time machine calls you to end the disorder " +
+                "and bring unity under its glorious wings, now it’s your turn to be the MASTERS OF TIME!");
+        //shop
+        shopItemNames.add("guide");
+        shopItemNames.add("defy");
+        shopItemNames.add("sword");
+        shopItemNames.add("energyboots");
+        shopItemNames.add("armor");
+        shopItemNames.add("magicstick");
+        shopItemNames.add("healthpotion");
+        shopItemNames.add("magicpotion");
+        shopItemNames.add("toughen");
+
+        shopItemMoneyCosts.put("guide", 4);
+        shopItemMoneyCosts.put("toughen", 4);
+        shopItemMoneyCosts.put("defy", 4);
+        shopItemMoneyCosts.put("sword", 25);
+        shopItemMoneyCosts.put("energyboots", 20);
+        shopItemMoneyCosts.put("armor", 25);
+        shopItemMoneyCosts.put("magicstick", 28);
+        shopItemMoneyCosts.put("healthpotion", 15);
+        shopItemMoneyCosts.put("magicpotion", 15);
+        //
+
+        immortalityPotionNum = 3;
+        initialMoney = 40;
+        initialXP = 15;
+        gameTurns = 5;
+        shopInflationValue = 2;
+        //
         heroClassNames.add("fighter");
         heroClassNames.add("supporter");
         HashMap<String, Integer> fighterData = new HashMap<>();
         fighterData.put("attack", 120);
-
         fighterData.put("max health", 200);
         fighterData.put("current health", 200);
         fighterData.put("health refill", 10);
@@ -208,52 +293,96 @@ public class UserInterface {
 
         /*************/
         //Items
-        /*    private ArrayList<String> itemNames;
-    private HashMap<String, HashMap<String, Integer>> itemDatas;
-    private HashMap<String, String> itemTargets;
-    */
+        //nonInstantEffectItemUseLimt
+        nonInstantEffectItemsUseLimit.put("healthpotion", 3);
+        nonInstantEffectItemsUseLimit.put("magicpotion", 3);
+
+        //instantEffectItems
+        instantEffectItems.add("toughen");
+        instantEffectItems.add("guide");
+        instantEffectItems.add("defy");
+        instantEffectItems.add("sword");
+        instantEffectItems.add("energyboots");
+        instantEffectItems.add("armor");
+        instantEffectItems.add("magicstick");
         //Item names
         itemNames.add("toughen");
+        itemNames.add("guide");
+        itemNames.add("defy");
+        itemNames.add("sword");
+        itemNames.add("energyboots");
+        itemNames.add("armor");
+        itemNames.add("magicstick");
+        itemNames.add("healthpotion");
+        itemNames.add("magicpotion");
+        //item targets
+        itemTargets.put("toughen", "himself");
+        itemTargets.put("guide", "himself");
+        itemTargets.put("defy", "himself");
+        itemTargets.put("sword", "himself");
+        itemTargets.put("energyboots", "himself");
+        itemTargets.put("armor", "himself");
+        itemTargets.put("magicstick", "himself");
+        itemTargets.put("healthpotion", "himself or an ally");
+        itemTargets.put("magicpotion", "himself or an ally");
+        //inflation Item
+        inflationItems.add("toughen");
+        inflationItems.add("guide");
+        inflationItems.add("defy");
         //ItemData
         HashMap<String, Integer> toughenData = new HashMap<>();
         toughenData.put("max health", 20);
+        toughenData.put("cost", 4);
         itemDatas.put("toughen", toughenData);
 
         HashMap<String, Integer> guideData = new HashMap<>();
         guideData.put("max magic", 20);
+        guideData.put("cost", 4);
         itemDatas.put("guide", guideData);
 
         HashMap<String, Integer> defyData = new HashMap<>();
         defyData.put("attack", 8);
+        defyData.put("cost", 4);
         itemDatas.put("defy", defyData);
 
         HashMap<String, Integer> swordData = new HashMap<>();
         swordData.put("attack", 80);
+        swordData.put("cost", 25);
         itemDatas.put("sword", swordData);
 
         HashMap<String, Integer> energyBootsData = new HashMap<>();
         energyBootsData.put("current EP", 1);
-        itemDatas.put("energyBoots", energyBootsData);
+        energyBootsData.put("cost", 20);
+        itemDatas.put("energyboots", energyBootsData);
 
         HashMap<String, Integer> armorData = new HashMap<>();
         armorData.put("max health", 200);
+        armorData.put("cost", 25);
         itemDatas.put("armor", armorData);
 
         HashMap<String, Integer> magicStickData = new HashMap<>();
         magicStickData.put("max magic", 150);
+        magicStickData.put("cost", 28);
         itemDatas.put("magicStick", magicStickData);
 
         HashMap<String, Integer> healthPotionData = new HashMap<>();
         healthPotionData.put("current health", 100);
+        healthPotionData.put("cost", 15);
         itemDatas.put("healthPotion", healthPotionData);
 
         HashMap<String, Integer> magicPotionData = new HashMap<>();
         magicPotionData.put("current magic", 50);
+        magicPotionData.put("cost", 15);
         itemDatas.put("magicPotion", magicPotionData);
 
         //item targets and etc remains
         /*************/
         //ABILITIES
+        //instant
+        instantEffectConditionAbilities.add("fightTraining");
+        instantEffectConditionAbilities.add("workOut");
+        instantEffectConditionAbilities.add("quickAsBunny");
+        instantEffectConditionAbilities.add("magicLessons");
         //names
         abilityNames.add("fightTraining");
         abilityNames.add("workOut");
@@ -458,8 +587,6 @@ public class UserInterface {
         fightTrainingFormula.put("attack", fightTrainingEffectFormulaUpgrades);
         allAbiliyFormulas.put("fightTraining", fightTrainingFormula);
 
-        //instant
-        instantEffectCondition.put("fightTraining", true);
         //workOut
         HashMap<String, ArrayList<Formula>> workOutFormula = new HashMap<>();
         Formula workOutEffectFormulaUpgrade1 = new Formula("max health + 50", null);
@@ -471,8 +598,6 @@ public class UserInterface {
         workOutEffectFormulaUpgrades.add(workOutEffectFormulaUpgrade3);
         workOutFormula.put("max health", workOutEffectFormulaUpgrades);
         allAbiliyFormulas.put("workOut", workOutFormula);
-        //instant
-        instantEffectCondition.put("workOut", true);
 
         //quickAsBunny
 
@@ -487,8 +612,6 @@ public class UserInterface {
         quickAsBunnyFormula.put("EP", quickAsBunnyEffectFormulaUpgrades);
         allAbiliyFormulas.put("quickAsBunny", quickAsBunnyFormula);
 
-        //instant
-        instantEffectCondition.put("quickAsBunny", true);
 
         //magicLessons
 
@@ -502,8 +625,6 @@ public class UserInterface {
         magicLessonsEffectFormulaUpgrades.add(magicLessonsEffectFormulaUpgrade3);
         magicLessonsFormula.put("max magic", magicLessonsEffectFormulaUpgrades);
         allAbiliyFormulas.put("magicLessons", magicLessonsFormula);
-        //instant
-        instantEffectCondition.put("magicLessons", true);
 
         //overPoweredAttack
         HashMap<String, ArrayList<Formula>> overPoweredAttackFormula = new HashMap<>();
@@ -532,8 +653,6 @@ public class UserInterface {
         overPoweredAttackFormula.put("CostEp", overPoweredAttackCostFormula1);
         overPoweredAttackFormula.put("CostMagic", overPoweredAttackCostFormula2);
         allAbiliyFormulas.put("overPoweredAttack", overPoweredAttackFormula);
-        //instant
-        instantEffectCondition.put("overPoweredAttack", false);
 
 
         //swirlingAttack----> hanu handle nashode
@@ -574,8 +693,6 @@ public class UserInterface {
         sacrificeFormula.put("CostMagic", sacrificeCostFormula2);
         sacrificeFormula.put("CostHealth", sacrificeCostFormula3);
         allAbiliyFormulas.put("sacrifice", sacrificeFormula);
-        //instant
-        instantEffectCondition.put("sacrifice", false);
         //coolDown
         ArrayList<Integer> sacrificeCooldownUpgrade = new ArrayList<>();
         sacrificeCooldownUpgrade.add(1);
@@ -612,8 +729,7 @@ public class UserInterface {
         elixirFormula.put("CostEp", elixirCostFormula1);
         elixirFormula.put("CostMagic", elixirCostFormula2);
         allAbiliyFormulas.put("elixir", elixirFormula);
-        //instant
-        instantEffectCondition.put("elixir", false);
+
         //coolDown
         ArrayList<Integer> elixirCooldownUpgrade = new ArrayList<>();
         elixirCooldownUpgrade.add(1);
@@ -648,8 +764,7 @@ public class UserInterface {
         caretakerFormula.put("CostEp", caretakerCostFormula1);
         caretakerFormula.put("CostMagic", caretakerCostFormula2);
         allAbiliyFormulas.put("caretaker", caretakerFormula);
-        //instant
-        instantEffectCondition.put("caretaker", false);
+
         //coolDown
         ArrayList<Integer> caretakerCooldownUpgrade = new ArrayList<>();
         caretakerCooldownUpgrade.add(1);
@@ -686,8 +801,6 @@ public class UserInterface {
         boostFormula.put("CostEp", boostCostFormula1);
         boostFormula.put("CostMagic", boostCostFormula2);
         allAbiliyFormulas.put(" boost", boostFormula);
-        //instant
-        instantEffectCondition.put(" boost", false);
         //coolDown
         ArrayList<Integer> boostCooldownUpgrade = new ArrayList<>();
         boostCooldownUpgrade.add(1);
@@ -722,8 +835,6 @@ public class UserInterface {
         manaBeamFormula.put("CostEp", manaBeamCostFormula1);
         manaBeamFormula.put("CostMagic", manaBeamCostFormula2);
         allAbiliyFormulas.put("manaBeam", manaBeamFormula);
-        //instant
-        instantEffectCondition.put("manaBeam", false);
         //coolDown
         ArrayList<Integer> manaBeamCooldownUpgrade = new ArrayList<>();
         manaBeamCooldownUpgrade.add(1);
@@ -1421,13 +1532,7 @@ public class UserInterface {
         this.allAbilityCooldowns = allAbilityCooldowns;
     }
 
-    public HashMap<String, Boolean> getInstantEffectCondition() {
-        return instantEffectCondition;
-    }
 
-    public void setInstantEffectCondition(HashMap<String, Boolean> instantEffectCondition) {
-        this.instantEffectCondition = instantEffectCondition;
-    }
 
     public ArrayList<String> getInstantEffectConditionAbilities() {
         return instantEffectConditionAbilities;
@@ -1475,5 +1580,12 @@ public class UserInterface {
 
     public void setEnemyGroupMoneys(ArrayList<Integer> enemyGroupMoneys) {
         this.enemyGroupMoneys = enemyGroupMoneys;
+    }
+    public HashMap<String, Integer> getNonInstantEffectItemsUseLimit() {
+        return nonInstantEffectItemsUseLimit;
+    }
+
+    public void setNonInstantEffectItemsUseLimit(HashMap<String, Integer> nonInstantEffectItemsUseLimit) {
+        this.nonInstantEffectItemsUseLimit = nonInstantEffectItemsUseLimit;
     }
 }
