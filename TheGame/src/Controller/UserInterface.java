@@ -14,8 +14,13 @@ import java.util.Scanner;
 */
 
 public class UserInterface {
-
     private boolean customed;
+    private int shopInflationValue;
+    private int gameTurns;
+    private int initialXP = 0;
+    private int initialMoney = 0;
+    private int immortalityPotionNum;
+
 
     private ArrayList<String> heroClassNames; // new it in the constructor
     private HashMap<String, HashMap<String, Integer>> heroClassDatas; // new it in the constructor
@@ -40,6 +45,8 @@ public class UserInterface {
     private HashMap<String, String> itemTargets;
     private ArrayList<String> itemAttributes;                         // must make this fully in the constructor
     private ArrayList<String> possibleItemTargets;                    // must make this fully in the constructor
+    private ArrayList<String> inflationItems;
+    private ArrayList<String> instantEffectItems;
 
     private ArrayList<String> abilityNames;
     private HashMap<String, HashMap<String, ArrayList<Formula>>> allAbiliyFormulas; // Even non targeted enemy share and cooldown is handled here
@@ -52,7 +59,16 @@ public class UserInterface {
     private HashMap<String, String> primaryVariableNames;
     private HashMap<String, ArrayList<Integer>> secondaryTargetShares;
     private HashMap<String, ArrayList<Integer>> allAbilityCooldowns;
-    private HashMap<String, Boolean> instantEffectCondition;
+    private HashMap<String, Boolean> instantEffectCondition;// paiini ro ba in avaz kon
+    private ArrayList<String> instantEffectConditionAbilities;
+
+    private ArrayList<String> shopItemNames;
+    private HashMap<String, Integer> shopItemMoneyCosts;
+
+    private ArrayList<String> gameStory;
+    private ArrayList<ArrayList<String>> storyEnemyGroups;
+    private ArrayList<Integer> enemyGroupXPs;
+    private ArrayList<Integer> enemyGroupMoneys;
 
 
     public void checkCustom(Scanner in) {
@@ -1098,5 +1114,366 @@ public class UserInterface {
         for (int i = 0; i < possibleItemTargets.size(); i++) {
             System.out.println(possibleItemTargets.get(i));
         }
+    }
+
+
+    public ArrayList<String> getGameStory() {
+        return gameStory;
+    }
+
+    public void setGameStory(ArrayList<String> gameStory) {
+        this.gameStory = gameStory;
+    }
+
+    public boolean isCustomed() {
+        return customed;
+    }
+
+    public void setCustomed(boolean customed) {
+        this.customed = customed;
+    }
+
+    public int getShopInflationValue() {
+        return shopInflationValue;
+    }
+
+    public void setShopInflationValue(int shopInflationValue) {
+        this.shopInflationValue = shopInflationValue;
+    }
+
+    public int getGameTurns() {
+        return gameTurns;
+    }
+
+    public void setGameTurns(int gameTurns) {
+        this.gameTurns = gameTurns;
+    }
+
+    public int getInitialXP() {
+        return initialXP;
+    }
+
+    public void setInitialXP(int initialXP) {
+        this.initialXP = initialXP;
+    }
+
+    public int getInitialMoney() {
+        return initialMoney;
+    }
+
+    public void setInitialMoney(int initialMoney) {
+        this.initialMoney = initialMoney;
+    }
+
+    public int getImmortalityPotionNum() {
+        return immortalityPotionNum;
+    }
+
+    public void setImmortalityPotionNum(int immortalityPotionNum) {
+        this.immortalityPotionNum = immortalityPotionNum;
+    }
+
+    public ArrayList<String> getHeroClassNames() {
+        return heroClassNames;
+    }
+
+    public void setHeroClassNames(ArrayList<String> heroClassNames) {
+        this.heroClassNames = heroClassNames;
+    }
+
+    public HashMap<String, HashMap<String, Integer>> getHeroClassDatas() {
+        return heroClassDatas;
+    }
+
+    public void setHeroClassDatas(HashMap<String, HashMap<String, Integer>> heroClassDatas) {
+        this.heroClassDatas = heroClassDatas;
+    }
+
+    public HashMap<String, ArrayList<String>> getHeroClassAbilities() {
+        return heroClassAbilities;
+    }
+
+    public void setHeroClassAbilities(HashMap<String, ArrayList<String>> heroClassAbilities) {
+        this.heroClassAbilities = heroClassAbilities;
+    }
+
+    public ArrayList<String> getHeroAttributes() {
+        return heroAttributes;
+    }
+
+    public void setHeroAttributes(ArrayList<String> heroAttributes) {
+        this.heroAttributes = heroAttributes;
+    }
+
+    public HashMap<String, String> getHerosAndTheirClasses() {
+        return herosAndTheirClasses;
+    }
+
+    public void setHerosAndTheirClasses(HashMap<String, String> herosAndTheirClasses) {
+        this.herosAndTheirClasses = herosAndTheirClasses;
+    }
+
+    public HashMap<String, ArrayList<String>> getHerosAndTheirAbilities() {
+        return herosAndTheirAbilities;
+    }
+
+    public void setHerosAndTheirAbilities(HashMap<String, ArrayList<String>> herosAndTheirAbilities) {
+        this.herosAndTheirAbilities = herosAndTheirAbilities;
+    }
+
+    public ArrayList<String> getNormalEnemyNames() {
+        return normalEnemyNames;
+    }
+
+    public void setNormalEnemyNames(ArrayList<String> normalEnemyNames) {
+        this.normalEnemyNames = normalEnemyNames;
+    }
+
+    public HashMap<String, ArrayList<EnemyVersion>> getNormalEnemyDatas() {
+        return normalEnemyDatas;
+    }
+
+    public void setNormalEnemyDatas(HashMap<String, ArrayList<EnemyVersion>> normalEnemyDatas) {
+        this.normalEnemyDatas = normalEnemyDatas;
+    }
+
+    public ArrayList<String> getEnemyAttributes() {
+        return enemyAttributes;
+    }
+
+    public void setEnemyAttributes(ArrayList<String> enemyAttributes) {
+        this.enemyAttributes = enemyAttributes;
+    }
+
+    public ArrayList<String> getBossEnemyNames() {
+        return bossEnemyNames;
+    }
+
+    public void setBossEnemyNames(ArrayList<String> bossEnemyNames) {
+        this.bossEnemyNames = bossEnemyNames;
+    }
+
+    public HashMap<String, HashMap<String, Integer>> getBossEnemyDatas() {
+        return bossEnemyDatas;
+    }
+
+    public void setBossEnemyDatas(HashMap<String, HashMap<String, Integer>> bossEnemyDatas) {
+        this.bossEnemyDatas = bossEnemyDatas;
+    }
+
+    public HashMap<String, ArrayList<String>> getBossEnemySpecialConditions() {
+        return bossEnemySpecialConditions;
+    }
+
+    public void setBossEnemySpecialConditions(HashMap<String, ArrayList<String>> bossEnemySpecialConditions) {
+        this.bossEnemySpecialConditions = bossEnemySpecialConditions;
+    }
+
+    public HashMap<String, ArrayList<String>> getBossEnemyEarlyTurnEffects() {
+        return bossEnemyEarlyTurnEffects;
+    }
+
+    public void setBossEnemyEarlyTurnEffects(HashMap<String, ArrayList<String>> bossEnemyEarlyTurnEffects) {
+        this.bossEnemyEarlyTurnEffects = bossEnemyEarlyTurnEffects;
+    }
+
+    public ArrayList<String> getItemNames() {
+        return itemNames;
+    }
+
+    public void setItemNames(ArrayList<String> itemNames) {
+        this.itemNames = itemNames;
+    }
+
+    public HashMap<String, HashMap<String, Integer>> getItemDatas() {
+        return itemDatas;
+    }
+
+    public void setItemDatas(HashMap<String, HashMap<String, Integer>> itemDatas) {
+        this.itemDatas = itemDatas;
+    }
+
+    public HashMap<String, String> getItemTargets() {
+        return itemTargets;
+    }
+
+    public void setItemTargets(HashMap<String, String> itemTargets) {
+        this.itemTargets = itemTargets;
+    }
+
+    public ArrayList<String> getItemAttributes() {
+        return itemAttributes;
+    }
+
+    public void setItemAttributes(ArrayList<String> itemAttributes) {
+        this.itemAttributes = itemAttributes;
+    }
+
+    public ArrayList<String> getPossibleItemTargets() {
+        return possibleItemTargets;
+    }
+
+    public void setPossibleItemTargets(ArrayList<String> possibleItemTargets) {
+        this.possibleItemTargets = possibleItemTargets;
+    }
+
+    public ArrayList<String> getInflationItems() {
+        return inflationItems;
+    }
+
+    public void setInflationItems(ArrayList<String> inflationItems) {
+        this.inflationItems = inflationItems;
+    }
+
+    public ArrayList<String> getInstantEffectItems() {
+        return instantEffectItems;
+    }
+
+    public void setInstantEffectItems(ArrayList<String> instantEffectItems) {
+        this.instantEffectItems = instantEffectItems;
+    }
+
+    public ArrayList<String> getAbilityNames() {
+        return abilityNames;
+    }
+
+    public void setAbilityNames(ArrayList<String> abilityNames) {
+        this.abilityNames = abilityNames;
+    }
+
+    public HashMap<String, HashMap<String, ArrayList<Formula>>> getAllAbiliyFormulas() {
+        return allAbiliyFormulas;
+    }
+
+    public void setAllAbiliyFormulas(HashMap<String, HashMap<String, ArrayList<Formula>>> allAbiliyFormulas) {
+        this.allAbiliyFormulas = allAbiliyFormulas;
+    }
+
+    public HashMap<String, String> getAbilityTargets() {
+        return abilityTargets;
+    }
+
+    public void setAbilityTargets(HashMap<String, String> abilityTargets) {
+        this.abilityTargets = abilityTargets;
+    }
+
+    public ArrayList<String> getPossibleAbilityTargets() {
+        return possibleAbilityTargets;
+    }
+
+    public void setPossibleAbilityTargets(ArrayList<String> possibleAbilityTargets) {
+        this.possibleAbilityTargets = possibleAbilityTargets;
+    }
+
+    public HashMap<String, ArrayList<Integer>> getAllAbilityUpgradeXPs() {
+        return allAbilityUpgradeXPs;
+    }
+
+    public void setAllAbilityUpgradeXPs(HashMap<String, ArrayList<Integer>> allAbilityUpgradeXPs) {
+        this.allAbilityUpgradeXPs = allAbilityUpgradeXPs;
+    }
+
+    public ArrayList<String> getAbilityAttributes() {
+        return abilityAttributes;
+    }
+
+    public void setAbilityAttributes(ArrayList<String> abilityAttributes) {
+        this.abilityAttributes = abilityAttributes;
+    }
+
+    public HashMap<String, ArrayList<HashMap<String, Integer>>> getAllRequiredAbilities() {
+        return allRequiredAbilities;
+    }
+
+    public void setAllRequiredAbilities(HashMap<String, ArrayList<HashMap<String, Integer>>> allRequiredAbilities) {
+        this.allRequiredAbilities = allRequiredAbilities;
+    }
+
+    public HashMap<String, ArrayList<Integer>> getAbilityLuckPercents() {
+        return abilityLuckPercents;
+    }
+
+    public void setAbilityLuckPercents(HashMap<String, ArrayList<Integer>> abilityLuckPercents) {
+        this.abilityLuckPercents = abilityLuckPercents;
+    }
+
+    public HashMap<String, String> getPrimaryVariableNames() {
+        return primaryVariableNames;
+    }
+
+    public void setPrimaryVariableNames(HashMap<String, String> primaryVariableNames) {
+        this.primaryVariableNames = primaryVariableNames;
+    }
+
+    public HashMap<String, ArrayList<Integer>> getSecondaryTargetShares() {
+        return secondaryTargetShares;
+    }
+
+    public void setSecondaryTargetShares(HashMap<String, ArrayList<Integer>> secondaryTargetShares) {
+        this.secondaryTargetShares = secondaryTargetShares;
+    }
+
+    public HashMap<String, ArrayList<Integer>> getAllAbilityCooldowns() {
+        return allAbilityCooldowns;
+    }
+
+    public void setAllAbilityCooldowns(HashMap<String, ArrayList<Integer>> allAbilityCooldowns) {
+        this.allAbilityCooldowns = allAbilityCooldowns;
+    }
+
+    public HashMap<String, Boolean> getInstantEffectCondition() {
+        return instantEffectCondition;
+    }
+
+    public void setInstantEffectCondition(HashMap<String, Boolean> instantEffectCondition) {
+        this.instantEffectCondition = instantEffectCondition;
+    }
+
+    public ArrayList<String> getInstantEffectConditionAbilities() {
+        return instantEffectConditionAbilities;
+    }
+
+    public void setInstantEffectConditionAbilities(ArrayList<String> instantEffectConditionAbilities) {
+        this.instantEffectConditionAbilities = instantEffectConditionAbilities;
+    }
+
+    public ArrayList<String> getShopItemNames() {
+        return shopItemNames;
+    }
+
+    public void setShopItemNames(ArrayList<String> shopItemNames) {
+        this.shopItemNames = shopItemNames;
+    }
+
+    public HashMap<String, Integer> getShopItemMoneyCosts() {
+        return shopItemMoneyCosts;
+    }
+
+    public void setShopItemMoneyCosts(HashMap<String, Integer> shopItemMoneyCosts) {
+        this.shopItemMoneyCosts = shopItemMoneyCosts;
+    }
+
+    public ArrayList<ArrayList<String>> getStoryEnemyGroups() {
+        return storyEnemyGroups;
+    }
+
+    public void setStoryEnemyGroups(ArrayList<ArrayList<String>> storyEnemyGroups) {
+        this.storyEnemyGroups = storyEnemyGroups;
+    }
+
+    public ArrayList<Integer> getEnemyGroupXPs() {
+        return enemyGroupXPs;
+    }
+
+    public void setEnemyGroupXPs(ArrayList<Integer> enemyGroupXPs) {
+        this.enemyGroupXPs = enemyGroupXPs;
+    }
+
+    public ArrayList<Integer> getEnemyGroupMoneys() {
+        return enemyGroupMoneys;
+    }
+
+    public void setEnemyGroupMoneys(ArrayList<Integer> enemyGroupMoneys) {
+        this.enemyGroupMoneys = enemyGroupMoneys;
     }
 }
