@@ -1060,35 +1060,39 @@ public class UserInterface {
     }
 
 
-    private void createNormalEnemy(Scanner in) {
+    private void createNormalEnemy(Scanner in)
+	{
         String enemyName;
-        ArrayList<EnemyVersion> enemyVersions = new ArrayList<>();
-
-        while (true) {
-            System.out.print("Please enter the name of the enemy you want to make: ");
-            enemyName = in.next();
-
-            System.out.println("Are you sure?(Enter the right number)");
-
-            if (yesNoQuestion(in)) {
-                normalEnemyNames.add(enemyName);
-                break;
-            }
-        }
-
-        System.out.println("How many versions do you want to make for this enemy?");
-        //check invalid input
-        int versionNum = in.nextInt();
-
-        for (int i = 0; i < versionNum; i++) {
-            EnemyVersion enemyVersion = makeEnemyVersion(in);
-            enemyVersions.add(enemyVersion);
-
-            System.out.println("Version added!");
-        }
-        normalEnemyDatas.put(enemyName, enemyVersions);
-
-        System.out.println("Enemy was made!");
+		ArrayList<EnemyVersion> enemyVersions = new ArrayList<>();
+		
+		while(true)
+		{
+			System.out.print("Please enter the name of the enemy you want to make: ");
+			enemyName = in.next();
+			
+			System.out.println("Are you sure?(Enter the right number)");
+			
+			if(yesNoQuestion(in))
+			{
+				normalEnemyNames.add(enemyName);
+				break;
+			}
+		}
+		
+		System.out.println("How many versions do you want to make for this enemy?");
+		//check invalid input
+		int versionNum = in.nextInt();
+		
+		for(int i = 0; i < versionNum; i++)
+		{
+			EnemyVersion enemyVersion = makeEnemyVersion(in, enemyName);
+			enemyVersions.add(enemyVersion);
+			
+			System.out.println("Version added!");
+		}
+		normalEnemyDatas.put(enemyName, enemyVersions);
+		
+		System.out.println("Enemy was made!");
     }
 
 
@@ -1203,45 +1207,67 @@ public class UserInterface {
     }
 
 
-    private EnemyVersion makeEnemyVersion(Scanner in) {
-        String versionName;
-        HashMap<String, Integer> versionData = new HashMap<>();
-
-        while (true) {
-            System.out.print("Please enter the name of the version you want to make: ");
-            versionName = in.next();
-
-            System.out.println("Are you sure?(Enter the right number)");
-
-            if (yesNoQuestion(in)) {
-                break;
-            }
-        }
-
-        System.out.println("Please enter the amount you want for each attribute");
-
-        for (int i = 0; i < enemyAttributes.size(); i++) {
-            while (true) {
-                String attributeName = enemyAttributes.get(i); // It will be nice if it goes up
-
-                System.out.print(attributeName + ": ");
-
-                String attributeAmount = in.next();
-                if (attributeAmount.matches("[0-9]+") && attributeAmount.length() < 8) {
-                    int attributeAmountNum = Integer.parseInt(attributeAmount);
-
-                    versionData.put(attributeName, attributeAmountNum);
-                    break;
-                } else {
-                    // Invalid Input
-                }
-            }
-        }
-
-        EnemyVersion enemyVersion = new EnemyVersion(versionName, versionData);
-
-        return enemyVersion;
-    }
+    private EnemyVersion makeEnemyVersion(Scanner in, String enemyName)
+	{
+		String versionName, versionTarget;
+		HashMap<String, Integer> versionData = new HashMap<>();
+		
+		while(true)
+		{
+			System.out.print("Please enter the name of the version you want to make: ");
+			versionName = in.next();
+			
+			System.out.println("Are you sure?(Enter the right number)");
+			
+			if(yesNoQuestion(in))
+			{
+				break;
+			}
+		}
+		
+		System.out.println("Please enter the amount you want for each attribute");
+		
+		for(int i = 0; i < enemyAttributes.size(); i++)
+		{
+			while(true)
+			{
+				String attributeName = enemyAttributes.get(i); // It will be nice if it goes up
+				
+				System.out.print(attributeName + ": ");
+				
+				String attributeAmount = in.next();
+				if(attributeAmount.matches("[0-9]+") && attributeAmount.length() < 8)
+				{
+					int attributeAmountNum = Integer.parseInt(attributeAmount);
+					
+					versionData.put(attributeName, attributeAmountNum);
+					break;
+				}
+				else
+				{
+					// Invalid Input
+				}
+			}
+		}
+		
+		while(true)
+		{
+			System.out.println("Please enter the target of this enemy version");
+			showPossibleNormalEnemyTargets();
+			versionTarget = in.next();
+			if(possibleNormalEnemyTargets.contains(versionTarget))
+			{
+				break;
+			}
+			
+			System.out.println("Invalid input! Please try again");
+			
+		}
+		
+		EnemyVersion enemyVersion = new EnemyVersion(versionName, enemyName, versionData, versionTarget);
+		
+		return enemyVersion;
+	}
 
 
     private boolean yesNoQuestion(Scanner in) {
