@@ -116,6 +116,7 @@ public class UserInterface {
         mightyThugData.put("attack", 150);
         mightyThugData.put("max health", 400);
 
+        //ENEMYVERSION SHOULD HAVE ANOTHER PARAMETER IN ITS CONSTRUCTOR EXP: WEAKTHUGH---> weak , thug
         ArrayList<EnemyVersion> thugEnemyVersion = new ArrayList<>();
         thugEnemyVersion.add(new EnemyVersion("weakThug", weakThugData));
         thugEnemyVersion.add(new EnemyVersion("ableThug", ableThugData));
@@ -403,7 +404,7 @@ public class UserInterface {
         allAbiliyFormulas.put("fightTraining", fightTrainingFormula);
 
         //instant
-        
+        instantEffectCondition.put("fightTraining", true);
         //workOut
         HashMap<String, ArrayList<Formula>> workOutFormula = new HashMap<>();
         Formula workOutEffectFormulaUpgrade1 = new Formula("max health + 50", null);
@@ -415,7 +416,8 @@ public class UserInterface {
         workOutEffectFormulaUpgrades.add(workOutEffectFormulaUpgrade3);
         workOutFormula.put("max health", workOutEffectFormulaUpgrades);
         allAbiliyFormulas.put("workOut", workOutFormula);
-
+        //instant
+        instantEffectCondition.put("workOut", true);
 
         //quickAsBunny
 
@@ -430,6 +432,9 @@ public class UserInterface {
         quickAsBunnyFormula.put("EP", quickAsBunnyEffectFormulaUpgrades);
         allAbiliyFormulas.put("quickAsBunny", quickAsBunnyFormula);
 
+        //instant
+        instantEffectCondition.put("quickAsBunny", true);
+
         //magicLessons
 
         HashMap<String, ArrayList<Formula>> magicLessonsFormula = new HashMap<>();
@@ -442,23 +447,235 @@ public class UserInterface {
         magicLessonsEffectFormulaUpgrades.add(magicLessonsEffectFormulaUpgrade3);
         magicLessonsFormula.put("max magic", magicLessonsEffectFormulaUpgrades);
         allAbiliyFormulas.put("magicLessons", magicLessonsFormula);
+        //instant
+        instantEffectCondition.put("magicLessons", true);
 
         //overPoweredAttack
+        HashMap<String, ArrayList<Formula>> overPoweredAttackFormula = new HashMap<>();
+        Formula overPoweredAttackEffectFormulaUpgrade1 = new Formula("1.2 * attack", null);
+        Formula overPoweredAttackEffectFormulaUpgrade2 = new Formula("1.4 * attack", null);
+        Formula overPoweredAttackEffectFormulaUpgrade3 = new Formula("1.6 * attack", null);
+        ArrayList<Formula> overPoweredAttackEffectFormulaUpgrades = new ArrayList<>();
+        overPoweredAttackEffectFormulaUpgrades.add(overPoweredAttackEffectFormulaUpgrade1);
+        overPoweredAttackEffectFormulaUpgrades.add(overPoweredAttackEffectFormulaUpgrade2);
+        overPoweredAttackEffectFormulaUpgrades.add(overPoweredAttackEffectFormulaUpgrade3);
+        ArrayList<Formula> overPoweredAttackCostFormula1 = new ArrayList<>();
+        ArrayList<Formula> overPoweredAttackCostFormula2 = new ArrayList<>();
+        Formula overPoweredAttackCostEP1 = new Formula("EP - 2", null);
+        Formula overPoweredAttackCostEP2 = new Formula("EP - 2", null);
+        Formula overPoweredAttackCostEP3 = new Formula("EP - 2", null);
+        Formula overPoweredAttackCostMagic1 = new Formula("current magic - 50", null);
+        Formula overPoweredAttackCostMagic2 = new Formula("current magic - 50", null);
+        Formula overPoweredAttackCostMagic3 = new Formula("current magic - 50", null);
+        overPoweredAttackCostFormula1.add(overPoweredAttackCostEP1);
+        overPoweredAttackCostFormula1.add(overPoweredAttackCostEP2);
+        overPoweredAttackCostFormula1.add(overPoweredAttackCostEP3);
+        overPoweredAttackCostFormula2.add(overPoweredAttackCostMagic1);
+        overPoweredAttackCostFormula2.add(overPoweredAttackCostMagic2);
+        overPoweredAttackCostFormula2.add(overPoweredAttackCostMagic3);
+        overPoweredAttackFormula.put("damage", overPoweredAttackEffectFormulaUpgrades);
+        overPoweredAttackFormula.put("CostEp", overPoweredAttackCostFormula1);
+        overPoweredAttackFormula.put("CostMagic", overPoweredAttackCostFormula2);
+        allAbiliyFormulas.put("overPoweredAttack", overPoweredAttackFormula);
+        //instant
+        instantEffectCondition.put("overPoweredAttack", false);
 
 
-        //swirlingAttack
+        //swirlingAttack----> hanu handle nashode
 
         //sacrifice
 
-        //criticalStrike
+        HashMap<String, ArrayList<Formula>> sacrificeFormula = new HashMap<>();
+        Formula sacrificeEffectFormulaUpgrade1 = new Formula("120", null);
+        Formula sacrificeEffectFormulaUpgrade2 = new Formula("150", null);
+        Formula sacrificeEffectFormulaUpgrade3 = new Formula("180", null);
+        ArrayList<Formula> sacrificeEffectFormulaUpgrades = new ArrayList<>();
+        sacrificeEffectFormulaUpgrades.add(sacrificeEffectFormulaUpgrade1);
+        sacrificeEffectFormulaUpgrades.add(sacrificeEffectFormulaUpgrade2);
+        sacrificeEffectFormulaUpgrades.add(sacrificeEffectFormulaUpgrade3);
+        ArrayList<Formula> sacrificeCostFormula1 = new ArrayList<>();
+        ArrayList<Formula> sacrificeCostFormula2 = new ArrayList<>();
+        ArrayList<Formula> sacrificeCostFormula3 = new ArrayList<>();
+        Formula sacrificeCostEP1 = new Formula("EP - 3", null);
+        Formula sacrificeCostEP2 = new Formula("EP - 3", null);
+        Formula sacrificeCostEP3 = new Formula("EP - 3", null);
+        Formula sacrificeCostMagic1 = new Formula("current magic - 60", null);
+        Formula sacrificeCostMagic2 = new Formula("current magic - 60", null);
+        Formula sacrificeCostMagic3 = new Formula("current magic - 60", null);
+        Formula sacrificeCostHealth1 = new Formula("current health - 40", null);
+        Formula sacrificeCostHealth2 = new Formula("current health - 50", null);
+        Formula sacrificeCostHealth3 = new Formula("current health - 60", null);
+        sacrificeCostFormula1.add(sacrificeCostEP1);
+        sacrificeCostFormula1.add(sacrificeCostEP2);
+        sacrificeCostFormula1.add(sacrificeCostEP3);
+        sacrificeCostFormula2.add(sacrificeCostMagic1);
+        sacrificeCostFormula2.add(sacrificeCostMagic2);
+        sacrificeCostFormula2.add(sacrificeCostMagic3);
+        sacrificeCostFormula3.add(sacrificeCostHealth1);
+        sacrificeCostFormula3.add(sacrificeCostHealth2);
+        sacrificeCostFormula3.add(sacrificeCostHealth3);
+        sacrificeFormula.put("damage", sacrificeEffectFormulaUpgrades);
+        sacrificeFormula.put("CostEp", sacrificeCostFormula1);
+        sacrificeFormula.put("CostMagic", sacrificeCostFormula2);
+        sacrificeFormula.put("CostHealth", sacrificeCostFormula3);
+        allAbiliyFormulas.put("sacrifice", sacrificeFormula);
+        //instant
+        instantEffectCondition.put("sacrifice", false);
+        //coolDown
+        ArrayList<Integer> sacrificeCooldownUpgrade = new ArrayList<>();
+        sacrificeCooldownUpgrade.add(1);
+        sacrificeCooldownUpgrade.add(1);
+        sacrificeCooldownUpgrade.add(1);
+        allAbilityCooldowns.put("sacrifice", sacrificeCooldownUpgrade);
+
+        //criticalStrike---> hanu handle nashode
 
         //elixir
+        HashMap<String, ArrayList<Formula>> elixirFormula = new HashMap<>();
+        Formula elixirEffectFormulaUpgrade1 = new Formula("current health + 100", null);
+        Formula elixirEffectFormulaUpgrade2 = new Formula("current health + 150", null);
+        Formula elixirEffectFormulaUpgrade3 = new Formula("current health + 150", null);
+        ArrayList<Formula>  elixirEffectFormulaUpgrades = new ArrayList<>();
+        elixirEffectFormulaUpgrades.add(elixirEffectFormulaUpgrade1);
+        elixirEffectFormulaUpgrades.add(elixirEffectFormulaUpgrade2);
+        elixirEffectFormulaUpgrades.add( elixirEffectFormulaUpgrade3);
+        ArrayList<Formula> elixirCostFormula1 = new ArrayList<>();
+        ArrayList<Formula> elixirCostFormula2 = new ArrayList<>();
+        Formula  elixirCostEP1 = new Formula("EP - 2", null);
+        Formula  elixirCostEP2 = new Formula("EP - 2", null);
+        Formula  elixirCostEP3 = new Formula("EP - 2", null);
+        Formula  elixirCostMagic1 = new Formula("current magic - 60", null);
+        Formula  elixirCostMagic2 = new Formula("current magic - 60", null);
+        Formula  elixirCostMagic3 = new Formula("current magic - 60", null);
+        elixirCostFormula1.add(elixirCostEP1);
+        elixirCostFormula1.add(elixirCostEP2);
+        elixirCostFormula1.add(elixirCostEP3);
+        elixirCostFormula2.add(elixirCostMagic1);
+        elixirCostFormula2.add(elixirCostMagic2);
+        elixirCostFormula2.add(elixirCostMagic3);
+        elixirFormula.put("current health", elixirEffectFormulaUpgrades);
+        elixirFormula.put("CostEp", elixirCostFormula1);
+        elixirFormula.put("CostMagic", elixirCostFormula2);
+        allAbiliyFormulas.put("elixir", elixirFormula);
+        //instant
+        instantEffectCondition.put("elixir", false);
+        //coolDown
+        ArrayList<Integer> elixirCooldownUpgrade = new ArrayList<>();
+        elixirCooldownUpgrade.add(1);
+        elixirCooldownUpgrade.add(1);
+        elixirCooldownUpgrade.add(0);
+        allAbilityCooldowns.put("elixir", elixirCooldownUpgrade);
 
         //caretaker
+        HashMap<String, ArrayList<Formula>> caretakerFormula = new HashMap<>();
+        Formula caretakerEffectFormulaUpgrade1 = new Formula("EP + 1", null);
+        Formula caretakerEffectFormulaUpgrade2 = new Formula("EP + 1", null);
+        Formula caretakerEffectFormulaUpgrade3 = new Formula("EP + 1", null);
+        ArrayList<Formula> caretakerEffectFormulaUpgrades = new ArrayList<>();
+        caretakerEffectFormulaUpgrades.add(caretakerEffectFormulaUpgrade1);
+        caretakerEffectFormulaUpgrades.add(caretakerEffectFormulaUpgrade2);
+        caretakerEffectFormulaUpgrades.add(caretakerEffectFormulaUpgrade3);
+        ArrayList<Formula> caretakerCostFormula1 = new ArrayList<>();
+        ArrayList<Formula> caretakerCostFormula2 = new ArrayList<>();
+        Formula  caretakerCostEP1 = new Formula("EP - 2", null);
+        Formula  caretakerCostEP2 = new Formula("EP - 2", null);
+        Formula  caretakerCostEP3 = new Formula("EP - 1", null);
+        Formula  caretakerCostMagic1 = new Formula("current magic - 30", null);
+        Formula  caretakerCostMagic2 = new Formula("current magic - 30", null);
+        Formula  caretakerCostMagic3 = new Formula("current magic - 30", null);
+        caretakerCostFormula1.add(caretakerCostEP1);
+        caretakerCostFormula1.add(caretakerCostEP2);
+        caretakerCostFormula1.add(caretakerCostEP3);
+        caretakerCostFormula2.add(caretakerCostMagic1);
+        caretakerCostFormula2.add(caretakerCostMagic2);
+        caretakerCostFormula2.add(caretakerCostMagic3);
+        caretakerFormula.put("current EP", caretakerEffectFormulaUpgrades);
+        caretakerFormula.put("CostEp", caretakerCostFormula1);
+        caretakerFormula.put("CostMagic", caretakerCostFormula2);
+        allAbiliyFormulas.put("caretaker", caretakerFormula);
+        //instant
+        instantEffectCondition.put("caretaker", false);
+        //coolDown
+        ArrayList<Integer> caretakerCooldownUpgrade = new ArrayList<>();
+        caretakerCooldownUpgrade.add(1);
+        caretakerCooldownUpgrade.add(0);
+        caretakerCooldownUpgrade.add(0);
+        allAbilityCooldowns.put("caretaker", caretakerCooldownUpgrade);
 
         //boost
+        //in ghesmat temporary attack power = temporary attack power + A(vali bahs injas ke mitunan ru ham jam shan va inke faghat tu
+        //hamun turn hast va ru attackPower miad
+        HashMap<String, ArrayList<Formula>> boostFormula = new HashMap<>();
+        Formula boostEffectFormulaUpgrade1 = new Formula("temporary attack power + 20", null);
+        Formula boostEffectFormulaUpgrade2 = new Formula("temporary attack power + 20", null);
+        Formula boostEffectFormulaUpgrade3 = new Formula("temporary attack power + 20", null);
+        ArrayList<Formula> boostEffectFormulaUpgrades = new ArrayList<>();
+        boostEffectFormulaUpgrades.add( boostEffectFormulaUpgrade1);
+        boostEffectFormulaUpgrades.add( boostEffectFormulaUpgrade2);
+        boostEffectFormulaUpgrades.add( boostEffectFormulaUpgrade3);
+        ArrayList<Formula>  boostCostFormula1 = new ArrayList<>();
+        ArrayList<Formula>  boostCostFormula2 = new ArrayList<>();
+        Formula   boostCostEP1 = new Formula("EP - 2", null);
+        Formula   boostCostEP2 = new Formula("EP - 2", null);
+        Formula   boostCostEP3 = new Formula("EP - 2", null);
+        Formula   boostCostMagic1 = new Formula("current magic - 50", null);
+        Formula   boostCostMagic2 = new Formula("current magic - 50", null);
+        Formula   boostCostMagic3 = new Formula("current magic - 50", null);
+        boostCostFormula1.add( boostCostEP1);
+        boostCostFormula1.add( boostCostEP2);
+        boostCostFormula1.add( boostCostEP3);
+        boostCostFormula2.add( boostCostMagic1);
+        boostCostFormula2.add( boostCostMagic2);
+        boostCostFormula2.add( boostCostMagic3);
+        boostFormula.put("temporary attack power",  boostEffectFormulaUpgrades);
+        boostFormula.put("CostEp",  boostCostFormula1);
+        boostFormula.put("CostMagic",  boostCostFormula2);
+        allAbiliyFormulas.put(" boost",  boostFormula);
+        //instant
+        instantEffectCondition.put(" boost", false);
+        //coolDown
+        ArrayList<Integer> boostCooldownUpgrade = new ArrayList<>();
+        boostCooldownUpgrade.add(1);
+        boostCooldownUpgrade.add(1);
+        boostCooldownUpgrade.add(0);
+        allAbilityCooldowns.put(" boost",  boostCooldownUpgrade);
 
         //manaBeam
+        HashMap<String, ArrayList<Formula>>manaBeamFormula = new HashMap<>();
+        Formula manaBeamEffectFormulaUpgrade1 = new Formula("current magic + 50", null);
+        Formula manaBeamEffectFormulaUpgrade2 = new Formula("current magic + 50", null);
+        Formula manaBeamEffectFormulaUpgrade3 = new Formula("current magic + 50", null);
+        ArrayList<Formula> manaBeamEffectFormulaUpgrades = new ArrayList<>();
+        manaBeamEffectFormulaUpgrades.add( boostEffectFormulaUpgrade1);
+        manaBeamEffectFormulaUpgrades.add( boostEffectFormulaUpgrade2);
+        manaBeamEffectFormulaUpgrades.add( boostEffectFormulaUpgrade3);
+        ArrayList<Formula>  manaBeamCostFormula1 = new ArrayList<>();
+        ArrayList<Formula>  manaBeamCostFormula2 = new ArrayList<>();
+        Formula   manaBeamCostEP1 = new Formula("EP - 1", null);
+        Formula   manaBeamCostEP2 = new Formula("EP - 1", null);
+        Formula   manaBeamCostEP3 = new Formula("EP - 1", null);
+        Formula   manaBeamCostMagic1 = new Formula("current magic - 50", null);
+        Formula   manaBeamCostMagic2 = new Formula("current magic - 50", null);
+        Formula   manaBeamCostMagic3 = new Formula("current magic - 50", null);
+        manaBeamCostFormula1.add( manaBeamCostEP1);
+        manaBeamCostFormula1.add( manaBeamCostEP2);
+        manaBeamCostFormula1.add( manaBeamCostEP3);
+        manaBeamCostFormula2.add( manaBeamCostMagic1);
+        manaBeamCostFormula2.add(manaBeamCostMagic2);
+        manaBeamCostFormula2.add( manaBeamCostMagic3);
+        manaBeamFormula.put("current magic",  manaBeamEffectFormulaUpgrades);
+        manaBeamFormula.put("CostEp",  manaBeamCostFormula1);
+        manaBeamFormula.put("CostMagic",  manaBeamCostFormula2);
+        allAbiliyFormulas.put("manaBeam",  manaBeamFormula);
+        //instant
+        instantEffectCondition.put("manaBeam", false);
+        //coolDown
+        ArrayList<Integer> manaBeamCooldownUpgrade = new ArrayList<>();
+        manaBeamCooldownUpgrade.add(1);
+        manaBeamCooldownUpgrade.add(1);
+        manaBeamCooldownUpgrade.add(0);
+        allAbilityCooldowns.put("manaBeam",  manaBeamCooldownUpgrade);
+        /*************/ //ability bye bye!
 
     }
 
