@@ -25,6 +25,7 @@ public class UserInterface {
     private ArrayList<String> heroClassNames; // new it in the constructor
     private HashMap<String, HashMap<String, Integer>> heroClassDatas; // new it in the constructor
     private HashMap<String, ArrayList<String>> heroClassAbilities;
+	private HashMap<String, Integer> heroClassInventorySizes; // A new variable!!
 
     private ArrayList<String> heroAttributes;                         // must make this fully in the constructor
 
@@ -34,7 +35,8 @@ public class UserInterface {
     private ArrayList<String> normalEnemyNames;
     private HashMap<String, ArrayList<EnemyVersion>> normalEnemyDatas;
     private ArrayList<String> enemyAttributes;                        // must make this fully in the constructor
-
+	private ArrayList<String> possibleNormalEnemyTargets; // A new variable
+	
     private ArrayList<String> bossEnemyNames;
     private HashMap<String, HashMap<String, Integer>> bossEnemyDatas;
     private HashMap<String, ArrayList<String>> bossEnemySpecialConditions;
@@ -846,38 +848,62 @@ public class UserInterface {
     }
 
 
-    public void startCreating(Scanner in) {
-        System.out.println("Welcome!");
-        while (true) {
-            System.out.println("What do you want to create?(Enter the right number)");
-            System.out.println("1- Hero Class");
-            System.out.println("2- Hero");
-            System.out.println("3- Normal Enemy");
-            System.out.println("4- Boss Enemy");
-            System.out.println("5- Item");
-            System.out.println("6- Ability");
-
-            String input = in.next();
-            if (input.equals("1")) {
-                creatHeroClass(in);
-            } else if (input.equals("2")) {
-                createHero(in);
-            } else if (input.equals("3")) {
-                createNormalEnemy(in);
-            } else if (input.equals("4")) {
-                createBossEnemy(in);
-            } else if (input.equals("5")) {
-                createItem(in);
-            } else if (input.equals("6")) {
-                createAbility(in);
-            }
-
-            System.out.println("Want to create anything else?(Enter the right number)");
-
-            if (!yesNoQuestion(in)) {
-                break;
-            }
-        }
+    public void startCreating(Scanner in) 
+	{
+    System.out.println("Welcome!");
+		while(true)
+		{
+			System.out.println("What do you want to create?(Enter the right number)");
+			System.out.println("1- Hero Class");
+			System.out.println("2- Hero");
+			System.out.println("3- Normal Enemy");
+			System.out.println("4- Boss Enemy");
+			System.out.println("5- Item");
+			System.out.println("6- Ability");
+			System.out.println("7- Shop Data");
+			System.out.println("8- Storyline");
+			
+			String input = in.next();
+			if(input.equals("1"))
+			{
+				creatHeroClass(in);
+			}
+			else if(input.equals("2"))
+			{
+				createHero(in);
+			}
+			else if(input.equals("3"))
+			{
+				createNormalEnemy(in);
+			}
+			else if(input.equals("4"))
+			{
+				createBossEnemy(in);
+			}
+			else if(input.equals("5"))
+			{
+				createItem(in);
+			}
+			else if(input.equals("6"))
+			{
+				createAbility(in);
+			}
+			else if(input.equals("7"))
+			{
+				createShopData(in);
+			}
+			else if(input.equals("8"))
+			{
+				createStoryline(in);
+			}
+			
+			System.out.println("Want to create anything else?(Enter the right number)");
+			
+			if(!yesNoQuestion(in))
+			{
+				break;
+			}
+		}
     }
 
 
@@ -1532,8 +1558,6 @@ public class UserInterface {
         this.allAbilityCooldowns = allAbilityCooldowns;
     }
 
-
-
     public ArrayList<String> getInstantEffectConditionAbilities() {
         return instantEffectConditionAbilities;
     }
@@ -1581,6 +1605,7 @@ public class UserInterface {
     public void setEnemyGroupMoneys(ArrayList<Integer> enemyGroupMoneys) {
         this.enemyGroupMoneys = enemyGroupMoneys;
     }
+	
     public HashMap<String, Integer> getNonInstantEffectItemsUseLimit() {
         return nonInstantEffectItemsUseLimit;
     }
