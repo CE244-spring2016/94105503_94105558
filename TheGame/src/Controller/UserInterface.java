@@ -1457,8 +1457,49 @@ public class UserInterface {
 		
 		System.out.println("Ability was freaking finally made!");
     }
-
-
+	
+	
+	private void createShopData(Scanner in)
+	{
+		while(true)
+		{
+			System.out.println("Which item do you want to add to your shop?");
+			showItemNames();
+			//check invalid input
+			String itemName = in.next();
+			if(itemNames.contains(itemName))
+			{
+				shopItemNames.add(itemName);
+			}
+			else
+			{
+				System.out.println("Invalid input! Please try again");
+				continue;
+			}
+			
+			System.out.println("Please enter it's cost: ");
+			//check invalid input
+			int itemCost = in.nextInt();
+			shopItemMoneyCosts.put(itemName, itemCost);
+			
+			System.out.println("Do you want to add any other items to your shop?");
+			
+			if(!yesNoQuestion(in))
+			{
+				break;
+			}
+		}
+		
+		System.out.println("How much will be the inflation in this shop?");
+		
+		//check invalid input
+		int inflationValue = in.nextInt();
+		shopInflationValue = inflationValue;
+		
+		System.out.println("Shop data completed!");
+	}
+	
+	
     private EnemyVersion makeEnemyVersion(Scanner in, String enemyName)
 	{
 		String versionName, versionTarget;
