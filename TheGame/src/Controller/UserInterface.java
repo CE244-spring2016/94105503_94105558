@@ -14,14 +14,18 @@ import java.util.Scanner;
 */
 
 public class UserInterface {
-
     private boolean customed;
+    private int shopInflationValue;
+    private int gameTurns;
+    private int initialXP = 0;
+    private int initialMoney = 0;
+    private int immortalityPotionNum;
 
+`
     private ArrayList<String> heroClassNames; // new it in the constructor
     private HashMap<String, HashMap<String, Integer>> heroClassDatas; // new it in the constructor
-    private HashMap<String, String> heroClassAbilities;
+    private HashMap<String, ArrayList<String>> heroClassAbilities;
 
-    //private ArrayList<String> abilityNames;
     private ArrayList<String> heroAttributes;                         // must make this fully in the constructor
 
     private HashMap<String, String> herosAndTheirClasses;
@@ -41,6 +45,9 @@ public class UserInterface {
     private HashMap<String, String> itemTargets;
     private ArrayList<String> itemAttributes;                         // must make this fully in the constructor
     private ArrayList<String> possibleItemTargets;                    // must make this fully in the constructor
+    private ArrayList<String> inflationItems;
+    private ArrayList<String> instantEffectItems;
+    private HashMap<String, Integer> nonInstantEffectItemsUseLimit;
 
     private ArrayList<String> abilityNames;
     private HashMap<String, HashMap<String, ArrayList<Formula>>> allAbiliyFormulas; // Even non targeted enemy share and cooldown is handled here
@@ -53,7 +60,15 @@ public class UserInterface {
     private HashMap<String, String> primaryVariableNames;
     private HashMap<String, ArrayList<Integer>> secondaryTargetShares;
     private HashMap<String, ArrayList<Integer>> allAbilityCooldowns;
-    private HashMap<String, Boolean> instantEffectCondition;
+    private ArrayList<String> instantEffectConditionAbilities;
+
+    private ArrayList<String> shopItemNames;
+    private HashMap<String, Integer> shopItemMoneyCosts;
+
+    private ArrayList<String> gameStory;
+    private ArrayList<ArrayList<String>> storyEnemyGroups;
+    private ArrayList<Integer> enemyGroupXPs;
+    private ArrayList<Integer> enemyGroupMoneys;
 
 
     public void checkCustom(Scanner in) {
@@ -73,9 +88,96 @@ public class UserInterface {
     }
 
     public void init() {
+        //storyEnemyGroups
+        ArrayList<String> storyEnemyGroups1 = new ArrayList<>();
+        ArrayList<String> storyEnemyGroups2 = new ArrayList<>();
+        ArrayList<String> storyEnemyGroups3 = new ArrayList<>();
+        ArrayList<String> storyEnemyGroups4 = new ArrayList<>();
+        ArrayList<String> storyEnemyGroups5 = new ArrayList<>();
+        storyEnemyGroups1.add("weak thug");
+        storyEnemyGroups1.add("weak thug");
+        storyEnemyGroups1.add("weak thug");
+        storyEnemyGroups1.add("weak angel");
+        storyEnemyGroups2.add("able thug");
+        storyEnemyGroups2.add("able thug");
+        storyEnemyGroups2.add("weak angel");
+        storyEnemyGroups2.add("weak tank");
+        storyEnemyGroups3.add("able thug");
+        storyEnemyGroups3.add("mighty thug");
+        storyEnemyGroups3.add("able angel");
+        storyEnemyGroups3.add("weak tank");
+        storyEnemyGroups4.add("mighty thug");
+        storyEnemyGroups4.add("mighty thug");
+        storyEnemyGroups4.add("able angel");
+        storyEnemyGroups4.add("able tank");
+        storyEnemyGroups4.add("able tank");
+        storyEnemyGroups5.add("collector");
+
+        storyEnemyGroups.add(storyEnemyGroups1);
+        storyEnemyGroups.add(storyEnemyGroups2);
+        storyEnemyGroups.add(storyEnemyGroups3);
+        storyEnemyGroups.add(storyEnemyGroups4);
+        storyEnemyGroups.add(storyEnemyGroups5);
+
+        //enemyGroupXP
+        enemyGroupXPs.add(20);
+        enemyGroupXPs.add(25);
+        enemyGroupXPs.add(30);
+        enemyGroupXPs.add(35);
+        //enemyGroupMoneys
+        enemyGroupMoneys.add(50);
+        enemyGroupMoneys.add(60);
+        enemyGroupMoneys.add(70);
+        enemyGroupMoneys.add(80);
+        //gameStory
+        gameStory.add("You’ve entered the castle, it takes a while for your eyes to get used to " +
+                "the darkness but the horrifying halo of your enemies is vaguely visible. " +
+                "Angel’s unsettling presence and the growling of thugs tell you that your first battle has BEGUN!");
+        gameStory.add("As you wander into the hall you realize the surrounding doors can lead your" +
+                " destiny to something far worse than you expected. You know what’s anticipating you" +
+                " behind the only open door but there’s no other choice.");
+        gameStory.add("The door behind you is shut with a thunderous sound and you progress into " +
+                "the next hall holding the first key that you’ve found, hoping to seek the second one.");
+        gameStory.add("Running with the second key in your hand, you unlock the door back to the first hall " +
+                "and use the first key to burst into your most terrifying nightmares.");
+        gameStory.add("You feel hopeless and exhausted as you stalk to the final door. What’s behind that door makes" +
+                " your hearts pound and your spines shake with fear, but you came here to do one thing and backing down" +
+                " is not an option.");
+        gameStory.add("The collector falls down on his knees, he’s strained and desperate but still tries to drag himself" +
+                " toward Epoch. He knows his era has come to an end. The ancient time machine calls you to end the disorder " +
+                "and bring unity under its glorious wings, now it’s your turn to be the MASTERS OF TIME!");
+        //shop
+        shopItemNames.add("guide");
+        shopItemNames.add("defy");
+        shopItemNames.add("sword");
+        shopItemNames.add("energyboots");
+        shopItemNames.add("armor");
+        shopItemNames.add("magicstick");
+        shopItemNames.add("healthpotion");
+        shopItemNames.add("magicpotion");
+        shopItemNames.add("toughen");
+
+        shopItemMoneyCosts.put("guide", 4);
+        shopItemMoneyCosts.put("toughen", 4);
+        shopItemMoneyCosts.put("defy", 4);
+        shopItemMoneyCosts.put("sword", 25);
+        shopItemMoneyCosts.put("energyboots", 20);
+        shopItemMoneyCosts.put("armor", 25);
+        shopItemMoneyCosts.put("magicstick", 28);
+        shopItemMoneyCosts.put("healthpotion", 15);
+        shopItemMoneyCosts.put("magicpotion", 15);
+        //
+
+        immortalityPotionNum = 3;
+        initialMoney = 40;
+        initialXP = 15;
+        gameTurns = 5;
+        shopInflationValue = 2;
+        //
+        heroClassNames.add("fighter");
+        heroClassNames.add("supporter");
         HashMap<String, Integer> fighterData = new HashMap<>();
         fighterData.put("attack", 120);
-
         fighterData.put("max health", 200);
         fighterData.put("current health", 200);
         fighterData.put("health refill", 10);
@@ -85,6 +187,10 @@ public class UserInterface {
         fighterData.put("max EP", 6);
         fighterData.put("current EP", 6);
         heroClassDatas.put("fighter", fighterData);
+        ArrayList<String> fighterAbilities = new ArrayList<>();
+        fighterAbilities.add("fightTraining");
+        fighterAbilities.add("workOut");
+        heroClassAbilities.put("fighter", fighterAbilities);
 
         /*************/
 
@@ -99,10 +205,38 @@ public class UserInterface {
         supporterData.put("max EP", 5);
         supporterData.put("current EP", 5);
         heroClassDatas.put("supporter", supporterData);
+        ArrayList<String> supporterAbilities = new ArrayList<>();
+        supporterAbilities.add("quickAsBunny");
+        supporterAbilities.add("magicLessons");
+        heroClassAbilities.put("supporter", supporterAbilities);
 
-        //khode hero ha mundan
+        //khode hero ha
+        herosAndTheirClasses.put("eley", "fighter");
+        herosAndTheirClasses.put("chrome", "fighter");
+        herosAndTheirClasses.put("meryl", "supporter");
+        herosAndTheirClasses.put("bolti", "supporter");
+        ArrayList<String> eleyAbilities = new ArrayList<>();
+        ArrayList<String> chromeAbilities = new ArrayList<>();
+        ArrayList<String> merylAbilities = new ArrayList<>();
+        ArrayList<String> boltiAbilities = new ArrayList<>();
+        eleyAbilities.add("overpoweredAttack");
+        eleyAbilities.add("SwirlingAttack");
+        chromeAbilities.add("sacrifice");
+        chromeAbilities.add("criticalStrike");
+        merylAbilities.add("elixir");
+        merylAbilities.add("caretaker");
+        boltiAbilities.add("boost");
+        boltiAbilities.add("manaBeam");
+        herosAndTheirAbilities.put("eley", eleyAbilities);
+        herosAndTheirAbilities.put("chrome", chromeAbilities);
+        herosAndTheirAbilities.put("meryl", merylAbilities);
+        herosAndTheirAbilities.put("bolti", boltiAbilities);
+
 
         /*************/
+        normalEnemyNames.add("thug");
+        normalEnemyNames.add("angel");
+        normalEnemyNames.add("tank");
 
         HashMap<String, Integer> weakThugData = new HashMap<>();
         weakThugData.put("attack", 50);
@@ -118,9 +252,9 @@ public class UserInterface {
 
         //ENEMYVERSION SHOULD HAVE ANOTHER PARAMETER IN ITS CONSTRUCTOR EXP: WEAKTHUGH---> weak , thug
         ArrayList<EnemyVersion> thugEnemyVersion = new ArrayList<>();
-        thugEnemyVersion.add(new EnemyVersion("weakThug", weakThugData));
-        thugEnemyVersion.add(new EnemyVersion("ableThug", ableThugData));
-        thugEnemyVersion.add(new EnemyVersion("mightyThug", mightyThugData));
+        thugEnemyVersion.add(new EnemyVersion("weak", "thug", weakThugData));
+        thugEnemyVersion.add(new EnemyVersion("able", "thug", ableThugData));
+        thugEnemyVersion.add(new EnemyVersion("mighty", "thug", mightyThugData));
         normalEnemyDatas.put("thug", thugEnemyVersion);
 
         /*************/
@@ -134,8 +268,8 @@ public class UserInterface {
         ableThugData.put("max health", 250);
 
         ArrayList<EnemyVersion> angelEnemyVersion = new ArrayList<>();
-        angelEnemyVersion.add(new EnemyVersion("weakAngel", weakAngelData));
-        angelEnemyVersion.add(new EnemyVersion("ableAngel", ableAngelData));
+        angelEnemyVersion.add(new EnemyVersion("weak", "angel", weakAngelData));
+        angelEnemyVersion.add(new EnemyVersion("able", "angel", ableAngelData));
         normalEnemyDatas.put("angel", angelEnemyVersion);
 
         /*************/
@@ -149,8 +283,8 @@ public class UserInterface {
         ableThugData.put("max health", 500);
 
         ArrayList<EnemyVersion> tankEnemyVersion = new ArrayList<>();
-        tankEnemyVersion.add(new EnemyVersion("weakTank", weakTankData));
-        tankEnemyVersion.add(new EnemyVersion("ableTank", ableTankData));
+        tankEnemyVersion.add(new EnemyVersion("weak", "tank", weakTankData));
+        tankEnemyVersion.add(new EnemyVersion("able", "tank", ableTankData));
         normalEnemyDatas.put("tank", tankEnemyVersion);
 
         /*************/
@@ -159,46 +293,96 @@ public class UserInterface {
 
         /*************/
         //Items
+        //nonInstantEffectItemUseLimt
+        nonInstantEffectItemsUseLimit.put("healthpotion", 3);
+        nonInstantEffectItemsUseLimit.put("magicpotion", 3);
+
+        //instantEffectItems
+        instantEffectItems.add("toughen");
+        instantEffectItems.add("guide");
+        instantEffectItems.add("defy");
+        instantEffectItems.add("sword");
+        instantEffectItems.add("energyboots");
+        instantEffectItems.add("armor");
+        instantEffectItems.add("magicstick");
+        //Item names
+        itemNames.add("toughen");
+        itemNames.add("guide");
+        itemNames.add("defy");
+        itemNames.add("sword");
+        itemNames.add("energyboots");
+        itemNames.add("armor");
+        itemNames.add("magicstick");
+        itemNames.add("healthpotion");
+        itemNames.add("magicpotion");
+        //item targets
+        itemTargets.put("toughen", "himself");
+        itemTargets.put("guide", "himself");
+        itemTargets.put("defy", "himself");
+        itemTargets.put("sword", "himself");
+        itemTargets.put("energyboots", "himself");
+        itemTargets.put("armor", "himself");
+        itemTargets.put("magicstick", "himself");
+        itemTargets.put("healthpotion", "himself or an ally");
+        itemTargets.put("magicpotion", "himself or an ally");
+        //inflation Item
+        inflationItems.add("toughen");
+        inflationItems.add("guide");
+        inflationItems.add("defy");
         //ItemData
         HashMap<String, Integer> toughenData = new HashMap<>();
         toughenData.put("max health", 20);
+        toughenData.put("cost", 4);
         itemDatas.put("toughen", toughenData);
 
         HashMap<String, Integer> guideData = new HashMap<>();
         guideData.put("max magic", 20);
+        guideData.put("cost", 4);
         itemDatas.put("guide", guideData);
 
         HashMap<String, Integer> defyData = new HashMap<>();
         defyData.put("attack", 8);
+        defyData.put("cost", 4);
         itemDatas.put("defy", defyData);
 
         HashMap<String, Integer> swordData = new HashMap<>();
         swordData.put("attack", 80);
+        swordData.put("cost", 25);
         itemDatas.put("sword", swordData);
 
         HashMap<String, Integer> energyBootsData = new HashMap<>();
         energyBootsData.put("current EP", 1);
-        itemDatas.put("energyBoots", energyBootsData);
+        energyBootsData.put("cost", 20);
+        itemDatas.put("energyboots", energyBootsData);
 
         HashMap<String, Integer> armorData = new HashMap<>();
         armorData.put("max health", 200);
+        armorData.put("cost", 25);
         itemDatas.put("armor", armorData);
 
         HashMap<String, Integer> magicStickData = new HashMap<>();
         magicStickData.put("max magic", 150);
+        magicStickData.put("cost", 28);
         itemDatas.put("magicStick", magicStickData);
 
         HashMap<String, Integer> healthPotionData = new HashMap<>();
         healthPotionData.put("current health", 100);
+        healthPotionData.put("cost", 15);
         itemDatas.put("healthPotion", healthPotionData);
 
         HashMap<String, Integer> magicPotionData = new HashMap<>();
         magicPotionData.put("current magic", 50);
+        magicPotionData.put("cost", 15);
         itemDatas.put("magicPotion", magicPotionData);
 
         //item targets and etc remains
         /*************/
         //ABILITIES
+        //instant
+        instantEffectConditionAbilities.add("fightTraining");
+        instantEffectConditionAbilities.add("workOut");
+        instantEffectConditionAbilities.add("quickAsBunny");
+        instantEffectConditionAbilities.add("magicLessons");
         //names
         abilityNames.add("fightTraining");
         abilityNames.add("workOut");
@@ -403,8 +587,6 @@ public class UserInterface {
         fightTrainingFormula.put("attack", fightTrainingEffectFormulaUpgrades);
         allAbiliyFormulas.put("fightTraining", fightTrainingFormula);
 
-        //instant
-        instantEffectCondition.put("fightTraining", true);
         //workOut
         HashMap<String, ArrayList<Formula>> workOutFormula = new HashMap<>();
         Formula workOutEffectFormulaUpgrade1 = new Formula("max health + 50", null);
@@ -416,8 +598,6 @@ public class UserInterface {
         workOutEffectFormulaUpgrades.add(workOutEffectFormulaUpgrade3);
         workOutFormula.put("max health", workOutEffectFormulaUpgrades);
         allAbiliyFormulas.put("workOut", workOutFormula);
-        //instant
-        instantEffectCondition.put("workOut", true);
 
         //quickAsBunny
 
@@ -432,8 +612,6 @@ public class UserInterface {
         quickAsBunnyFormula.put("EP", quickAsBunnyEffectFormulaUpgrades);
         allAbiliyFormulas.put("quickAsBunny", quickAsBunnyFormula);
 
-        //instant
-        instantEffectCondition.put("quickAsBunny", true);
 
         //magicLessons
 
@@ -447,8 +625,6 @@ public class UserInterface {
         magicLessonsEffectFormulaUpgrades.add(magicLessonsEffectFormulaUpgrade3);
         magicLessonsFormula.put("max magic", magicLessonsEffectFormulaUpgrades);
         allAbiliyFormulas.put("magicLessons", magicLessonsFormula);
-        //instant
-        instantEffectCondition.put("magicLessons", true);
 
         //overPoweredAttack
         HashMap<String, ArrayList<Formula>> overPoweredAttackFormula = new HashMap<>();
@@ -477,8 +653,6 @@ public class UserInterface {
         overPoweredAttackFormula.put("CostEp", overPoweredAttackCostFormula1);
         overPoweredAttackFormula.put("CostMagic", overPoweredAttackCostFormula2);
         allAbiliyFormulas.put("overPoweredAttack", overPoweredAttackFormula);
-        //instant
-        instantEffectCondition.put("overPoweredAttack", false);
 
 
         //swirlingAttack----> hanu handle nashode
@@ -519,8 +693,6 @@ public class UserInterface {
         sacrificeFormula.put("CostMagic", sacrificeCostFormula2);
         sacrificeFormula.put("CostHealth", sacrificeCostFormula3);
         allAbiliyFormulas.put("sacrifice", sacrificeFormula);
-        //instant
-        instantEffectCondition.put("sacrifice", false);
         //coolDown
         ArrayList<Integer> sacrificeCooldownUpgrade = new ArrayList<>();
         sacrificeCooldownUpgrade.add(1);
@@ -535,18 +707,18 @@ public class UserInterface {
         Formula elixirEffectFormulaUpgrade1 = new Formula("current health + 100", null);
         Formula elixirEffectFormulaUpgrade2 = new Formula("current health + 150", null);
         Formula elixirEffectFormulaUpgrade3 = new Formula("current health + 150", null);
-        ArrayList<Formula>  elixirEffectFormulaUpgrades = new ArrayList<>();
+        ArrayList<Formula> elixirEffectFormulaUpgrades = new ArrayList<>();
         elixirEffectFormulaUpgrades.add(elixirEffectFormulaUpgrade1);
         elixirEffectFormulaUpgrades.add(elixirEffectFormulaUpgrade2);
-        elixirEffectFormulaUpgrades.add( elixirEffectFormulaUpgrade3);
+        elixirEffectFormulaUpgrades.add(elixirEffectFormulaUpgrade3);
         ArrayList<Formula> elixirCostFormula1 = new ArrayList<>();
         ArrayList<Formula> elixirCostFormula2 = new ArrayList<>();
-        Formula  elixirCostEP1 = new Formula("EP - 2", null);
-        Formula  elixirCostEP2 = new Formula("EP - 2", null);
-        Formula  elixirCostEP3 = new Formula("EP - 2", null);
-        Formula  elixirCostMagic1 = new Formula("current magic - 60", null);
-        Formula  elixirCostMagic2 = new Formula("current magic - 60", null);
-        Formula  elixirCostMagic3 = new Formula("current magic - 60", null);
+        Formula elixirCostEP1 = new Formula("EP - 2", null);
+        Formula elixirCostEP2 = new Formula("EP - 2", null);
+        Formula elixirCostEP3 = new Formula("EP - 2", null);
+        Formula elixirCostMagic1 = new Formula("current magic - 60", null);
+        Formula elixirCostMagic2 = new Formula("current magic - 60", null);
+        Formula elixirCostMagic3 = new Formula("current magic - 60", null);
         elixirCostFormula1.add(elixirCostEP1);
         elixirCostFormula1.add(elixirCostEP2);
         elixirCostFormula1.add(elixirCostEP3);
@@ -557,8 +729,7 @@ public class UserInterface {
         elixirFormula.put("CostEp", elixirCostFormula1);
         elixirFormula.put("CostMagic", elixirCostFormula2);
         allAbiliyFormulas.put("elixir", elixirFormula);
-        //instant
-        instantEffectCondition.put("elixir", false);
+
         //coolDown
         ArrayList<Integer> elixirCooldownUpgrade = new ArrayList<>();
         elixirCooldownUpgrade.add(1);
@@ -577,12 +748,12 @@ public class UserInterface {
         caretakerEffectFormulaUpgrades.add(caretakerEffectFormulaUpgrade3);
         ArrayList<Formula> caretakerCostFormula1 = new ArrayList<>();
         ArrayList<Formula> caretakerCostFormula2 = new ArrayList<>();
-        Formula  caretakerCostEP1 = new Formula("EP - 2", null);
-        Formula  caretakerCostEP2 = new Formula("EP - 2", null);
-        Formula  caretakerCostEP3 = new Formula("EP - 1", null);
-        Formula  caretakerCostMagic1 = new Formula("current magic - 30", null);
-        Formula  caretakerCostMagic2 = new Formula("current magic - 30", null);
-        Formula  caretakerCostMagic3 = new Formula("current magic - 30", null);
+        Formula caretakerCostEP1 = new Formula("EP - 2", null);
+        Formula caretakerCostEP2 = new Formula("EP - 2", null);
+        Formula caretakerCostEP3 = new Formula("EP - 1", null);
+        Formula caretakerCostMagic1 = new Formula("current magic - 30", null);
+        Formula caretakerCostMagic2 = new Formula("current magic - 30", null);
+        Formula caretakerCostMagic3 = new Formula("current magic - 30", null);
         caretakerCostFormula1.add(caretakerCostEP1);
         caretakerCostFormula1.add(caretakerCostEP2);
         caretakerCostFormula1.add(caretakerCostEP3);
@@ -593,8 +764,7 @@ public class UserInterface {
         caretakerFormula.put("CostEp", caretakerCostFormula1);
         caretakerFormula.put("CostMagic", caretakerCostFormula2);
         allAbiliyFormulas.put("caretaker", caretakerFormula);
-        //instant
-        instantEffectCondition.put("caretaker", false);
+
         //coolDown
         ArrayList<Integer> caretakerCooldownUpgrade = new ArrayList<>();
         caretakerCooldownUpgrade.add(1);
@@ -607,40 +777,71 @@ public class UserInterface {
         //hamun turn hast va ru attackPower miad
         HashMap<String, ArrayList<Formula>> boostFormula = new HashMap<>();
         Formula boostEffectFormulaUpgrade1 = new Formula("temporary attack power + 20", null);
-        Formula boostEffectFormulaUpgrade2 = new Formula("temporary attack power + ", null);
-        Formula boostEffectFormulaUpgrade3 = new Formula("EP + 1", null);
+        Formula boostEffectFormulaUpgrade2 = new Formula("temporary attack power + 20", null);
+        Formula boostEffectFormulaUpgrade3 = new Formula("temporary attack power + 20", null);
         ArrayList<Formula> boostEffectFormulaUpgrades = new ArrayList<>();
-        boostEffectFormulaUpgrades.add( boostEffectFormulaUpgrade1);
-        boostEffectFormulaUpgrades.add( boostEffectFormulaUpgrade2);
-        boostEffectFormulaUpgrades.add( boostEffectFormulaUpgrade3);
-        ArrayList<Formula>  boostCostFormula1 = new ArrayList<>();
-        ArrayList<Formula>  boostCostFormula2 = new ArrayList<>();
-        Formula   boostCostEP1 = new Formula("EP - 2", null);
-        Formula   boostCostEP2 = new Formula("EP - 2", null);
-        Formula   boostCostEP3 = new Formula("EP - 1", null);
-        Formula   boostCostMagic1 = new Formula("current magic - 30", null);
-        Formula   boostCostMagic2 = new Formula("current magic - 30", null);
-        Formula   boostCostMagic3 = new Formula("current magic - 30", null);
-        boostCostFormula1.add( boostCostEP1);
-        boostCostFormula1.add( boostCostEP2);
-        boostCostFormula1.add( boostCostEP3);
-        boostCostFormula2.add( boostCostMagic1);
-        boostCostFormula2.add( boostCostMagic2);
-        boostCostFormula2.add( boostCostMagic3);
-        boostFormula.put("current EP",  boostEffectFormulaUpgrades);
-        boostFormula.put("CostEp",  boostCostFormula1);
-        boostFormula.put("CostMagic",  boostCostFormula2);
-        allAbiliyFormulas.put(" boost",  boostFormula);
-        //instant
-        instantEffectCondition.put(" boost", false);
+        boostEffectFormulaUpgrades.add(boostEffectFormulaUpgrade1);
+        boostEffectFormulaUpgrades.add(boostEffectFormulaUpgrade2);
+        boostEffectFormulaUpgrades.add(boostEffectFormulaUpgrade3);
+        ArrayList<Formula> boostCostFormula1 = new ArrayList<>();
+        ArrayList<Formula> boostCostFormula2 = new ArrayList<>();
+        Formula boostCostEP1 = new Formula("EP - 2", null);
+        Formula boostCostEP2 = new Formula("EP - 2", null);
+        Formula boostCostEP3 = new Formula("EP - 2", null);
+        Formula boostCostMagic1 = new Formula("current magic - 50", null);
+        Formula boostCostMagic2 = new Formula("current magic - 50", null);
+        Formula boostCostMagic3 = new Formula("current magic - 50", null);
+        boostCostFormula1.add(boostCostEP1);
+        boostCostFormula1.add(boostCostEP2);
+        boostCostFormula1.add(boostCostEP3);
+        boostCostFormula2.add(boostCostMagic1);
+        boostCostFormula2.add(boostCostMagic2);
+        boostCostFormula2.add(boostCostMagic3);
+        boostFormula.put("temporary attack power", boostEffectFormulaUpgrades);
+        boostFormula.put("CostEp", boostCostFormula1);
+        boostFormula.put("CostMagic", boostCostFormula2);
+        allAbiliyFormulas.put(" boost", boostFormula);
         //coolDown
         ArrayList<Integer> boostCooldownUpgrade = new ArrayList<>();
         boostCooldownUpgrade.add(1);
+        boostCooldownUpgrade.add(1);
         boostCooldownUpgrade.add(0);
-        boostCooldownUpgrade.add(0);
-        allAbilityCooldowns.put(" boost",  boostCooldownUpgrade);
+        allAbilityCooldowns.put(" boost", boostCooldownUpgrade);
 
         //manaBeam
+        HashMap<String, ArrayList<Formula>> manaBeamFormula = new HashMap<>();
+        Formula manaBeamEffectFormulaUpgrade1 = new Formula("current magic + 50", null);
+        Formula manaBeamEffectFormulaUpgrade2 = new Formula("current magic + 50", null);
+        Formula manaBeamEffectFormulaUpgrade3 = new Formula("current magic + 50", null);
+        ArrayList<Formula> manaBeamEffectFormulaUpgrades = new ArrayList<>();
+        manaBeamEffectFormulaUpgrades.add(boostEffectFormulaUpgrade1);
+        manaBeamEffectFormulaUpgrades.add(boostEffectFormulaUpgrade2);
+        manaBeamEffectFormulaUpgrades.add(boostEffectFormulaUpgrade3);
+        ArrayList<Formula> manaBeamCostFormula1 = new ArrayList<>();
+        ArrayList<Formula> manaBeamCostFormula2 = new ArrayList<>();
+        Formula manaBeamCostEP1 = new Formula("EP - 1", null);
+        Formula manaBeamCostEP2 = new Formula("EP - 1", null);
+        Formula manaBeamCostEP3 = new Formula("EP - 1", null);
+        Formula manaBeamCostMagic1 = new Formula("current magic - 50", null);
+        Formula manaBeamCostMagic2 = new Formula("current magic - 50", null);
+        Formula manaBeamCostMagic3 = new Formula("current magic - 50", null);
+        manaBeamCostFormula1.add(manaBeamCostEP1);
+        manaBeamCostFormula1.add(manaBeamCostEP2);
+        manaBeamCostFormula1.add(manaBeamCostEP3);
+        manaBeamCostFormula2.add(manaBeamCostMagic1);
+        manaBeamCostFormula2.add(manaBeamCostMagic2);
+        manaBeamCostFormula2.add(manaBeamCostMagic3);
+        manaBeamFormula.put("current magic", manaBeamEffectFormulaUpgrades);
+        manaBeamFormula.put("CostEp", manaBeamCostFormula1);
+        manaBeamFormula.put("CostMagic", manaBeamCostFormula2);
+        allAbiliyFormulas.put("manaBeam", manaBeamFormula);
+        //coolDown
+        ArrayList<Integer> manaBeamCooldownUpgrade = new ArrayList<>();
+        manaBeamCooldownUpgrade.add(1);
+        manaBeamCooldownUpgrade.add(1);
+        manaBeamCooldownUpgrade.add(0);
+        allAbilityCooldowns.put("manaBeam", manaBeamCooldownUpgrade);
+        /*************/ //ability bye bye!
 
     }
 
@@ -1024,5 +1225,367 @@ public class UserInterface {
         for (int i = 0; i < possibleItemTargets.size(); i++) {
             System.out.println(possibleItemTargets.get(i));
         }
+    }
+
+
+    public ArrayList<String> getGameStory() {
+        return gameStory;
+    }
+
+    public void setGameStory(ArrayList<String> gameStory) {
+        this.gameStory = gameStory;
+    }
+
+    public boolean isCustomed() {
+        return customed;
+    }
+
+    public void setCustomed(boolean customed) {
+        this.customed = customed;
+    }
+
+    public int getShopInflationValue() {
+        return shopInflationValue;
+    }
+
+    public void setShopInflationValue(int shopInflationValue) {
+        this.shopInflationValue = shopInflationValue;
+    }
+
+    public int getGameTurns() {
+        return gameTurns;
+    }
+
+    public void setGameTurns(int gameTurns) {
+        this.gameTurns = gameTurns;
+    }
+
+    public int getInitialXP() {
+        return initialXP;
+    }
+
+    public void setInitialXP(int initialXP) {
+        this.initialXP = initialXP;
+    }
+
+    public int getInitialMoney() {
+        return initialMoney;
+    }
+
+    public void setInitialMoney(int initialMoney) {
+        this.initialMoney = initialMoney;
+    }
+
+    public int getImmortalityPotionNum() {
+        return immortalityPotionNum;
+    }
+
+    public void setImmortalityPotionNum(int immortalityPotionNum) {
+        this.immortalityPotionNum = immortalityPotionNum;
+    }
+
+    public ArrayList<String> getHeroClassNames() {
+        return heroClassNames;
+    }
+
+    public void setHeroClassNames(ArrayList<String> heroClassNames) {
+        this.heroClassNames = heroClassNames;
+    }
+
+    public HashMap<String, HashMap<String, Integer>> getHeroClassDatas() {
+        return heroClassDatas;
+    }
+
+    public void setHeroClassDatas(HashMap<String, HashMap<String, Integer>> heroClassDatas) {
+        this.heroClassDatas = heroClassDatas;
+    }
+
+    public HashMap<String, ArrayList<String>> getHeroClassAbilities() {
+        return heroClassAbilities;
+    }
+
+    public void setHeroClassAbilities(HashMap<String, ArrayList<String>> heroClassAbilities) {
+        this.heroClassAbilities = heroClassAbilities;
+    }
+
+    public ArrayList<String> getHeroAttributes() {
+        return heroAttributes;
+    }
+
+    public void setHeroAttributes(ArrayList<String> heroAttributes) {
+        this.heroAttributes = heroAttributes;
+    }
+
+    public HashMap<String, String> getHerosAndTheirClasses() {
+        return herosAndTheirClasses;
+    }
+
+    public void setHerosAndTheirClasses(HashMap<String, String> herosAndTheirClasses) {
+        this.herosAndTheirClasses = herosAndTheirClasses;
+    }
+
+    public HashMap<String, ArrayList<String>> getHerosAndTheirAbilities() {
+        return herosAndTheirAbilities;
+    }
+
+    public void setHerosAndTheirAbilities(HashMap<String, ArrayList<String>> herosAndTheirAbilities) {
+        this.herosAndTheirAbilities = herosAndTheirAbilities;
+    }
+
+    public ArrayList<String> getNormalEnemyNames() {
+        return normalEnemyNames;
+    }
+
+    public void setNormalEnemyNames(ArrayList<String> normalEnemyNames) {
+        this.normalEnemyNames = normalEnemyNames;
+    }
+
+    public HashMap<String, ArrayList<EnemyVersion>> getNormalEnemyDatas() {
+        return normalEnemyDatas;
+    }
+
+    public void setNormalEnemyDatas(HashMap<String, ArrayList<EnemyVersion>> normalEnemyDatas) {
+        this.normalEnemyDatas = normalEnemyDatas;
+    }
+
+    public ArrayList<String> getEnemyAttributes() {
+        return enemyAttributes;
+    }
+
+    public void setEnemyAttributes(ArrayList<String> enemyAttributes) {
+        this.enemyAttributes = enemyAttributes;
+    }
+
+    public ArrayList<String> getBossEnemyNames() {
+        return bossEnemyNames;
+    }
+
+    public void setBossEnemyNames(ArrayList<String> bossEnemyNames) {
+        this.bossEnemyNames = bossEnemyNames;
+    }
+
+    public HashMap<String, HashMap<String, Integer>> getBossEnemyDatas() {
+        return bossEnemyDatas;
+    }
+
+    public void setBossEnemyDatas(HashMap<String, HashMap<String, Integer>> bossEnemyDatas) {
+        this.bossEnemyDatas = bossEnemyDatas;
+    }
+
+    public HashMap<String, ArrayList<String>> getBossEnemySpecialConditions() {
+        return bossEnemySpecialConditions;
+    }
+
+    public void setBossEnemySpecialConditions(HashMap<String, ArrayList<String>> bossEnemySpecialConditions) {
+        this.bossEnemySpecialConditions = bossEnemySpecialConditions;
+    }
+
+    public HashMap<String, ArrayList<String>> getBossEnemyEarlyTurnEffects() {
+        return bossEnemyEarlyTurnEffects;
+    }
+
+    public void setBossEnemyEarlyTurnEffects(HashMap<String, ArrayList<String>> bossEnemyEarlyTurnEffects) {
+        this.bossEnemyEarlyTurnEffects = bossEnemyEarlyTurnEffects;
+    }
+
+    public ArrayList<String> getItemNames() {
+        return itemNames;
+    }
+
+    public void setItemNames(ArrayList<String> itemNames) {
+        this.itemNames = itemNames;
+    }
+
+    public HashMap<String, HashMap<String, Integer>> getItemDatas() {
+        return itemDatas;
+    }
+
+    public void setItemDatas(HashMap<String, HashMap<String, Integer>> itemDatas) {
+        this.itemDatas = itemDatas;
+    }
+
+    public HashMap<String, String> getItemTargets() {
+        return itemTargets;
+    }
+
+    public void setItemTargets(HashMap<String, String> itemTargets) {
+        this.itemTargets = itemTargets;
+    }
+
+    public ArrayList<String> getItemAttributes() {
+        return itemAttributes;
+    }
+
+    public void setItemAttributes(ArrayList<String> itemAttributes) {
+        this.itemAttributes = itemAttributes;
+    }
+
+    public ArrayList<String> getPossibleItemTargets() {
+        return possibleItemTargets;
+    }
+
+    public void setPossibleItemTargets(ArrayList<String> possibleItemTargets) {
+        this.possibleItemTargets = possibleItemTargets;
+    }
+
+    public ArrayList<String> getInflationItems() {
+        return inflationItems;
+    }
+
+    public void setInflationItems(ArrayList<String> inflationItems) {
+        this.inflationItems = inflationItems;
+    }
+
+    public ArrayList<String> getInstantEffectItems() {
+        return instantEffectItems;
+    }
+
+    public void setInstantEffectItems(ArrayList<String> instantEffectItems) {
+        this.instantEffectItems = instantEffectItems;
+    }
+
+    public ArrayList<String> getAbilityNames() {
+        return abilityNames;
+    }
+
+    public void setAbilityNames(ArrayList<String> abilityNames) {
+        this.abilityNames = abilityNames;
+    }
+
+    public HashMap<String, HashMap<String, ArrayList<Formula>>> getAllAbiliyFormulas() {
+        return allAbiliyFormulas;
+    }
+
+    public void setAllAbiliyFormulas(HashMap<String, HashMap<String, ArrayList<Formula>>> allAbiliyFormulas) {
+        this.allAbiliyFormulas = allAbiliyFormulas;
+    }
+
+    public HashMap<String, String> getAbilityTargets() {
+        return abilityTargets;
+    }
+
+    public void setAbilityTargets(HashMap<String, String> abilityTargets) {
+        this.abilityTargets = abilityTargets;
+    }
+
+    public ArrayList<String> getPossibleAbilityTargets() {
+        return possibleAbilityTargets;
+    }
+
+    public void setPossibleAbilityTargets(ArrayList<String> possibleAbilityTargets) {
+        this.possibleAbilityTargets = possibleAbilityTargets;
+    }
+
+    public HashMap<String, ArrayList<Integer>> getAllAbilityUpgradeXPs() {
+        return allAbilityUpgradeXPs;
+    }
+
+    public void setAllAbilityUpgradeXPs(HashMap<String, ArrayList<Integer>> allAbilityUpgradeXPs) {
+        this.allAbilityUpgradeXPs = allAbilityUpgradeXPs;
+    }
+
+    public ArrayList<String> getAbilityAttributes() {
+        return abilityAttributes;
+    }
+
+    public void setAbilityAttributes(ArrayList<String> abilityAttributes) {
+        this.abilityAttributes = abilityAttributes;
+    }
+
+    public HashMap<String, ArrayList<HashMap<String, Integer>>> getAllRequiredAbilities() {
+        return allRequiredAbilities;
+    }
+
+    public void setAllRequiredAbilities(HashMap<String, ArrayList<HashMap<String, Integer>>> allRequiredAbilities) {
+        this.allRequiredAbilities = allRequiredAbilities;
+    }
+
+    public HashMap<String, ArrayList<Integer>> getAbilityLuckPercents() {
+        return abilityLuckPercents;
+    }
+
+    public void setAbilityLuckPercents(HashMap<String, ArrayList<Integer>> abilityLuckPercents) {
+        this.abilityLuckPercents = abilityLuckPercents;
+    }
+
+    public HashMap<String, String> getPrimaryVariableNames() {
+        return primaryVariableNames;
+    }
+
+    public void setPrimaryVariableNames(HashMap<String, String> primaryVariableNames) {
+        this.primaryVariableNames = primaryVariableNames;
+    }
+
+    public HashMap<String, ArrayList<Integer>> getSecondaryTargetShares() {
+        return secondaryTargetShares;
+    }
+
+    public void setSecondaryTargetShares(HashMap<String, ArrayList<Integer>> secondaryTargetShares) {
+        this.secondaryTargetShares = secondaryTargetShares;
+    }
+
+    public HashMap<String, ArrayList<Integer>> getAllAbilityCooldowns() {
+        return allAbilityCooldowns;
+    }
+
+    public void setAllAbilityCooldowns(HashMap<String, ArrayList<Integer>> allAbilityCooldowns) {
+        this.allAbilityCooldowns = allAbilityCooldowns;
+    }
+
+
+
+    public ArrayList<String> getInstantEffectConditionAbilities() {
+        return instantEffectConditionAbilities;
+    }
+
+    public void setInstantEffectConditionAbilities(ArrayList<String> instantEffectConditionAbilities) {
+        this.instantEffectConditionAbilities = instantEffectConditionAbilities;
+    }
+
+    public ArrayList<String> getShopItemNames() {
+        return shopItemNames;
+    }
+
+    public void setShopItemNames(ArrayList<String> shopItemNames) {
+        this.shopItemNames = shopItemNames;
+    }
+
+    public HashMap<String, Integer> getShopItemMoneyCosts() {
+        return shopItemMoneyCosts;
+    }
+
+    public void setShopItemMoneyCosts(HashMap<String, Integer> shopItemMoneyCosts) {
+        this.shopItemMoneyCosts = shopItemMoneyCosts;
+    }
+
+    public ArrayList<ArrayList<String>> getStoryEnemyGroups() {
+        return storyEnemyGroups;
+    }
+
+    public void setStoryEnemyGroups(ArrayList<ArrayList<String>> storyEnemyGroups) {
+        this.storyEnemyGroups = storyEnemyGroups;
+    }
+
+    public ArrayList<Integer> getEnemyGroupXPs() {
+        return enemyGroupXPs;
+    }
+
+    public void setEnemyGroupXPs(ArrayList<Integer> enemyGroupXPs) {
+        this.enemyGroupXPs = enemyGroupXPs;
+    }
+
+    public ArrayList<Integer> getEnemyGroupMoneys() {
+        return enemyGroupMoneys;
+    }
+
+    public void setEnemyGroupMoneys(ArrayList<Integer> enemyGroupMoneys) {
+        this.enemyGroupMoneys = enemyGroupMoneys;
+    }
+    public HashMap<String, Integer> getNonInstantEffectItemsUseLimit() {
+        return nonInstantEffectItemsUseLimit;
+    }
+
+    public void setNonInstantEffectItemsUseLimit(HashMap<String, Integer> nonInstantEffectItemsUseLimit) {
+        this.nonInstantEffectItemsUseLimit = nonInstantEffectItemsUseLimit;
     }
 }
