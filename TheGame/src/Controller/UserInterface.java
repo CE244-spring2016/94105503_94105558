@@ -19,9 +19,8 @@ public class UserInterface {
 
     private ArrayList<String> heroClassNames; // new it in the constructor
     private HashMap<String, HashMap<String, Integer>> heroClassDatas; // new it in the constructor
-    private HashMap<String, String> heroClassAbilities;
+    private HashMap<String, ArrayList<String>> heroClassAbilities;
 
-    //private ArrayList<String> abilityNames;
     private ArrayList<String> heroAttributes;                         // must make this fully in the constructor
 
     private HashMap<String, String> herosAndTheirClasses;
@@ -73,6 +72,8 @@ public class UserInterface {
     }
 
     public void init() {
+        heroClassNames.add("fighter");
+        heroClassNames.add("supporter");
         HashMap<String, Integer> fighterData = new HashMap<>();
         fighterData.put("attack", 120);
 
@@ -85,6 +86,10 @@ public class UserInterface {
         fighterData.put("max EP", 6);
         fighterData.put("current EP", 6);
         heroClassDatas.put("fighter", fighterData);
+        ArrayList<String> fighterAbilities = new ArrayList<>();
+        fighterAbilities.add("fightTraining");
+        fighterAbilities.add("workOut");
+        heroClassAbilities.put("fighter", fighterAbilities);
 
         /*************/
 
@@ -99,10 +104,38 @@ public class UserInterface {
         supporterData.put("max EP", 5);
         supporterData.put("current EP", 5);
         heroClassDatas.put("supporter", supporterData);
+        ArrayList<String> supporterAbilities = new ArrayList<>();
+        supporterAbilities.add("quickAsBunny");
+        supporterAbilities.add("magicLessons");
+        heroClassAbilities.put("supporter", supporterAbilities);
 
-        //khode hero ha mundan
+        //khode hero ha
+        herosAndTheirClasses.put("eley", "fighter");
+        herosAndTheirClasses.put("chrome", "fighter");
+        herosAndTheirClasses.put("meryl", "supporter");
+        herosAndTheirClasses.put("bolti", "supporter");
+        ArrayList<String> eleyAbilities = new ArrayList<>();
+        ArrayList<String> chromeAbilities = new ArrayList<>();
+        ArrayList<String> merylAbilities = new ArrayList<>();
+        ArrayList<String> boltiAbilities = new ArrayList<>();
+        eleyAbilities.add("overpoweredAttack");
+        eleyAbilities.add("SwirlingAttack");
+        chromeAbilities.add("sacrifice");
+        chromeAbilities.add("criticalStrike");
+        merylAbilities.add("elixir");
+        merylAbilities.add("caretaker");
+        boltiAbilities.add("boost");
+        boltiAbilities.add("manaBeam");
+        herosAndTheirAbilities.put("eley", eleyAbilities);
+        herosAndTheirAbilities.put("chrome", chromeAbilities);
+        herosAndTheirAbilities.put("meryl", merylAbilities);
+        herosAndTheirAbilities.put("bolti", boltiAbilities);
+
 
         /*************/
+        normalEnemyNames.add("thug");
+        normalEnemyNames.add("angel");
+        normalEnemyNames.add("tank");
 
         HashMap<String, Integer> weakThugData = new HashMap<>();
         weakThugData.put("attack", 50);
@@ -118,9 +151,9 @@ public class UserInterface {
 
         //ENEMYVERSION SHOULD HAVE ANOTHER PARAMETER IN ITS CONSTRUCTOR EXP: WEAKTHUGH---> weak , thug
         ArrayList<EnemyVersion> thugEnemyVersion = new ArrayList<>();
-        thugEnemyVersion.add(new EnemyVersion("weakThug", weakThugData));
-        thugEnemyVersion.add(new EnemyVersion("ableThug", ableThugData));
-        thugEnemyVersion.add(new EnemyVersion("mightyThug", mightyThugData));
+        thugEnemyVersion.add(new EnemyVersion("weak", "thug", weakThugData));
+        thugEnemyVersion.add(new EnemyVersion("able", "thug", ableThugData));
+        thugEnemyVersion.add(new EnemyVersion("mighty", "thug", mightyThugData));
         normalEnemyDatas.put("thug", thugEnemyVersion);
 
         /*************/
@@ -134,8 +167,8 @@ public class UserInterface {
         ableThugData.put("max health", 250);
 
         ArrayList<EnemyVersion> angelEnemyVersion = new ArrayList<>();
-        angelEnemyVersion.add(new EnemyVersion("weakAngel", weakAngelData));
-        angelEnemyVersion.add(new EnemyVersion("ableAngel", ableAngelData));
+        angelEnemyVersion.add(new EnemyVersion("weak", "angel", weakAngelData));
+        angelEnemyVersion.add(new EnemyVersion("able", "angel", ableAngelData));
         normalEnemyDatas.put("angel", angelEnemyVersion);
 
         /*************/
@@ -149,8 +182,8 @@ public class UserInterface {
         ableThugData.put("max health", 500);
 
         ArrayList<EnemyVersion> tankEnemyVersion = new ArrayList<>();
-        tankEnemyVersion.add(new EnemyVersion("weakTank", weakTankData));
-        tankEnemyVersion.add(new EnemyVersion("ableTank", ableTankData));
+        tankEnemyVersion.add(new EnemyVersion("weak", "tank", weakTankData));
+        tankEnemyVersion.add(new EnemyVersion("able", "tank", ableTankData));
         normalEnemyDatas.put("tank", tankEnemyVersion);
 
         /*************/
@@ -159,6 +192,12 @@ public class UserInterface {
 
         /*************/
         //Items
+        /*    private ArrayList<String> itemNames;
+    private HashMap<String, HashMap<String, Integer>> itemDatas;
+    private HashMap<String, String> itemTargets;
+    */
+        //Item names
+        itemNames.add("toughen");
         //ItemData
         HashMap<String, Integer> toughenData = new HashMap<>();
         toughenData.put("max health", 20);
@@ -535,18 +574,18 @@ public class UserInterface {
         Formula elixirEffectFormulaUpgrade1 = new Formula("current health + 100", null);
         Formula elixirEffectFormulaUpgrade2 = new Formula("current health + 150", null);
         Formula elixirEffectFormulaUpgrade3 = new Formula("current health + 150", null);
-        ArrayList<Formula>  elixirEffectFormulaUpgrades = new ArrayList<>();
+        ArrayList<Formula> elixirEffectFormulaUpgrades = new ArrayList<>();
         elixirEffectFormulaUpgrades.add(elixirEffectFormulaUpgrade1);
         elixirEffectFormulaUpgrades.add(elixirEffectFormulaUpgrade2);
-        elixirEffectFormulaUpgrades.add( elixirEffectFormulaUpgrade3);
+        elixirEffectFormulaUpgrades.add(elixirEffectFormulaUpgrade3);
         ArrayList<Formula> elixirCostFormula1 = new ArrayList<>();
         ArrayList<Formula> elixirCostFormula2 = new ArrayList<>();
-        Formula  elixirCostEP1 = new Formula("EP - 2", null);
-        Formula  elixirCostEP2 = new Formula("EP - 2", null);
-        Formula  elixirCostEP3 = new Formula("EP - 2", null);
-        Formula  elixirCostMagic1 = new Formula("current magic - 60", null);
-        Formula  elixirCostMagic2 = new Formula("current magic - 60", null);
-        Formula  elixirCostMagic3 = new Formula("current magic - 60", null);
+        Formula elixirCostEP1 = new Formula("EP - 2", null);
+        Formula elixirCostEP2 = new Formula("EP - 2", null);
+        Formula elixirCostEP3 = new Formula("EP - 2", null);
+        Formula elixirCostMagic1 = new Formula("current magic - 60", null);
+        Formula elixirCostMagic2 = new Formula("current magic - 60", null);
+        Formula elixirCostMagic3 = new Formula("current magic - 60", null);
         elixirCostFormula1.add(elixirCostEP1);
         elixirCostFormula1.add(elixirCostEP2);
         elixirCostFormula1.add(elixirCostEP3);
@@ -577,12 +616,12 @@ public class UserInterface {
         caretakerEffectFormulaUpgrades.add(caretakerEffectFormulaUpgrade3);
         ArrayList<Formula> caretakerCostFormula1 = new ArrayList<>();
         ArrayList<Formula> caretakerCostFormula2 = new ArrayList<>();
-        Formula  caretakerCostEP1 = new Formula("EP - 2", null);
-        Formula  caretakerCostEP2 = new Formula("EP - 2", null);
-        Formula  caretakerCostEP3 = new Formula("EP - 1", null);
-        Formula  caretakerCostMagic1 = new Formula("current magic - 30", null);
-        Formula  caretakerCostMagic2 = new Formula("current magic - 30", null);
-        Formula  caretakerCostMagic3 = new Formula("current magic - 30", null);
+        Formula caretakerCostEP1 = new Formula("EP - 2", null);
+        Formula caretakerCostEP2 = new Formula("EP - 2", null);
+        Formula caretakerCostEP3 = new Formula("EP - 1", null);
+        Formula caretakerCostMagic1 = new Formula("current magic - 30", null);
+        Formula caretakerCostMagic2 = new Formula("current magic - 30", null);
+        Formula caretakerCostMagic3 = new Formula("current magic - 30", null);
         caretakerCostFormula1.add(caretakerCostEP1);
         caretakerCostFormula1.add(caretakerCostEP2);
         caretakerCostFormula1.add(caretakerCostEP3);
@@ -610,27 +649,27 @@ public class UserInterface {
         Formula boostEffectFormulaUpgrade2 = new Formula("temporary attack power + 20", null);
         Formula boostEffectFormulaUpgrade3 = new Formula("temporary attack power + 20", null);
         ArrayList<Formula> boostEffectFormulaUpgrades = new ArrayList<>();
-        boostEffectFormulaUpgrades.add( boostEffectFormulaUpgrade1);
-        boostEffectFormulaUpgrades.add( boostEffectFormulaUpgrade2);
-        boostEffectFormulaUpgrades.add( boostEffectFormulaUpgrade3);
-        ArrayList<Formula>  boostCostFormula1 = new ArrayList<>();
-        ArrayList<Formula>  boostCostFormula2 = new ArrayList<>();
-        Formula   boostCostEP1 = new Formula("EP - 2", null);
-        Formula   boostCostEP2 = new Formula("EP - 2", null);
-        Formula   boostCostEP3 = new Formula("EP - 2", null);
-        Formula   boostCostMagic1 = new Formula("current magic - 50", null);
-        Formula   boostCostMagic2 = new Formula("current magic - 50", null);
-        Formula   boostCostMagic3 = new Formula("current magic - 50", null);
-        boostCostFormula1.add( boostCostEP1);
-        boostCostFormula1.add( boostCostEP2);
-        boostCostFormula1.add( boostCostEP3);
-        boostCostFormula2.add( boostCostMagic1);
-        boostCostFormula2.add( boostCostMagic2);
-        boostCostFormula2.add( boostCostMagic3);
-        boostFormula.put("temporary attack power",  boostEffectFormulaUpgrades);
-        boostFormula.put("CostEp",  boostCostFormula1);
-        boostFormula.put("CostMagic",  boostCostFormula2);
-        allAbiliyFormulas.put(" boost",  boostFormula);
+        boostEffectFormulaUpgrades.add(boostEffectFormulaUpgrade1);
+        boostEffectFormulaUpgrades.add(boostEffectFormulaUpgrade2);
+        boostEffectFormulaUpgrades.add(boostEffectFormulaUpgrade3);
+        ArrayList<Formula> boostCostFormula1 = new ArrayList<>();
+        ArrayList<Formula> boostCostFormula2 = new ArrayList<>();
+        Formula boostCostEP1 = new Formula("EP - 2", null);
+        Formula boostCostEP2 = new Formula("EP - 2", null);
+        Formula boostCostEP3 = new Formula("EP - 2", null);
+        Formula boostCostMagic1 = new Formula("current magic - 50", null);
+        Formula boostCostMagic2 = new Formula("current magic - 50", null);
+        Formula boostCostMagic3 = new Formula("current magic - 50", null);
+        boostCostFormula1.add(boostCostEP1);
+        boostCostFormula1.add(boostCostEP2);
+        boostCostFormula1.add(boostCostEP3);
+        boostCostFormula2.add(boostCostMagic1);
+        boostCostFormula2.add(boostCostMagic2);
+        boostCostFormula2.add(boostCostMagic3);
+        boostFormula.put("temporary attack power", boostEffectFormulaUpgrades);
+        boostFormula.put("CostEp", boostCostFormula1);
+        boostFormula.put("CostMagic", boostCostFormula2);
+        allAbiliyFormulas.put(" boost", boostFormula);
         //instant
         instantEffectCondition.put(" boost", false);
         //coolDown
@@ -638,35 +677,35 @@ public class UserInterface {
         boostCooldownUpgrade.add(1);
         boostCooldownUpgrade.add(1);
         boostCooldownUpgrade.add(0);
-        allAbilityCooldowns.put(" boost",  boostCooldownUpgrade);
+        allAbilityCooldowns.put(" boost", boostCooldownUpgrade);
 
         //manaBeam
-        HashMap<String, ArrayList<Formula>>manaBeamFormula = new HashMap<>();
+        HashMap<String, ArrayList<Formula>> manaBeamFormula = new HashMap<>();
         Formula manaBeamEffectFormulaUpgrade1 = new Formula("current magic + 50", null);
         Formula manaBeamEffectFormulaUpgrade2 = new Formula("current magic + 50", null);
         Formula manaBeamEffectFormulaUpgrade3 = new Formula("current magic + 50", null);
         ArrayList<Formula> manaBeamEffectFormulaUpgrades = new ArrayList<>();
-        manaBeamEffectFormulaUpgrades.add( boostEffectFormulaUpgrade1);
-        manaBeamEffectFormulaUpgrades.add( boostEffectFormulaUpgrade2);
-        manaBeamEffectFormulaUpgrades.add( boostEffectFormulaUpgrade3);
-        ArrayList<Formula>  manaBeamCostFormula1 = new ArrayList<>();
-        ArrayList<Formula>  manaBeamCostFormula2 = new ArrayList<>();
-        Formula   manaBeamCostEP1 = new Formula("EP - 1", null);
-        Formula   manaBeamCostEP2 = new Formula("EP - 1", null);
-        Formula   manaBeamCostEP3 = new Formula("EP - 1", null);
-        Formula   manaBeamCostMagic1 = new Formula("current magic - 50", null);
-        Formula   manaBeamCostMagic2 = new Formula("current magic - 50", null);
-        Formula   manaBeamCostMagic3 = new Formula("current magic - 50", null);
-        manaBeamCostFormula1.add( manaBeamCostEP1);
-        manaBeamCostFormula1.add( manaBeamCostEP2);
-        manaBeamCostFormula1.add( manaBeamCostEP3);
-        manaBeamCostFormula2.add( manaBeamCostMagic1);
+        manaBeamEffectFormulaUpgrades.add(boostEffectFormulaUpgrade1);
+        manaBeamEffectFormulaUpgrades.add(boostEffectFormulaUpgrade2);
+        manaBeamEffectFormulaUpgrades.add(boostEffectFormulaUpgrade3);
+        ArrayList<Formula> manaBeamCostFormula1 = new ArrayList<>();
+        ArrayList<Formula> manaBeamCostFormula2 = new ArrayList<>();
+        Formula manaBeamCostEP1 = new Formula("EP - 1", null);
+        Formula manaBeamCostEP2 = new Formula("EP - 1", null);
+        Formula manaBeamCostEP3 = new Formula("EP - 1", null);
+        Formula manaBeamCostMagic1 = new Formula("current magic - 50", null);
+        Formula manaBeamCostMagic2 = new Formula("current magic - 50", null);
+        Formula manaBeamCostMagic3 = new Formula("current magic - 50", null);
+        manaBeamCostFormula1.add(manaBeamCostEP1);
+        manaBeamCostFormula1.add(manaBeamCostEP2);
+        manaBeamCostFormula1.add(manaBeamCostEP3);
+        manaBeamCostFormula2.add(manaBeamCostMagic1);
         manaBeamCostFormula2.add(manaBeamCostMagic2);
-        manaBeamCostFormula2.add( manaBeamCostMagic3);
-        manaBeamFormula.put("current magic",  manaBeamEffectFormulaUpgrades);
-        manaBeamFormula.put("CostEp",  manaBeamCostFormula1);
-        manaBeamFormula.put("CostMagic",  manaBeamCostFormula2);
-        allAbiliyFormulas.put("manaBeam",  manaBeamFormula);
+        manaBeamCostFormula2.add(manaBeamCostMagic3);
+        manaBeamFormula.put("current magic", manaBeamEffectFormulaUpgrades);
+        manaBeamFormula.put("CostEp", manaBeamCostFormula1);
+        manaBeamFormula.put("CostMagic", manaBeamCostFormula2);
+        allAbiliyFormulas.put("manaBeam", manaBeamFormula);
         //instant
         instantEffectCondition.put("manaBeam", false);
         //coolDown
@@ -674,7 +713,7 @@ public class UserInterface {
         manaBeamCooldownUpgrade.add(1);
         manaBeamCooldownUpgrade.add(1);
         manaBeamCooldownUpgrade.add(0);
-        allAbilityCooldowns.put("manaBeam",  manaBeamCooldownUpgrade);
+        allAbilityCooldowns.put("manaBeam", manaBeamCooldownUpgrade);
         /*************/ //ability bye bye!
 
     }

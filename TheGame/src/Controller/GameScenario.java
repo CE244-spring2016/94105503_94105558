@@ -42,8 +42,9 @@ public class GameScenario
 			
 		}
 	}
-	
-	
+
+
+
 	public void scenario()
 	{
 		introduceHeros();
