@@ -1139,66 +1139,92 @@ public class UserInterface {
     }
 
 
-    private void createItem(Scanner in) {
+    private void createItem(Scanner in)
+	{
         String itemName, itemTarget;
-        HashMap<String, Integer> itemData = new HashMap<>();
-
-        while (true) {
-            System.out.print("Please enter the name of the item you want to make: ");
-            itemName = in.next();
-
-            System.out.println("Are you sure?(Enter the right number)");
-
-            if (yesNoQuestion(in)) {
-                itemNames.add(itemName);
-                break;
-            }
-        }
-
-        while (true) {
-            System.out.println("Please enter the name of the attribute that you want this item to affect it");
-            showItemAttributes();
-            String attributeName = in.next();
-
-            if (!itemAttributes.contains(attributeName)) {
-                // invalid input
-                continue;
-            }
-
-            while (true) {
-                System.out.println("Please enter the amount of effect: ");
-                String attributeAmount = in.next();
-
-                if (attributeAmount.matches("[0-9]+") && attributeAmount.length() < 8) {
-                    int attributeAmountNum = Integer.parseInt(attributeAmount);
-                    itemData.put(attributeName, attributeAmountNum);
-                    break;
-                } else {
-                    // Invalid Input
-                }
-            }
-
-            System.out.println("Do you want any other effect for this item?");
-
-            if (!yesNoQuestion(in)) {
-                break;
-            }
-        }
-
-        while (true) {
-            System.out.println("Please enter the target of this item");
-            showPossibleItemTargets();
-            itemTarget = in.next();
-
-            if (itemTargets.containsKey(itemTarget)) {
-                itemTargets.put(itemName, itemTarget);
-                break;
-            }
-
-            //invalid input
-        }
-
-        System.out.println("Item was made!");
+		HashMap<String, Integer> itemData;
+		
+		while(true)
+		{
+			System.out.print("Please enter the name of the item you want to make: ");
+			itemName = in.next();
+			
+			System.out.println("Are you sure?(Enter the right number)");
+			
+			if(yesNoQuestion(in))
+			{
+				itemNames.add(itemName);
+				break;
+			}
+		}
+		
+		while(true)
+		{
+			System.out.println("Please enter the name of the attribute that you want this item to affect it");
+			showItemAttributes();
+			String attributeName = in.next();
+			
+			if(!itemAttributes.contains(attributeName))
+			{
+				// invalid input
+				continue;
+			}
+			
+			while(true)
+			{
+				System.out.println("Please enter the amount of effect: ");
+				String attributeAmount = in.next();
+				
+				if(attributeAmount.matches("[0-9]+") && attributeAmount.length() < 8)
+				{
+					int attributeAmountNum = Integer.parseInt(attributeAmount);
+					itemData.put(attributeName, attributeAmountNum);
+					break;
+				}
+				else
+				{
+					// Invalid Input
+				}
+			}
+			
+			System.out.println("Do you want any other effect for this item?");
+			
+			if(!yesNoQuestion(in))
+			{
+				break;
+			}
+		}
+		
+		while(true)
+		{
+			System.out.println("Please enter the target of this item");
+			showPossibleItemTargets();
+			itemTarget = in.next();
+			
+			if(itemTargets.containsKey(itemTarget))
+			{
+				itemTargets.put(itemName, itemTarget);
+				break;
+			}
+			
+			//invalid input
+		}
+		
+		System.out.println("Does inflation affect this item?(will it get more expensive after each time you buy it?)");
+		
+		if(yesNoQuestion(in))
+		{
+			inflationedItems.add(itemName);
+		}
+		
+		System.out.println("Does this ability take effect exactly after buying?");
+		
+		if(yesNoQuestion(in))
+		{
+			instantEffectItems.add(itemName);
+		}
+		
+		System.out.println("Item was made!");
     }
 
 
