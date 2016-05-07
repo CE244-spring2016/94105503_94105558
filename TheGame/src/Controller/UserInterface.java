@@ -1500,6 +1500,114 @@ public class UserInterface {
 	}
 	
 	
+	private void createStoryline(Scanner in)
+	{
+		System.out.println("How many parts does your game story consist of?");
+		System.out.println("(each part shows us part of the story and has it's own enemy group)");
+		//check invalid input
+		int parts = in.nextInt();
+		gameTurns = parts;
+		for(int i = 0; i < gameTurns; i++)
+		{
+			ArrayList<String> enemyNames = new ArrayList<>();
+			System.out.println("Please enter the part of story related to this part:");
+			//Check invalid input
+			String storyPart = getThisStoryPart(in);
+			gameStory.add(storyPart);
+			
+			System.out.println("How many enemies will the heros encounter in this part?");
+			//check invalid input
+			int enemyGroupNum = in.nextInt();
+			
+			for(int j = 0; j < enemyGroupNum; j++)
+			{
+				System.out.println("Do you want to add a boss enemy or a normal enemy?(Enter the right number)");
+				System.out.println("1- Normal Enemy");
+				System.out.println("2- Boss Enemy");
+				// check invalid input
+				int enemyChoice = in.nextInt();
+				if(enemyChoice == 1)
+				{
+					while(true)
+					{
+						System.out.println("Choose the enemy");
+						showNormalEnemyNames();
+						String normalEnemy = in.next();
+						if(normalEnemyNames.contains(normalEnemy))
+						{
+							System.out.println("Which version?");
+							showEnemyVersion(normalEnemy);
+							String normalEnemyVersion = getEnemyVersion(in, normalEnemy);
+							enemyNames.add(normalEnemyVersion + " " + normalEnemy);
+							break;
+						}
+						
+						System.out.println("Invalid input! Please try again");
+					}
+				}
+				else if(enemyChoice == 2)
+				{
+					while(true)
+					{
+						System.out.println("Choose the enemy");
+						showBossEnemyNames();
+						String bossEnemy = in.next();
+						if(bossEnemyNames.contains(bossEnemy))
+						{
+							enemyNames.add(bossEnemy);
+							break;
+						}
+						
+						System.out.println("Invalid input! Please try again");
+					}
+				}
+			}
+			
+			storyEnemyGroups.add(enemyNames);
+			
+			System.out.println("Will heros get any xp after beating these enemies?");
+			int xpAmount = 0;
+			if(yesNoQuestion(in))
+			{
+				System.out.println("How much?");
+				//check invalid input
+				xpAmount = in.nextInt();
+			}
+			enemyGroupXPs.add(xpAmount);
+			
+			System.out.println("Will heros get any money after beating these enemies?");
+			int moneyAmount = 0;
+			if(yesNoQuestion(in))
+			{
+				System.out.println("How much?");
+				//check invalid input
+				moneyAmount = in.nextInt();
+			}
+			enemyGroupMoneys.add(moneyAmount);
+		}
+		
+		System.out.println("There are some items named \"Immortality Potion\"");
+		System.out.println("When one of the heros die, it will automaticly revive that hero");
+		System.out.println("If you run out of them and one of the heros die.. GAME OVER");
+		System.out.println("So how many of them do you want to have at the beginning?");
+		//check invalid input
+		int potionNum = in.nextInt();
+		immortalityPotionNum = potionNum;
+		
+		System.out.println("How much xp does the team have at the beginning?");
+		//check invalid input
+		int startingXP = in.nextInt();
+		initialXP = startingXP;
+		
+		System.out.println("How much money does the team have at the beginning?");
+		//check invalid input
+		int startingMoney = in.nextInt();
+		initialMoney = startingMoney;
+		
+		System.out.println("Storyline Ended");
+	}
+	
+	
     private EnemyVersion makeEnemyVersion(Scanner in, String enemyName)
 	{
 		String versionName, versionTarget;
