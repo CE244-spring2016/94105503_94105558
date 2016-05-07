@@ -21,7 +21,7 @@ public class UserInterface {
     private int initialMoney = 0;
     private int immortalityPotionNum;
 
-`
+
     private ArrayList<String> heroClassNames; // new it in the constructor
     private HashMap<String, HashMap<String, Integer>> heroClassDatas; // new it in the constructor
     private HashMap<String, ArrayList<String>> heroClassAbilities;
