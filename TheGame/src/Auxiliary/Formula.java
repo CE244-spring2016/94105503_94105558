@@ -21,15 +21,19 @@ public class Formula {
 
     private String replaceFormula(HashMap<String, Integer> values) {
         String theNewFormula = theFormula;
-        String[] extraVariables = new String[extraVariable.size()];
-        String[] basicVariables = new String[values.size()];
-        extraVariable.keySet().toArray(extraVariables);
-        values.keySet().toArray(basicVariables);
-        for (int i = 0; i < extraVariables.length; i++) {
-            theNewFormula = theNewFormula.replaceAll(extraVariables[i], extraVariable.get(extraVariables[i]).toString());
+        if(extraVariable != null) {
+            String[] extraVariables = new String[extraVariable.size()];
+            extraVariable.keySet().toArray(extraVariables);
+            for (int i = 0; i < extraVariables.length; i++) {
+                theNewFormula = theNewFormula.replaceAll(extraVariables[i], extraVariable.get(extraVariables[i]).toString());
+            }
         }
-        for (int i = 0; i < basicVariables.length; i++) {
-            theNewFormula = theNewFormula.replaceAll(basicVariables[i], values.get(basicVariables[i]).toString());
+        if(values != null) {
+            String[] basicVariables = new String[values.size()];
+            values.keySet().toArray(basicVariables);
+            for (int i = 0; i < basicVariables.length; i++) {
+                theNewFormula = theNewFormula.replaceAll(basicVariables[i], values.get(basicVariables[i]).toString());
+            }
         }
         return theNewFormula;
     }
