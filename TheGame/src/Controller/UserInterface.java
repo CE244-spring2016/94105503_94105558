@@ -1,7 +1,5 @@
 package Controller;
 
-import java.util.*;
-
 import Auxiliary.Formula;
 import Model.EnemyVersion;
 
@@ -50,9 +48,12 @@ public class UserInterface {
     private ArrayList<String> possibleAbilityTargets;                 // must make this fully in the constructor
     private HashMap<String, ArrayList<Integer>> allAbilityUpgradeXPs;
     private ArrayList<String> abilityAttributes;                      // must make this fully in the constructor
-    private HashMap<String, ArrayList<HashMap<String, Integer>>> allRequieredAbilities;
+    private HashMap<String, ArrayList<HashMap<String, Integer>>> allRequiredAbilities;
     private HashMap<String, ArrayList<Integer>> abilityLuckPercents;
+    private HashMap<String, String> primaryVariableNames;
     private HashMap<String, ArrayList<Integer>> secondaryTargetShares;
+    private HashMap<String, ArrayList<Integer>> allAbilityCooldowns;
+    private HashMap<String, Boolean> instantEffectCondition;
 
 
     public void checkCustom(Scanner in) {
@@ -316,13 +317,13 @@ public class UserInterface {
         overPoweredAttackUpgradeRequirements.add(overPoweredAttackUpgradeRequirement1);
         overPoweredAttackUpgradeRequirements.add(overPoweredAttackUpgradeRequirement2);
         overPoweredAttackUpgradeRequirements.add(overPoweredAttackUpgradeRequirement3);
-         allRequieredAbilities.put("overPoweredAttack", overPoweredAttackUpgradeRequirements);
+        allRequiredAbilities.put("overPoweredAttack", overPoweredAttackUpgradeRequirements);
 
         HashMap<String, Integer> swirlingAttackUpgradeRequirement1 = new HashMap<>();
         swirlingAttackUpgradeRequirement1.put("workOut", 1);
         ArrayList<HashMap<String, Integer>> swirlingAttackUpgradeRequirements = new ArrayList<>();
         swirlingAttackUpgradeRequirements.add(swirlingAttackUpgradeRequirement1);
-        allRequieredAbilities.put("swirlingAttack", swirlingAttackUpgradeRequirements);
+        allRequiredAbilities.put("swirlingAttack", swirlingAttackUpgradeRequirements);
 
         HashMap<String, Integer> sacrificeUpgradeRequirement1 = new HashMap<>();
         sacrificeUpgradeRequirement1.put("workOut", 1);
@@ -334,24 +335,24 @@ public class UserInterface {
         sacrificeUpgradeRequirements.add(sacrificeUpgradeRequirement1);
         sacrificeUpgradeRequirements.add(sacrificeUpgradeRequirement2);
         sacrificeUpgradeRequirements.add(sacrificeUpgradeRequirement3);
-        allRequieredAbilities.put("sacrifice", sacrificeUpgradeRequirements);
+        allRequiredAbilities.put("sacrifice", sacrificeUpgradeRequirements);
 
         HashMap<String, Integer> criticalStrikeUpgradeRequirement1 = new HashMap<>();
         criticalStrikeUpgradeRequirement1.put("fightTraining", 1);
         ArrayList<HashMap<String, Integer>> criticalStrikeUpgradeRequirements = new ArrayList<>();
         criticalStrikeUpgradeRequirements.add(criticalStrikeUpgradeRequirement1);
-        allRequieredAbilities.put("criticalStrike", criticalStrikeUpgradeRequirements);
+        allRequiredAbilities.put("criticalStrike", criticalStrikeUpgradeRequirements);
 
         HashMap<String, Integer> elixirUpgradeRequirement1 = new HashMap<>();
         HashMap<String, Integer> elixirUpgradeRequirement2 = new HashMap<>();
         elixirUpgradeRequirement2.put("magicLessons", 1);
         HashMap<String, Integer> elixirUpgradeRequirement3 = new HashMap<>();
         elixirUpgradeRequirement3.put("magicLessons", 2);
-        ArrayList<HashMap<String, Integer>>elixirUpgradeRequirements = new ArrayList<>();
+        ArrayList<HashMap<String, Integer>> elixirUpgradeRequirements = new ArrayList<>();
         elixirUpgradeRequirements.add(elixirUpgradeRequirement1);
         elixirUpgradeRequirements.add(elixirUpgradeRequirement2);
         elixirUpgradeRequirements.add(elixirUpgradeRequirement3);
-        allRequieredAbilities.put("sacrifice", elixirUpgradeRequirements);
+        allRequiredAbilities.put("sacrifice", elixirUpgradeRequirements);
 
         HashMap<String, Integer> caretakerUpgradeRequirement1 = new HashMap<>();
         caretakerUpgradeRequirement1.put("quickAsBunny", 1);
@@ -363,7 +364,7 @@ public class UserInterface {
         caretakerUpgradeRequirements.add(caretakerUpgradeRequirement1);
         caretakerUpgradeRequirements.add(caretakerUpgradeRequirement2);
         caretakerUpgradeRequirements.add(caretakerUpgradeRequirement3);
-        allRequieredAbilities.put("caretaker", caretakerUpgradeRequirements);
+        allRequiredAbilities.put("caretaker", caretakerUpgradeRequirements);
 
         HashMap<String, Integer> manaBeamUpgradeRequirement1 = new HashMap<>();
         manaBeamUpgradeRequirement1.put("magicLessons", 1);
@@ -375,7 +376,7 @@ public class UserInterface {
         manaBeamUpgradeRequirements.add(manaBeamUpgradeRequirement1);
         manaBeamUpgradeRequirements.add(manaBeamUpgradeRequirement2);
         manaBeamUpgradeRequirements.add(manaBeamUpgradeRequirement3);
-        allRequieredAbilities.put("manaBeam", manaBeamUpgradeRequirements);
+        allRequiredAbilities.put("manaBeam", manaBeamUpgradeRequirements);
         //I think requirements are finished but Im not sure
 
         //secondaryTarget
@@ -383,7 +384,7 @@ public class UserInterface {
         swirlingAttackNonTargetShareUpgrades.add(10);
         swirlingAttackNonTargetShareUpgrades.add(20);
         swirlingAttackNonTargetShareUpgrades.add(30);
-        secondaryTargetShares.put("swirlingAttack",swirlingAttackNonTargetShareUpgrades);
+        secondaryTargetShares.put("swirlingAttack", swirlingAttackNonTargetShareUpgrades);
 
         //formula
 
@@ -391,22 +392,59 @@ public class UserInterface {
 
         //fightTraining
         HashMap<String, ArrayList<Formula>> fightTrainingFormula = new HashMap<>();
-        Formula fightTrainingEffectFormulaUpgrade1 = new Formula("30", null);
-        Formula fightTrainingEffectFormulaUpgrade2 = new Formula("30", null);
-        Formula fightTrainingEffectFormulaUpgrade3 = new Formula("30", null);
+        Formula fightTrainingEffectFormulaUpgrade1 = new Formula("attack + 30", null);
+        Formula fightTrainingEffectFormulaUpgrade2 = new Formula("attack + 30", null);
+        Formula fightTrainingEffectFormulaUpgrade3 = new Formula("attack + 30", null);
         ArrayList<Formula> fightTrainingEffectFormulaUpgrades = new ArrayList<>();
         fightTrainingEffectFormulaUpgrades.add(fightTrainingEffectFormulaUpgrade1);
         fightTrainingEffectFormulaUpgrades.add(fightTrainingEffectFormulaUpgrade2);
         fightTrainingEffectFormulaUpgrades.add(fightTrainingEffectFormulaUpgrade3);
         fightTrainingFormula.put("attack", fightTrainingEffectFormulaUpgrades);
         allAbiliyFormulas.put("fightTraining", fightTrainingFormula);
+
+        //instant
+        
         //workOut
+        HashMap<String, ArrayList<Formula>> workOutFormula = new HashMap<>();
+        Formula workOutEffectFormulaUpgrade1 = new Formula("max health + 50", null);
+        Formula workOutEffectFormulaUpgrade2 = new Formula("max health + 50", null);
+        Formula workOutEffectFormulaUpgrade3 = new Formula("max health + 50", null);
+        ArrayList<Formula> workOutEffectFormulaUpgrades = new ArrayList<>();
+        workOutEffectFormulaUpgrades.add(workOutEffectFormulaUpgrade1);
+        workOutEffectFormulaUpgrades.add(workOutEffectFormulaUpgrade2);
+        workOutEffectFormulaUpgrades.add(workOutEffectFormulaUpgrade3);
+        workOutFormula.put("max health", workOutEffectFormulaUpgrades);
+        allAbiliyFormulas.put("workOut", workOutFormula);
+
 
         //quickAsBunny
 
+        HashMap<String, ArrayList<Formula>> quickAsBunnyFormula = new HashMap<>();
+        Formula quickAsBunnyEffectFormulaUpgrade1 = new Formula("EP + 1", null);
+        Formula quickAsBunnyEffectFormulaUpgrade2 = new Formula("EP + 1", null);
+        Formula quickAsBunnyEffectFormulaUpgrade3 = new Formula("EP + 1", null);
+        ArrayList<Formula> quickAsBunnyEffectFormulaUpgrades = new ArrayList<>();
+        quickAsBunnyEffectFormulaUpgrades.add(quickAsBunnyEffectFormulaUpgrade1);
+        quickAsBunnyEffectFormulaUpgrades.add(quickAsBunnyEffectFormulaUpgrade2);
+        quickAsBunnyEffectFormulaUpgrades.add(quickAsBunnyEffectFormulaUpgrade3);
+        quickAsBunnyFormula.put("EP", quickAsBunnyEffectFormulaUpgrades);
+        allAbiliyFormulas.put("quickAsBunny", quickAsBunnyFormula);
+
         //magicLessons
 
+        HashMap<String, ArrayList<Formula>> magicLessonsFormula = new HashMap<>();
+        Formula magicLessonsEffectFormulaUpgrade1 = new Formula("max magic + 50", null);
+        Formula magicLessonsEffectFormulaUpgrade2 = new Formula("max magic + 50", null);
+        Formula magicLessonsEffectFormulaUpgrade3 = new Formula("max magic + 50", null);
+        ArrayList<Formula> magicLessonsEffectFormulaUpgrades = new ArrayList<>();
+        magicLessonsEffectFormulaUpgrades.add(magicLessonsEffectFormulaUpgrade1);
+        magicLessonsEffectFormulaUpgrades.add(magicLessonsEffectFormulaUpgrade2);
+        magicLessonsEffectFormulaUpgrades.add(magicLessonsEffectFormulaUpgrade3);
+        magicLessonsFormula.put("max magic", magicLessonsEffectFormulaUpgrades);
+        allAbiliyFormulas.put("magicLessons", magicLessonsFormula);
+
         //overPoweredAttack
+
 
         //swirlingAttack
 
@@ -421,13 +459,6 @@ public class UserInterface {
         //boost
 
         //manaBeam
-
-
-
-
-
-
-
 
 
     }
