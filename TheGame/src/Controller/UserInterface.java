@@ -990,60 +990,73 @@ public class UserInterface {
     }
 
 
-    private void createHero(Scanner in) {
-        String heroName, heroClassName;
-        ArrayList<String> abilityList = new ArrayList<>();
-
-        while (true) {
-            System.out.print("Please enter the name of the hero you want to make: ");
-            heroName = in.next();
-
-            System.out.println("Are you sure?(Enter the right number)");
-
-            if (yesNoQuestion(in)) {
-                //heroClassNames.add(heroClassName);
-                break;
-            }
-        }
-
-        while (true) {
-            System.out.println("Please choose a class for this hero: ");
-            showHeroClasses();
-
-            heroClassName = in.next();
-            if (heroClassNames.contains(heroClassName)) {
-                System.out.println("Are you sure?(Enter the right number)");
-
-                if (yesNoQuestion(in)) {
-                    herosAndTheirClasses.put(heroName, heroClassName);
-                    break;
-                }
-            } else {
-                // invalid input
-            }
-        }
-
-        System.out.println("Please enter the name of the abilities you want this hero to have:");
-        showAbilityNames();
-        while (true) {
-            String abilityName = in.next();
-            if (abilityNames.contains(abilityName)) {
-                abilityList.add(abilityName);
-            } else {
-                //invalid input
-                continue;
-            }
-
-            System.out.println("Do you want to add any other ability?(Enter the right number)");
-            if (!yesNoQuestion(in)) {
-                break;
-            }
-
-            System.out.println("Please enter the name of the next ability you want this hero to have: ");
-        }
-        herosAndTheirAbilities.put(heroName, abilityList);
-
-        System.out.println("Hero was made!");
+    private void createHero(Scanner in) 
+	{
+        	String heroName, heroClassName;
+		ArrayList<String> abilityList = new ArrayList<>();
+		
+		while(true)
+		{
+			System.out.print("Please enter the name of the hero you want to make: ");
+			heroName = in.next();
+			
+			System.out.println("Are you sure?(Enter the right number)");
+			
+			if(yesNoQuestion(in))
+			{
+				//heroClassNames.add(heroClassName);
+				break;
+			}
+		}
+		
+		while(true)
+		{
+			System.out.println("Please choose a class for this hero: ");
+			showHeroClasses();
+			
+			heroClassName = in.next();
+			if(heroClassNames.contains(heroClassName))
+			{
+				System.out.println("Are you sure?(Enter the right number)");
+				
+				if(yesNoQuestion(in))
+				{
+					herosAndTheirClasses.put(heroName, heroClassName);
+					break;
+				}
+			}
+			else
+			{
+				// invalid input
+			}
+		}
+		
+		System.out.println("Please enter the name of the abilities you want this hero to have:");
+		showAbilityNames();
+		while(true)
+		{
+			String abilityName = in.next();
+			if(abilityNames.contains(abilityName))
+			{
+				abilityList.add(abilityName);
+			}
+			else
+			{
+				//invalid input
+				continue;
+			}
+			
+			System.out.println("Do you want to add any other ability?(Enter the right number)");
+			if(!yesNoQuestion(in))
+			{
+				break;
+			}
+			
+			System.out.println("Please enter the name of the next ability you want this hero to have: ");
+		}
+		herosAndTheirAbilities.put(heroName, abilityList);
+		
+		System.out.println("Hero was made!");
     }
 
 
