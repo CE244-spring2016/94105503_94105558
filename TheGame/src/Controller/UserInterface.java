@@ -1671,48 +1671,168 @@ public class UserInterface {
 	}
 
 
-    private boolean yesNoQuestion(Scanner in) {
-        System.out.println("1- Yes");
-        System.out.println("2- No");
-        while (true) {
-            String input = in.next();
-            if (input.equals("1")) {
-                return true;
-            } else if (input.equals("2")) {
-                return false;
-            }
-
-            System.out.println("Invalid input! Please try again.");
-        }
-    }
-
-
-    private void showAbilityNames() {
-        for (int i = 0; i < abilityNames.size(); i++) {
-            System.out.println(abilityNames.get(i));
-        }
-    }
-
-
-    private void showHeroClasses() {
-        for (String heroClassName : heroClassNames) {
-            System.out.println(heroClassName);
-        }
-    }
-
-
-    private void showItemAttributes() {
-        for (int i = 0; i < itemAttributes.size(); i++) {
-            System.out.println(itemAttributes.get(i));
-        }
-    }
-
-
-    private void showPossibleItemTargets() {
-        for (int i = 0; i < possibleItemTargets.size(); i++) {
-            System.out.println(possibleItemTargets.get(i));
-        }
-    }
+    private boolean yesNoQuestion(Scanner in)
+	{
+		System.out.println("1- Yes");
+		System.out.println("2- No");
+		while(true)
+		{
+			String input = in.next();
+			if(input.equals("1"))
+			{
+				return true;
+			}
+			else if(input.equals("2"))
+			{
+				return false;
+			}
+			
+			System.out.println("Invalid input! Please try again.");
+		}
+	}
+	
+	
+	private void showAbilityNames()
+	{
+		for(int i = 0; i < abilityNames.size(); i++)
+		{
+			System.out.println(abilityNames.get(i));
+		}
+	}
+	
+	
+	private void showHeroClasses()
+	{
+		for(String heroClassName : heroClassNames)
+		{
+			System.out.println(heroClassName);
+		}
+	}
+	
+	
+	private void showItemAttributes()
+	{
+		for(int i = 0; i < itemAttributes.size(); i++)
+		{
+			System.out.println(itemAttributes.get(i));
+		}
+	}
+	
+	
+	private void showPossibleItemTargets()
+	{
+		for(int i = 0; i < possibleItemTargets.size(); i++)
+		{
+			System.out.println(possibleItemTargets.get(i));
+		}
+	}
+	
+	
+	private void showAllVariables(Set<String> variables)
+	{
+		System.out.println("Available variables:");
+		
+		for(String variableName : variables)
+		{
+			System.out.println(variableName);
+		}
+		for(String variableName : primaryVariableNames.keySet())
+		{
+			System.out.println(variableName);
+		}
+	}
+	
+	
+	private String getFormulaString(Scanner in)
+	{
+		
+		
+		return "L.O.L";
+	}
+	
+	
+	private void showNormalDamageFormula(String formula)
+	{
+		System.out.println("Normal damage formula: " + formula);
+	}
+	
+	
+	private String getRequieredAbilityName(Scanner in, String mainAbilityName)
+	{
+		String requiredAbility;
+		
+		while(true)
+		{
+			System.out.println("List of available abilities:");
+			for(int i = 0; i < abilityNames.size(); i++)
+			{
+				if(abilityNames.get(i).equals(mainAbilityName))
+				{
+					continue;
+				}
+				System.out.println(abilityNames.get(i));
+			}
+			
+			requiredAbility = in.next();
+			
+			if(!requiredAbility.equals(mainAbilityName) && abilityNames.contains(requiredAbility))
+			{
+				return requiredAbility;
+			}
+			else
+			{
+				System.out.println("Invalid input! Please try again");
+			}
+		}
+	}
+	
+	
+	private int getRequieredAbilityUpgrade(Scanner in, String requiredAbilityName)
+	{
+		int upgradeNum = allAbilityUpgradeXPs.get(requiredAbilityName).size(), requiredUpgrade;
+		System.out.println(upgradeNum + " upgrades are available");
+		System.out.print("Upgrade num: ");
+		while(true)
+		{
+			requiredUpgrade = in.nextInt();
+			if(requiredUpgrade > 0 && requiredUpgrade <= upgradeNum)
+			{
+				return requiredUpgrade;
+			}
+			System.out.println("Invalid input! Please try again");
+		}
+	}
+	
+	
+	private void showPossibleAbilityTargets()
+	{
+		System.out.println("Available targets for an ability:");
+		
+		for(int i = 0; i < possibleAbilityTargets.size(); i++)
+		{
+			System.out.println(possibleAbilityTargets);
+		}
+	}
+	
+	
+	private boolean isMultipuleTarget(String abilityTarget)
+	{
+		if(abilityTarget.equals("all enemy") || abilityTarget.equals("all ally"))
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	
+	private void showItemNames()
+	{
+		System.out.println("Available items:");
+		for(String itemName : itemNames)
+		{
+			System.out.println(itemName);
+		}
+	}
 
 
     public ArrayList<String> getGameStory() {
