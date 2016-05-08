@@ -93,8 +93,9 @@ public class UserInterface
     }
 	
 	
-    public void init() {
-        //storyEnemyGroups
+    public void init() 
+	{
+		//storyEnemyGroups
         ArrayList<String> storyEnemyGroups1 = new ArrayList<>();
         ArrayList<String> storyEnemyGroups2 = new ArrayList<>();
         ArrayList<String> storyEnemyGroups3 = new ArrayList<>();
@@ -847,7 +848,6 @@ public class UserInterface
         manaBeamCooldownUpgrade.add(0);
         allAbilityCooldowns.put("manaBeam", manaBeamCooldownUpgrade);
         /*************/ //ability bye bye!
-
     }
 	
 	
@@ -1836,6 +1836,90 @@ public class UserInterface
 		for(String itemName : itemNames)
 		{
 			System.out.println(itemName);
+		}
+	}
+	
+	
+	private String getThisStoryPart(Scanner in)
+	{
+		String storyPart;
+		while(true)
+		{
+			in.nextLine();
+			storyPart = in.nextLine();
+			
+			System.out.println("Are you sure?");
+			if(yesNoQuestion(in))
+			{
+				break;
+			}
+			
+			System.out.println("Please enter the part of story related to this part:");
+		}
+		
+		return storyPart;
+	}
+	
+	
+	private void showNormalEnemyNames()
+	{
+		System.out.println("List of enemies:");
+		for(String normalEnemyName : normalEnemyNames)
+		{
+			System.out.println(normalEnemyName);
+		}
+	}
+	
+	
+	private String getEnemyVersion(Scanner in, String mainEnemyName)
+	{
+		String enemyVersionName;
+		ArrayList<EnemyVersion> thisEnemyVersions = normalEnemyDatas.get(mainEnemyName);
+		ArrayList<String> versionNames = new ArrayList<>();
+		for(EnemyVersion version : thisEnemyVersions)
+		{
+			versionNames.add(version.getName());
+		}
+		
+		while(true)
+		{
+			enemyVersionName = in.next();
+			if(versionNames.contains(enemyVersionName))
+			{
+				return enemyVersionName;
+			}
+			
+			System.out.println("Invalid input! Please try again");
+		}
+	}
+	
+	
+	private void showEnemyVersion(String mainEnemyName)
+	{
+		System.out.println("This enemy's list of version:");
+		ArrayList<EnemyVersion> thisEnemyVersions = normalEnemyDatas.get(mainEnemyName);
+		for(EnemyVersion version : thisEnemyVersions)
+		{
+			System.out.println(version.getName());
+		}
+	}
+	
+	
+	private void showBossEnemyNames()
+	{
+		System.out.println("List of boss enemies: ");
+		for(String bossName : bossEnemyNames)
+		{
+			System.out.println(bossName);
+		}
+	}
+	
+	
+	private void showPossibleNormalEnemyTargets()
+	{
+		for(String normalEnemyTarget : possibleNormalEnemyTargets)
+		{
+			System.out.println(normalEnemyTarget);
 		}
 	}
 	
