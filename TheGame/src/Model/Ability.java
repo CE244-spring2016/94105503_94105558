@@ -36,7 +36,7 @@ public abstract class Ability
         setAbilityCooldownNums(abilityCooldownNums);
         setRequiredAbilities(requiredAbilities);
         setFormulas(formulas);
-        this.instantEffective = instantEffective;
+        setInstantEffective(instantEffective);
     }
 
     public int getCooldownTurn()
