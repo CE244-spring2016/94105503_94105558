@@ -13,7 +13,8 @@ import java.util.Scanner;
 	We could divide this class to 5-6 other classes
 */
 
-public class UserInterface {
+public class UserInterface 
+{
     private boolean customed;
     private int shopInflationValue;
     private int gameTurns;
@@ -27,6 +28,7 @@ public class UserInterface {
     private HashMap<String, ArrayList<String>> heroClassAbilities;
 	private HashMap<String, Integer> heroClassInventorySizes; // A new variable!!
 
+	private ArrayList<String> heroNames;
     private ArrayList<String> heroAttributes;                         // must make this fully in the constructor
 
     private HashMap<String, String> herosAndTheirClasses;
@@ -993,7 +995,7 @@ public class UserInterface {
 	
     private void createHero(Scanner in) 
 	{
-        	String heroName, heroClassName;
+        String heroName, heroClassName;
 		ArrayList<String> abilityList = new ArrayList<>();
 		
 		while(true)
@@ -1005,7 +1007,7 @@ public class UserInterface {
 			
 			if(yesNoQuestion(in))
 			{
-				//heroClassNames.add(heroClassName);
+				heroNames.add(heroName);
 				break;
 			}
 		}
@@ -1264,7 +1266,7 @@ public class UserInterface {
 			abilityUpgradeXPs.add(upgradeXP);
 		}
 		
-		for(int i = 0; i < abilityAttributes.size(); i++)
+		for(int i = 0; i < abilityAttributes.size(); i++) // ability formulas
 		{
 			HashMap<String, ArrayList<Double>> extraVariables = new HashMap<>();
 			String abilityAttribute = abilityAttributes.get(i);
@@ -1357,7 +1359,7 @@ public class UserInterface {
 		// Check if luck exists for this ability or not
 		System.out.println("Please enter the percent chance of luck for each upgrade");
 		ArrayList<Integer> luckPercents = new ArrayList<>();
-		for(int i = 0; i < upgradeNum; i++)
+		for(int i = 0; i < upgradeNum; i++) // ability luck percents
 		{
 			System.out.print("Upgrade " + (i + 1) + ": ");
 			// check invalid input
@@ -1368,7 +1370,7 @@ public class UserInterface {
 		
 		System.out.println("Is it required to have an upgrade of any other ability before getting any of the upgrades of this ability?");
 		
-		if(yesNoQuestion(in))
+		if(yesNoQuestion(in)) // required abilities
 		{
 			ArrayList<HashMap<String, Integer>> requieredAbilities = new ArrayList<>();
 			for(int i = 0; i < upgradeNum; i++)
@@ -1396,11 +1398,11 @@ public class UserInterface {
 				
 				requieredAbilities.add(requieredAbilityForUpgrade);
 			}
-			allRequieredAbilities.put(abilityName, requieredAbilities);
+			allRequiredAbilities.put(abilityName, requieredAbilities);
 		}
 		
 		
-		while(true)
+		while(true) // ability target
 		{
 			System.out.println("Please enter the target of this ability");
 			showPossibleAbilityTargets();
@@ -1433,7 +1435,7 @@ public class UserInterface {
 		System.out.println("How many cooldown turns does this ability have for each upgrade?");
 		System.out.println("(enter 0 if it doesn't have a cooldown)");
 		ArrayList<Integer> cooldowns = new ArrayList<>();
-		for(int i = 0; i < upgradeNum; i++)
+		for(int i = 0; i < upgradeNum; i++) // ability cooldowns
 		{
 			System.out.print("Upgrade " + (i + 1) + ": ");
 			//Check invalid input
@@ -1444,7 +1446,7 @@ public class UserInterface {
 		
 		System.out.println("Does this ability take effect exactly after upgrading?");
 		
-		if(yesNoQuestion(in))
+		if(yesNoQuestion(in)) // instant effect check
 		{
 			instantEffectConditionAbilities.add(abilityName);
 		}
@@ -1455,6 +1457,7 @@ public class UserInterface {
 			int useLimit = in.nextInt();
 			nonInstantEffectItemsUseLimit.put(abilityName, useLimit);
 		}
+		
 		
 		System.out.println("Ability was freaking finally made!");
     }
