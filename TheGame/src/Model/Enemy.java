@@ -8,22 +8,5 @@ import java.util.HashMap;
  */
 public class Enemy extends Warrior
 {
-    private HashMap<String, Integer> data;
-    private InetSocketAddress name;
-    private InetSocketAddress ID;
-
-    public HashMap<String, Integer> getData()
-    {
-        return data;
-    }
-
-    public InetSocketAddress getName()
-    {
-        return name;
-    }
-
-    public InetSocketAddress getID()
-    {
-        return ID;
-    }
+	
 }
