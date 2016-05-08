@@ -20,8 +20,8 @@ public class Hero extends Warrior
 
     public Hero(String heroClassName, HashMap<String, Integer> data, int inventorySize, ArrayList<Ability> abilities)
     {
-        this.heroClassName = heroClassName;
-        this.inventory = new Inventory(inventorySize);
+        setHeroClassName(heroClassName);
+        setInventory(new Inventory(inventorySize));
         setAbilities(abilities);
         setData(data);
     }
