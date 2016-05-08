@@ -953,6 +953,7 @@ public class UserInterface
 				}
 			}
 		}
+        heroClassDatas.put(heroClassName, heroClassData);
 		
 		System.out.println("How many abilities do you want to give to this class?");
 		//check invalid input
@@ -1145,7 +1146,7 @@ public class UserInterface
     private void createItem(Scanner in)
 	{
         String itemName, itemTarget;
-		HashMap<String, Integer> itemData;
+		HashMap<String, Integer> itemData = new HashMap<>();
 		
 		while(true)
 		{
