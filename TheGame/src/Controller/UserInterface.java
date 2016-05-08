@@ -6,6 +6,7 @@ import Model.EnemyVersion;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.Set;
 
 /*
     We need init here!
@@ -22,13 +23,13 @@ public class UserInterface
     private int initialMoney = 0;
     private int immortalityPotionNum;
 
-`
     private ArrayList<String> heroClassNames; // new it in the constructor
     private HashMap<String, HashMap<String, Integer>> heroClassDatas; // new it in the constructor
     private HashMap<String, ArrayList<String>> heroClassAbilities;
 	private HashMap<String, Integer> heroClassInventorySizes; // A new variable!!
 
-	private ArrayList<String> heroNames;
+
+    private ArrayList<String> heroNames;
     private ArrayList<String> heroAttributes;                         // must make this fully in the constructor
 
     private HashMap<String, String> herosAndTheirClasses;
@@ -49,7 +50,7 @@ public class UserInterface
     private HashMap<String, String> itemTargets;
     private ArrayList<String> itemAttributes;                         // must make this fully in the constructor
     private ArrayList<String> possibleItemTargets;                    // must make this fully in the constructor
-    private ArrayList<String> inflationItems;
+    private ArrayList<String> inflationedItems;
     private ArrayList<String> instantEffectItems;
     private HashMap<String, Integer> nonInstantEffectItemsUseLimit;
 
@@ -257,9 +258,9 @@ public class UserInterface
 
         //ENEMYVERSION SHOULD HAVE ANOTHER PARAMETER IN ITS CONSTRUCTOR EXP: WEAKTHUGH---> weak , thug
         ArrayList<EnemyVersion> thugEnemyVersion = new ArrayList<>();
-        thugEnemyVersion.add(new EnemyVersion("weak", "thug", weakThugData));
-        thugEnemyVersion.add(new EnemyVersion("able", "thug", ableThugData));
-        thugEnemyVersion.add(new EnemyVersion("mighty", "thug", mightyThugData));
+        thugEnemyVersion.add(new EnemyVersion("weak", "thug", weakThugData, "a hero" ));
+        thugEnemyVersion.add(new EnemyVersion("able", "thug", ableThugData, "a hero"));
+        thugEnemyVersion.add(new EnemyVersion("mighty", "thug", mightyThugData, "a hero"));
         normalEnemyDatas.put("thug", thugEnemyVersion);
 
         /*************/
@@ -273,8 +274,8 @@ public class UserInterface
         ableThugData.put("max health", 250);
 
         ArrayList<EnemyVersion> angelEnemyVersion = new ArrayList<>();
-        angelEnemyVersion.add(new EnemyVersion("weak", "angel", weakAngelData));
-        angelEnemyVersion.add(new EnemyVersion("able", "angel", ableAngelData));
+        angelEnemyVersion.add(new EnemyVersion("weak", "angel", weakAngelData, "an ally"));
+        angelEnemyVersion.add(new EnemyVersion("able", "angel", ableAngelData, "an ally"));
         normalEnemyDatas.put("angel", angelEnemyVersion);
 
         /*************/
@@ -288,8 +289,8 @@ public class UserInterface
         ableThugData.put("max health", 500);
 
         ArrayList<EnemyVersion> tankEnemyVersion = new ArrayList<>();
-        tankEnemyVersion.add(new EnemyVersion("weak", "tank", weakTankData));
-        tankEnemyVersion.add(new EnemyVersion("able", "tank", ableTankData));
+        tankEnemyVersion.add(new EnemyVersion("weak", "tank", weakTankData, "a hero"));
+        tankEnemyVersion.add(new EnemyVersion("able", "tank", ableTankData, "a hero"));
         normalEnemyDatas.put("tank", tankEnemyVersion);
 
         /*************/
@@ -331,9 +332,9 @@ public class UserInterface
         itemTargets.put("healthpotion", "himself or an ally");
         itemTargets.put("magicpotion", "himself or an ally");
         //inflation Item
-        inflationItems.add("toughen");
-        inflationItems.add("guide");
-        inflationItems.add("defy");
+        inflationedItems.add("toughen");
+        inflationedItems.add("guide");
+        inflationedItems.add("defy");
         //ItemData
         HashMap<String, Integer> toughenData = new HashMap<>();
         toughenData.put("max health", 20);
@@ -380,7 +381,6 @@ public class UserInterface
         magicPotionData.put("cost", 15);
         itemDatas.put("magicPotion", magicPotionData);
 
-        //item targets and etc remains
         /*************/
         //ABILITIES
         //instant
@@ -2089,13 +2089,13 @@ public class UserInterface
     }
 	
 	
-    public ArrayList<String> getInflationItems() {
-        return inflationItems;
+    public ArrayList<String> getInflationedItems() {
+        return inflationedItems;
     }
 	
 	
-    public void setInflationItems(ArrayList<String> inflationItems) {
-        this.inflationItems = inflationItems;
+    public void setInflationedItems(ArrayList<String> inflationedItems) {
+        this.inflationedItems = inflationedItems;
     }
 	
 	
@@ -2286,5 +2286,34 @@ public class UserInterface
 	
     public void setNonInstantEffectItemsUseLimit(HashMap<String, Integer> nonInstantEffectItemsUseLimit) {
         this.nonInstantEffectItemsUseLimit = nonInstantEffectItemsUseLimit;
+    }
+    public HashMap<String, Integer> getHeroClassInventorySizes()
+    {
+        return heroClassInventorySizes;
+    }
+
+    public void setHeroClassInventorySizes(HashMap<String, Integer> heroClassInventorySizes)
+    {
+        this.heroClassInventorySizes = heroClassInventorySizes;
+    }
+
+    public ArrayList<String> getHeroNames()
+    {
+        return heroNames;
+    }
+
+    public void setHeroNames(ArrayList<String> heroNames)
+    {
+        this.heroNames = heroNames;
+    }
+
+    public ArrayList<String> getPossibleNormalEnemyTargets()
+    {
+        return possibleNormalEnemyTargets;
+    }
+
+    public void setPossibleNormalEnemyTargets(ArrayList<String> possibleNormalEnemyTargets)
+    {
+        this.possibleNormalEnemyTargets = possibleNormalEnemyTargets;
     }
 }
