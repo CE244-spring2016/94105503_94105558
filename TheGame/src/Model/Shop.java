@@ -1,5 +1,7 @@
 package Model;
 
+import java.util.HashMap;
+
 /**
  * Created by Vahid on 5/5/2016.
  */

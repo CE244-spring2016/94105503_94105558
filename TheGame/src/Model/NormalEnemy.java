@@ -1,10 +1,17 @@
 package Model;
 
+import java.util.HashMap;
+
 /**
  * Created by Vahid on 5/5/2016.
  */
 public class NormalEnemy extends Enemy
 {
+	public void setData(HashMap<String, Integer> data)
+	{
+		this.data = data;
+	}
+
 	private HashMap<String, Integer> data;
     //private String name; Its handled in warrior :|
     private int ID; // maybe move this to enemy group?
@@ -17,7 +24,7 @@ public class NormalEnemy extends Enemy
 	}
 	
 	
-    public HashMap<String, Integer> getData() 
+    public HashMap<String, Integer> getData()
 	{
         return data;
     }

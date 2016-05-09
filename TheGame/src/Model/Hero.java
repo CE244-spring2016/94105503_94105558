@@ -18,42 +18,13 @@ public class Hero extends Warrior
     private Inventory inventory;
     private HashMap<String, Integer> data = new HashMap<>();
 
-    public Hero(String heroClassName, HashMap<String, Integer> data, int inventorySize, ArrayList<Ability> abilities)
+    public Hero(String heroName, String heroClassName, HashMap<String, Integer> data, int inventorySize, ArrayList<Ability> abilities)
     {
+        setName(heroName);
         setHeroClassName(heroClassName);
         setInventory(new Inventory(inventorySize));
         setAbilities(abilities);
         setData(data);
-    }
-
-    public void setAbilities(ArrayList<Ability> abilities)
-    {
-        this.abilities = abilities;
-    }
-
-    public Inventory getInventory()
-    {
-        return inventory;
-    }
-
-    public void setInventory(Inventory inventory)
-    {
-        this.inventory = inventory;
-    }
-
-    public ArrayList<Ability> getAbilities()
-    {
-        return abilities;
-    }
-
-    public void setData(HashMap<String,Integer> data)
-    {
-        this.data = data;
-    }
-
-    public HashMap<String, Integer> getData()
-    {
-        return data;
     }
 
     public static int getMoney()
@@ -85,6 +56,37 @@ public class Hero extends Warrior
     {
         Hero.immortalityPotionNum = immortalityPotionNum;
     }
+
+    public Inventory getInventory()
+    {
+        return inventory;
+    }
+
+    public void setInventory(Inventory inventory)
+    {
+        this.inventory = inventory;
+    }
+
+    public ArrayList<Ability> getAbilities()
+    {
+        return abilities;
+    }
+
+    public void setAbilities(ArrayList<Ability> abilities)
+    {
+        this.abilities = abilities;
+    }
+
+    public HashMap<String, Integer> getData()
+    {
+        return data;
+    }
+
+    public void setData(HashMap<String, Integer> data)
+    {
+        this.data = data;
+    }
+
     public String getHeroClassName()
     {
         return heroClassName;

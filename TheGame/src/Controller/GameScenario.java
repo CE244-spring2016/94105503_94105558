@@ -2,10 +2,7 @@ package Controller;
 
 import Auxiliary.Formula;
 import Auxiliary.StringParser;
-import Model.Ability;
-import Model.Hero;
-import Model.SingleTargetAbility;
-import Model.Warrior;
+import Model.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +16,8 @@ public class GameScenario
     ArrayList<Warrior> warrior; // Is this needed?
     ArrayList<Ability> abilities = new ArrayList<>();
     Scanner scanner;
+    private ArrayList<Hero> heros = new ArrayList<>();
+    private ArrayList<Enemy> enemis = new ArrayList<>();
 
     public GameScenario(UserInterface userInterface, StringParser stringParser, Scanner in)
     {
@@ -65,7 +64,7 @@ public class GameScenario
                             abilityCooldownNums, requiredAbilities, formulas, isInstantEffect));
                 }
             }
-            Hero hero = new Hero(/*heroname,*/ heroClassName, heroData, inventorySize, abilities);
+            Hero hero = new Hero(heroName, heroClassName, heroData, inventorySize, abilities);
             warrior.add(hero);
             for (int j = 0; j < abilities.size(); j++)
             {
@@ -100,7 +99,7 @@ public class GameScenario
 
     public void introduceHeros()
     {
-        System.out.println("Eley (fighter) – Chrome (fighter) – Meryl (Supporter) – Bolti (Supporter)");
+        stringParser.introduceHeros(heros);
         String order = stringParser.normalizer(this.scanner.next());
         while (!order.equals("done"))
         {
@@ -109,26 +108,15 @@ public class GameScenario
                 System.out.println("(Class name) + ?\uF0E0 (class description)");
                 System.out.println("(hero name) + ? \uF0E0 (hero description)");
             }
-            if (order.equals("again"))
+            else if (order.equals("again"))
             {
-                System.out.println("Eley (fighter) – Chrome (fighter) – Meryl (Supporter) – Bolti (Supporter)");
+                stringParser.introduceHeros(heros);
             }
-            switch (order)
+            else
             {
-                case "fighter?":
-                    break;
-                case "supporter?":
-                    break;
-                case "eley?":
-                    break;
-                case "chrome?":
-                    break;
-                case "meryl?":
-                    break;
-                case "bolti?":
-                    break;
-
+               stringParser.parseOrder(order);
             }
+           order = stringParser.normalizer(this.scanner.next());
         }
     }
 
@@ -143,29 +131,67 @@ public class GameScenario
     public void showEnemyData()
     {
 
+        stringParser.showEnemyData(enemis);
+        String order = stringParser.normalizer(this.scanner.next());
+        while (!order.equals("done"))
+        {
+            if (order.equals("help"))
+            {
+                //helping
+            }
+            else if (order.equals("again"))
+            {
+                stringParser.showEnemyData(enemis);
+            }
+            else
+            {
+                stringParser.parseOrder(order);
+            }
+            order = stringParser.normalizer(this.scanner.next());
+        }
+
     }
 
 
     public void startUpgrading()
     {
-        String command = userInterface.getUpgradeCommand();
-        while (!command.equals("Done"))
+        stringParser.heroUpgrading(heros);
+        String order = stringParser.normalizer(this.scanner.next());
+        while (!order.equals("done"))
         {
-            // do the job
-
-            command = userInterface.getUpgradeCommand();
+            if (order.equals("help"))
+            {
+                //helping
+            } else if (order.equals("again"))
+            {
+                stringParser.heroUpgrading(heros);
+            } else
+            {
+                stringParser.parseOrder(order);
+            }
+            order = stringParser.normalizer(this.scanner.next());
         }
+
     }
 
 
     public void shopping()
     {
-        String command = userInterface.getShoppingCommand();
-        while (!command.equals("Done"))
+        stringParser.shoping(heros);
+        String order = stringParser.normalizer(this.scanner.next());
+        while (!order.equals("done"))
         {
-            // do the job
-
-            command = userInterface.getShoppingCommand();
+            if (order.equals("help"))
+            {
+                //helping
+            } else if (order.equals("again"))
+            {
+                stringParser.shoping(heros);
+            } else
+            {
+                stringParser.parseOrder(order);
+            }
+            order = stringParser.normalizer(this.scanner.next());
         }
     }
 
