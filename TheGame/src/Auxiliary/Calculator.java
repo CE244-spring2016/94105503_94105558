@@ -4,15 +4,14 @@ import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
-public class Calculator {
-    private String unprocessed;
-    private String infix;
-    private String postfix;
-
+public class Calculator
+{
     private final String VALID_SYMBOLS = "()1234567890/*+-\t ";
     private final String VALID_NUMBERS = "1234567890";
     private final String OPS = "/*+-()";
-
+    private String unprocessed;
+    private String infix;
+    private String postfix;
     private Stack<Character> opstack;
     private StringBuilder postfixBuilder;
     private Stack<Character> parenthesis;
@@ -27,14 +26,19 @@ public class Calculator {
         opstack = new Stack<Character>();
         parenthesis = new Stack<Character>();
     }
-    private String toInteger(String exp) {
+
+    private String toInteger(String exp)
+    {
         //char[] exper = exp.toCharArray();
         ArrayList<Character> exper = new ArrayList<>();
-        for (int i = 0; i < exp.length(); i++) {
+        for (int i = 0; i < exp.length(); i++)
+        {
             exper.add(exp.charAt(i));
         }
-        for (int i = 0; i < exper.size(); i++) {
-            if(exper.get(i) == '.') {
+        for (int i = 0; i < exper.size(); i++)
+        {
+            if (exper.get(i) == '.')
+            {
                 exper.remove(i);
                 exper.add(i + 1, '/');
                 exper.add(i + 2, '1');
@@ -42,7 +46,8 @@ public class Calculator {
             }
         }
         StringBuilder result = new StringBuilder();
-        for (int i = 0; i < exper.size(); i++) {
+        for (int i = 0; i < exper.size(); i++)
+        {
             result.append(exper.get(i));
         }
         return result.toString();
@@ -69,54 +74,52 @@ public class Calculator {
         unprocessed = unprocessed.replaceAll(" ", "");
         boolean error = false;
 
-        for(int i=0;i<unprocessed.length();i++)
+        for (int i = 0; i < unprocessed.length(); i++)
         {
             char token = unprocessed.charAt(i);
             char nexttoken = 0;
             boolean lastchar = false;
             boolean isTokenDigit = false;
-            boolean isNextTokenDigit = false;;
+            boolean isNextTokenDigit = false;
+            ;
 
-            if(i==unprocessed.length()-1)
+            if (i == unprocessed.length() - 1)
             {
                 lastchar = true;
-            }
-            else
+            } else
             {
-                nexttoken = unprocessed.charAt(i+1);
+                nexttoken = unprocessed.charAt(i + 1);
             }
 
-            if(VALID_SYMBOLS.indexOf(token) < 0)
+            if (VALID_SYMBOLS.indexOf(token) < 0)
             {
                 System.out.println("Illegal Character.");
                 error = true;
                 break;
             }
 
-            if(!lastchar)
+            if (!lastchar)
             {
                 isTokenDigit = Character.isDigit(token);
                 isNextTokenDigit = Character.isDigit(nexttoken);
-                if((isTokenDigit && nexttoken=='(')
-                        || (token==')' && isNextTokenDigit)
-                        || (token==')') && (nexttoken=='(')
-                        || (token==')' && nexttoken=='^'))
+                if ((isTokenDigit && nexttoken == '(')
+                        || (token == ')' && isNextTokenDigit)
+                        || (token == ')') && (nexttoken == '(')
+                        || (token == ')' && nexttoken == '^'))
                 {
-                    buffer.append(token+"*"+nexttoken);
+                    buffer.append(token + "*" + nexttoken);
                     i++;
 
-                }
-                else
+                } else
                 {
                     buffer.append(token);
                 }
-            }
-            else if(lastchar)
+            } else if (lastchar)
             {
                 buffer.append(token);
             }
         }
-        if(error)
+        if (error)
             infix = postfix = "NA";
         else
             infix = buffer.toString();
@@ -125,11 +128,10 @@ public class Calculator {
     private int precedence(char token)
     {
         int result = 0;
-        if(token=='*' || token=='/')
+        if (token == '*' || token == '/')
         {
             result = 2;
-        }
-        else if(token=='+'||token=='-')
+        } else if (token == '+' || token == '-')
         {
             result = 1;
         }
@@ -139,34 +141,32 @@ public class Calculator {
 
     private void processOp(char op)
     {
-        if(opstack.empty() || op=='(')
+        if (opstack.empty() || op == '(')
         {
             opstack.push(op);
-        }
-        else
+        } else
         {
             char topop = opstack.peek();
-            if(precedence(op)>precedence(topop))
+            if (precedence(op) > precedence(topop))
             {
                 opstack.push(op);
-            }
-            else
+            } else
             {
-                while(!opstack.empty() && precedence(op) <= precedence(topop))
+                while (!opstack.empty() && precedence(op) <= precedence(topop))
                 {
                     opstack.pop();
-                    if(topop=='(')
+                    if (topop == '(')
                     {
                         break;
                     }
                     postfixBuilder.append(' ');
                     postfixBuilder.append(topop);
-                    if(!opstack.empty())
+                    if (!opstack.empty())
                     {
-                        topop=opstack.peek();
+                        topop = opstack.peek();
                     }
                 }
-                if(op!=')')
+                if (op != ')')
                     opstack.push(op);
             }
         }
@@ -174,33 +174,32 @@ public class Calculator {
 
     private boolean isOp(char op)
     {
-        return OPS.indexOf(op)!=-1;
+        return OPS.indexOf(op) != -1;
     }
 
     public void infix2postfix()
     {
         boolean error = false;
 
-        if(!infix.equals("NA"))
+        if (!infix.equals("NA"))
         {
             postfixBuilder = new StringBuilder();
 
-            for(int i=0;i<infix.length();i++)
+            for (int i = 0; i < infix.length(); i++)
             {
                 char token = infix.charAt(i);
 
                 try
                 {
-                    if(token=='(')
+                    if (token == '(')
                     {
                         parenthesis.push(token);
                     }
-                    if(token==')')
+                    if (token == ')')
                     {
                         parenthesis.pop();
                     }
-                }
-                catch(EmptyStackException e)
+                } catch (EmptyStackException e)
                 {
                     System.out.println("Unbalanced parenthesis.");
                     postfix = "NA";
@@ -208,30 +207,29 @@ public class Calculator {
                     break;
                 }
 
-                if(VALID_NUMBERS.indexOf(token)>=0)
+                if (VALID_NUMBERS.indexOf(token) >= 0)
                 {
                     postfixBuilder.append(token);
-                }
-                else if(isOp(token))
+                } else if (isOp(token))
                 {
                     processOp(token);
                     postfixBuilder.append(' ');
                 }
 
             }
-            if(!parenthesis.empty())
+            if (!parenthesis.empty())
             {
                 System.out.println("Unbalanced parenthesis.");
                 postfix = "NA";
                 error = true;
 
             }
-            if(!error)
+            if (!error)
             {
-                while(!opstack.empty())
+                while (!opstack.empty())
                 {
                     char op = opstack.pop();
-                    if(op=='(')
+                    if (op == '(')
                     {
 
                     }
@@ -247,33 +245,30 @@ public class Calculator {
 
     public BinaryTree<String> buildExpressionTree()
     {
-        if(!postfix.equals("NA"))
+        if (!postfix.equals("NA"))
         {
             String[] elements = postfix.split(" ");
 
-            for(String token: elements)
+            for (String token : elements)
             {
-                if(token.isEmpty())
+                if (token.isEmpty())
                 {
 
-                }
-                else if(Character.isDigit(token.charAt(0)))
+                } else if (Character.isDigit(token.charAt(0)))
                 {
-                    BinaryTree<String> element = new BinaryTree<String>(token,null,null);
+                    BinaryTree<String> element = new BinaryTree<String>(token, null, null);
                     binstack.push(element);
-                }
-                else
+                } else
                 {
                     BinaryTree<String> right = binstack.pop();
                     BinaryTree<String> left = binstack.pop();
-                    BinaryTree<String> element = new BinaryTree<String>(token,left,right);
+                    BinaryTree<String> element = new BinaryTree<String>(token, left, right);
                     binstack.push(element);
                 }
             }
             return binstack.pop();
 
-        }
-        else
+        } else
             return null;
 
     }
@@ -281,9 +276,9 @@ public class Calculator {
 
     public double evalExpressionTree(BinaryTree<String> eTree)
     {
-        if(eTree == null)
+        if (eTree == null)
             return 0;
-        else if(eTree.isLeaf())
+        else if (eTree.isLeaf())
             return Double.parseDouble(eTree.root.data);
         else
         {
@@ -298,16 +293,24 @@ public class Calculator {
     }
 
 
-    private double evaluate(char op, double left,double right)
+    private double evaluate(char op, double left, double right)
     {
         double result = 0;
 
-        switch(op)
+        switch (op)
         {
-            case '+' : result = left+right; break;
-            case '-' : result = left-right; break;
-            case '*' : result = left*right; break;
-            case '/' : result = left/right; break;
+            case '+':
+                result = left + right;
+                break;
+            case '-':
+                result = left - right;
+                break;
+            case '*':
+                result = left * right;
+                break;
+            case '/':
+                result = left / right;
+                break;
         }
         return result;
     }

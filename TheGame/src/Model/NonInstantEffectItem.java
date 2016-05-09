@@ -1,4 +1,5 @@
-package Model;/*
+package Model;
+/*
 	MAIN PROBLEM
 	
 	Not being able to handle stuff like:
@@ -16,27 +17,13 @@ import java.util.HashMap;
 
 public class NonInstantEffectItem extends Item
 {
-	private int cost;
 	private int useLimit;
 	
-	public NonInstantEffectItem(String name, int size, int cost, int useLimit)
+	public NonInstantEffectItem(String name, int size, int useLimit)
 	{
 		setName(name);
 		setItemSize(size);
-		setCost(cost);
 		setUseLimit(useLimit);
-	}
-	
-	
-	public void setCost(int cost)
-	{
-		this.cost = cost;
-	}
-	
-	
-	public int getCost()
-	{
-		return cost;
 	}
 	
 	

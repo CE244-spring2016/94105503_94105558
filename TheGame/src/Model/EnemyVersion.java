@@ -1,52 +1,67 @@
 package Model;
 
-import java.util.*;
+import java.util.HashMap;
 
 
 public class EnemyVersion
 {
-	String name;
+    String name;
+    String mainEnemyName;
+    HashMap<String, Integer> data;
+    String target;
 
-	public String getMainEnemyName() {
-		return mainEnemyName;
-	}
 
-	public void setMainEnemyName(String mainEnemyName) {
-		this.mainEnemyName = mainEnemyName;
-	}
+    public EnemyVersion(String name, String mainEnemyName, HashMap<String, Integer> data, String target)
+    {
+        this.data = new HashMap<>();
+        setData(data);
+        setName(name);
+        setMainEnemyName(mainEnemyName);
+        setTarget(target);
+    }
 
-	String mainEnemyName;
-	HashMap<String, Integer> data;
-	
-	public EnemyVersion(String name, String mainEnemyName, HashMap<String, Integer> data)
-	{
-		this.data = new HashMap<>();
-		setData(data);
-		setName(name);
-		setMainEnemyName(mainEnemyName);
-	}
-	
-	
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-	
-	
-	public String getName()
-	{
-		return name;
-	}
-	
-	
-	public void setData(HashMap<String, Integer> data)
-	{
-		this.data.putAll(data);
-	}
-	
-	
-	public HashMap<String, Integer> getData()
-	{
-		return data;
-	}
+    public EnemyVersion(String name, String mainEnemyName, HashMap<String, Integer> data)
+    {
+
+    }
+
+    public String getMainEnemyName()
+    {
+        return mainEnemyName;
+    }
+
+    public void setMainEnemyName(String mainEnemyName)
+    {
+        this.mainEnemyName = mainEnemyName;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public HashMap<String, Integer> getData()
+    {
+        return data;
+    }
+
+    public void setData(HashMap<String, Integer> data)
+    {
+        this.data.putAll(data);
+    }
+
+    public void setTarget(String target)
+    {
+        this.target = target;
+    }
+
+    public String getTarget()
+    {
+        return target;
+    }
 }
