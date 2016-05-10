@@ -39,6 +39,18 @@ public class UserInterface
     private HashMap<String, ArrayList<EnemyVersion>> normalEnemyDatas;
     private ArrayList<String> enemyAttributes;                        // must make this fully in the constructor
 	private ArrayList<String> possibleNormalEnemyTargets; // A new variable
+
+    public HashMap<String, ArrayList<String>> getEnemyVersionNames()
+    {
+        return enemyVersionNames;
+    }
+
+    public void setEnemyVersionNames(HashMap<String, ArrayList<String>> enemyVersionNames)
+    {
+        this.enemyVersionNames = enemyVersionNames;
+    }
+
+    private HashMap<String, ArrayList<String>> enemyVersionNames;
 	
     private ArrayList<String> bossEnemyNames;
     private HashMap<String, HashMap<String, Integer>> bossEnemyDatas;
@@ -119,6 +131,8 @@ public class UserInterface
         storyEnemyGroups4.add("able tank");
         storyEnemyGroups4.add("able tank");
         storyEnemyGroups5.add("collector");
+        ArrayList<String>
+        enemyVersionNames.put("thug", )
 
         storyEnemyGroups.add(storyEnemyGroups1);
         storyEnemyGroups.add(storyEnemyGroups2);
@@ -299,6 +313,9 @@ public class UserInterface
         //boss must be init
 
         /*************/
+        //heroClass inventorySize
+        heroClassInventorySizes.put("fighter", 3);
+        heroClassInventorySizes.put("supporter", 2);
         //Items
         //nonInstantEffectItemUseLimt
         nonInstantEffectItemsUseLimit.put("healthpotion", 3);
@@ -583,9 +600,9 @@ public class UserInterface
 
         //fightTraining
         HashMap<String, ArrayList<Formula>> fightTrainingFormula = new HashMap<>();
-        Formula fightTrainingEffectFormulaUpgrade1 = new Formula("attack + 30", null);
-        Formula fightTrainingEffectFormulaUpgrade2 = new Formula("attack + 30", null);
-        Formula fightTrainingEffectFormulaUpgrade3 = new Formula("attack + 30", null);
+        Formula fightTrainingEffectFormulaUpgrade1 = new Formula("30", null);
+        Formula fightTrainingEffectFormulaUpgrade2 = new Formula("30", null);
+        Formula fightTrainingEffectFormulaUpgrade3 = new Formula("30", null);
         ArrayList<Formula> fightTrainingEffectFormulaUpgrades = new ArrayList<>();
         fightTrainingEffectFormulaUpgrades.add(fightTrainingEffectFormulaUpgrade1);
         fightTrainingEffectFormulaUpgrades.add(fightTrainingEffectFormulaUpgrade2);
@@ -595,9 +612,9 @@ public class UserInterface
 
         //workOut
         HashMap<String, ArrayList<Formula>> workOutFormula = new HashMap<>();
-        Formula workOutEffectFormulaUpgrade1 = new Formula("max health + 50", null);
-        Formula workOutEffectFormulaUpgrade2 = new Formula("max health + 50", null);
-        Formula workOutEffectFormulaUpgrade3 = new Formula("max health + 50", null);
+        Formula workOutEffectFormulaUpgrade1 = new Formula("50", null);
+        Formula workOutEffectFormulaUpgrade2 = new Formula("50", null);
+        Formula workOutEffectFormulaUpgrade3 = new Formula("50", null);
         ArrayList<Formula> workOutEffectFormulaUpgrades = new ArrayList<>();
         workOutEffectFormulaUpgrades.add(workOutEffectFormulaUpgrade1);
         workOutEffectFormulaUpgrades.add(workOutEffectFormulaUpgrade2);
@@ -608,9 +625,9 @@ public class UserInterface
         //quickAsBunny
 
         HashMap<String, ArrayList<Formula>> quickAsBunnyFormula = new HashMap<>();
-        Formula quickAsBunnyEffectFormulaUpgrade1 = new Formula("EP + 1", null);
-        Formula quickAsBunnyEffectFormulaUpgrade2 = new Formula("EP + 1", null);
-        Formula quickAsBunnyEffectFormulaUpgrade3 = new Formula("EP + 1", null);
+        Formula quickAsBunnyEffectFormulaUpgrade1 = new Formula("1", null);
+        Formula quickAsBunnyEffectFormulaUpgrade2 = new Formula("1", null);
+        Formula quickAsBunnyEffectFormulaUpgrade3 = new Formula("1", null);
         ArrayList<Formula> quickAsBunnyEffectFormulaUpgrades = new ArrayList<>();
         quickAsBunnyEffectFormulaUpgrades.add(quickAsBunnyEffectFormulaUpgrade1);
         quickAsBunnyEffectFormulaUpgrades.add(quickAsBunnyEffectFormulaUpgrade2);
@@ -622,9 +639,9 @@ public class UserInterface
         //magicLessons
 
         HashMap<String, ArrayList<Formula>> magicLessonsFormula = new HashMap<>();
-        Formula magicLessonsEffectFormulaUpgrade1 = new Formula("max magic + 50", null);
-        Formula magicLessonsEffectFormulaUpgrade2 = new Formula("max magic + 50", null);
-        Formula magicLessonsEffectFormulaUpgrade3 = new Formula("max magic + 50", null);
+        Formula magicLessonsEffectFormulaUpgrade1 = new Formula("50", null);
+        Formula magicLessonsEffectFormulaUpgrade2 = new Formula("50", null);
+        Formula magicLessonsEffectFormulaUpgrade3 = new Formula("50", null);
         ArrayList<Formula> magicLessonsEffectFormulaUpgrades = new ArrayList<>();
         magicLessonsEffectFormulaUpgrades.add(magicLessonsEffectFormulaUpgrade1);
         magicLessonsEffectFormulaUpgrades.add(magicLessonsEffectFormulaUpgrade2);
@@ -634,28 +651,28 @@ public class UserInterface
 
         //overPoweredAttack
         HashMap<String, ArrayList<Formula>> overPoweredAttackFormula = new HashMap<>();
-        Formula overPoweredAttackEffectFormulaUpgrade1 = new Formula("1.2 * attack", null);
-        Formula overPoweredAttackEffectFormulaUpgrade2 = new Formula("1.4 * attack", null);
-        Formula overPoweredAttackEffectFormulaUpgrade3 = new Formula("1.6 * attack", null);
+        Formula overPoweredAttackEffectFormulaUpgrade1 = new Formula("(0-1.2) * attack", null);
+        Formula overPoweredAttackEffectFormulaUpgrade2 = new Formula("(0-1.4) * attack", null);
+        Formula overPoweredAttackEffectFormulaUpgrade3 = new Formula("(0-1.6) * attack", null);
         ArrayList<Formula> overPoweredAttackEffectFormulaUpgrades = new ArrayList<>();
         overPoweredAttackEffectFormulaUpgrades.add(overPoweredAttackEffectFormulaUpgrade1);
         overPoweredAttackEffectFormulaUpgrades.add(overPoweredAttackEffectFormulaUpgrade2);
         overPoweredAttackEffectFormulaUpgrades.add(overPoweredAttackEffectFormulaUpgrade3);
         ArrayList<Formula> overPoweredAttackCostFormula1 = new ArrayList<>();
         ArrayList<Formula> overPoweredAttackCostFormula2 = new ArrayList<>();
-        Formula overPoweredAttackCostEP1 = new Formula("EP - 2", null);
-        Formula overPoweredAttackCostEP2 = new Formula("EP - 2", null);
-        Formula overPoweredAttackCostEP3 = new Formula("EP - 2", null);
-        Formula overPoweredAttackCostMagic1 = new Formula("current magic - 50", null);
-        Formula overPoweredAttackCostMagic2 = new Formula("current magic - 50", null);
-        Formula overPoweredAttackCostMagic3 = new Formula("current magic - 50", null);
+        Formula overPoweredAttackCostEP1 = new Formula("0-2", null);
+        Formula overPoweredAttackCostEP2 = new Formula("0-2", null);
+        Formula overPoweredAttackCostEP3 = new Formula("0-2", null);
+        Formula overPoweredAttackCostMagic1 = new Formula("0-50", null);
+        Formula overPoweredAttackCostMagic2 = new Formula("0-50", null);
+        Formula overPoweredAttackCostMagic3 = new Formula("0-50", null);
         overPoweredAttackCostFormula1.add(overPoweredAttackCostEP1);
         overPoweredAttackCostFormula1.add(overPoweredAttackCostEP2);
         overPoweredAttackCostFormula1.add(overPoweredAttackCostEP3);
         overPoweredAttackCostFormula2.add(overPoweredAttackCostMagic1);
         overPoweredAttackCostFormula2.add(overPoweredAttackCostMagic2);
         overPoweredAttackCostFormula2.add(overPoweredAttackCostMagic3);
-        overPoweredAttackFormula.put("damage", overPoweredAttackEffectFormulaUpgrades);
+        overPoweredAttackFormula.put("health", overPoweredAttackEffectFormulaUpgrades);
         overPoweredAttackFormula.put("CostEp", overPoweredAttackCostFormula1);
         overPoweredAttackFormula.put("CostMagic", overPoweredAttackCostFormula2);
         allAbiliyFormulas.put("overPoweredAttack", overPoweredAttackFormula);
@@ -676,15 +693,15 @@ public class UserInterface
         ArrayList<Formula> sacrificeCostFormula1 = new ArrayList<>();
         ArrayList<Formula> sacrificeCostFormula2 = new ArrayList<>();
         ArrayList<Formula> sacrificeCostFormula3 = new ArrayList<>();
-        Formula sacrificeCostEP1 = new Formula("EP - 3", null);
-        Formula sacrificeCostEP2 = new Formula("EP - 3", null);
-        Formula sacrificeCostEP3 = new Formula("EP - 3", null);
-        Formula sacrificeCostMagic1 = new Formula("current magic - 60", null);
-        Formula sacrificeCostMagic2 = new Formula("current magic - 60", null);
-        Formula sacrificeCostMagic3 = new Formula("current magic - 60", null);
-        Formula sacrificeCostHealth1 = new Formula("current health - 40", null);
-        Formula sacrificeCostHealth2 = new Formula("current health - 50", null);
-        Formula sacrificeCostHealth3 = new Formula("current health - 60", null);
+        Formula sacrificeCostEP1 = new Formula("0- 3", null);
+        Formula sacrificeCostEP2 = new Formula("0 - 3", null);
+        Formula sacrificeCostEP3 = new Formula("0 - 3", null);
+        Formula sacrificeCostMagic1 = new Formula("0 - 60", null);
+        Formula sacrificeCostMagic2 = new Formula("0 - 60", null);
+        Formula sacrificeCostMagic3 = new Formula("0- 60", null);
+        Formula sacrificeCostHealth1 = new Formula("0 - 40", null);
+        Formula sacrificeCostHealth2 = new Formula("0- 50", null);
+        Formula sacrificeCostHealth3 = new Formula("0- 60", null);
         sacrificeCostFormula1.add(sacrificeCostEP1);
         sacrificeCostFormula1.add(sacrificeCostEP2);
         sacrificeCostFormula1.add(sacrificeCostEP3);
@@ -710,21 +727,21 @@ public class UserInterface
 
         //elixir
         HashMap<String, ArrayList<Formula>> elixirFormula = new HashMap<>();
-        Formula elixirEffectFormulaUpgrade1 = new Formula("current health + 100", null);
-        Formula elixirEffectFormulaUpgrade2 = new Formula("current health + 150", null);
-        Formula elixirEffectFormulaUpgrade3 = new Formula("current health + 150", null);
+        Formula elixirEffectFormulaUpgrade1 = new Formula("100", null);
+        Formula elixirEffectFormulaUpgrade2 = new Formula("150", null);
+        Formula elixirEffectFormulaUpgrade3 = new Formula(" 150", null);
         ArrayList<Formula> elixirEffectFormulaUpgrades = new ArrayList<>();
         elixirEffectFormulaUpgrades.add(elixirEffectFormulaUpgrade1);
         elixirEffectFormulaUpgrades.add(elixirEffectFormulaUpgrade2);
         elixirEffectFormulaUpgrades.add(elixirEffectFormulaUpgrade3);
         ArrayList<Formula> elixirCostFormula1 = new ArrayList<>();
         ArrayList<Formula> elixirCostFormula2 = new ArrayList<>();
-        Formula elixirCostEP1 = new Formula("EP - 2", null);
-        Formula elixirCostEP2 = new Formula("EP - 2", null);
-        Formula elixirCostEP3 = new Formula("EP - 2", null);
-        Formula elixirCostMagic1 = new Formula("current magic - 60", null);
-        Formula elixirCostMagic2 = new Formula("current magic - 60", null);
-        Formula elixirCostMagic3 = new Formula("current magic - 60", null);
+        Formula elixirCostEP1 = new Formula("0 - 2", null);
+        Formula elixirCostEP2 = new Formula("0 - 2", null);
+        Formula elixirCostEP3 = new Formula("0 - 2", null);
+        Formula elixirCostMagic1 = new Formula("0 - 60", null);
+        Formula elixirCostMagic2 = new Formula("0 - 60", null);
+        Formula elixirCostMagic3 = new Formula("0 - 60", null);
         elixirCostFormula1.add(elixirCostEP1);
         elixirCostFormula1.add(elixirCostEP2);
         elixirCostFormula1.add(elixirCostEP3);
@@ -745,21 +762,21 @@ public class UserInterface
 
         //caretaker
         HashMap<String, ArrayList<Formula>> caretakerFormula = new HashMap<>();
-        Formula caretakerEffectFormulaUpgrade1 = new Formula("EP + 1", null);
-        Formula caretakerEffectFormulaUpgrade2 = new Formula("EP + 1", null);
-        Formula caretakerEffectFormulaUpgrade3 = new Formula("EP + 1", null);
+        Formula caretakerEffectFormulaUpgrade1 = new Formula("1", null);
+        Formula caretakerEffectFormulaUpgrade2 = new Formula("1", null);
+        Formula caretakerEffectFormulaUpgrade3 = new Formula("1", null);
         ArrayList<Formula> caretakerEffectFormulaUpgrades = new ArrayList<>();
         caretakerEffectFormulaUpgrades.add(caretakerEffectFormulaUpgrade1);
         caretakerEffectFormulaUpgrades.add(caretakerEffectFormulaUpgrade2);
         caretakerEffectFormulaUpgrades.add(caretakerEffectFormulaUpgrade3);
         ArrayList<Formula> caretakerCostFormula1 = new ArrayList<>();
         ArrayList<Formula> caretakerCostFormula2 = new ArrayList<>();
-        Formula caretakerCostEP1 = new Formula("EP - 2", null);
-        Formula caretakerCostEP2 = new Formula("EP - 2", null);
-        Formula caretakerCostEP3 = new Formula("EP - 1", null);
-        Formula caretakerCostMagic1 = new Formula("current magic - 30", null);
-        Formula caretakerCostMagic2 = new Formula("current magic - 30", null);
-        Formula caretakerCostMagic3 = new Formula("current magic - 30", null);
+        Formula caretakerCostEP1 = new Formula("0 - 2", null);
+        Formula caretakerCostEP2 = new Formula("0 - 2", null);
+        Formula caretakerCostEP3 = new Formula("0 - 1", null);
+        Formula caretakerCostMagic1 = new Formula("0 - 30", null);
+        Formula caretakerCostMagic2 = new Formula("0 - 30", null);
+        Formula caretakerCostMagic3 = new Formula("0 - 30", null);
         caretakerCostFormula1.add(caretakerCostEP1);
         caretakerCostFormula1.add(caretakerCostEP2);
         caretakerCostFormula1.add(caretakerCostEP3);
@@ -782,21 +799,21 @@ public class UserInterface
         //in ghesmat temporary attack power = temporary attack power + A(vali bahs injas ke mitunan ru ham jam shan va inke faghat tu
         //hamun turn hast va ru attackPower miad
         HashMap<String, ArrayList<Formula>> boostFormula = new HashMap<>();
-        Formula boostEffectFormulaUpgrade1 = new Formula("temporary attack power + 20", null);
-        Formula boostEffectFormulaUpgrade2 = new Formula("temporary attack power + 20", null);
-        Formula boostEffectFormulaUpgrade3 = new Formula("temporary attack power + 20", null);
+        Formula boostEffectFormulaUpgrade1 = new Formula(" 20", null);
+        Formula boostEffectFormulaUpgrade2 = new Formula(" 20", null);
+        Formula boostEffectFormulaUpgrade3 = new Formula("20", null);
         ArrayList<Formula> boostEffectFormulaUpgrades = new ArrayList<>();
         boostEffectFormulaUpgrades.add(boostEffectFormulaUpgrade1);
         boostEffectFormulaUpgrades.add(boostEffectFormulaUpgrade2);
         boostEffectFormulaUpgrades.add(boostEffectFormulaUpgrade3);
         ArrayList<Formula> boostCostFormula1 = new ArrayList<>();
         ArrayList<Formula> boostCostFormula2 = new ArrayList<>();
-        Formula boostCostEP1 = new Formula("EP - 2", null);
-        Formula boostCostEP2 = new Formula("EP - 2", null);
-        Formula boostCostEP3 = new Formula("EP - 2", null);
-        Formula boostCostMagic1 = new Formula("current magic - 50", null);
-        Formula boostCostMagic2 = new Formula("current magic - 50", null);
-        Formula boostCostMagic3 = new Formula("current magic - 50", null);
+        Formula boostCostEP1 = new Formula("0 - 2", null);
+        Formula boostCostEP2 = new Formula("0 - 2", null);
+        Formula boostCostEP3 = new Formula("0 - 2", null);
+        Formula boostCostMagic1 = new Formula("0 - 50", null);
+        Formula boostCostMagic2 = new Formula("0- 50", null);
+        Formula boostCostMagic3 = new Formula("0- 50", null);
         boostCostFormula1.add(boostCostEP1);
         boostCostFormula1.add(boostCostEP2);
         boostCostFormula1.add(boostCostEP3);
@@ -816,21 +833,21 @@ public class UserInterface
 
         //manaBeam
         HashMap<String, ArrayList<Formula>> manaBeamFormula = new HashMap<>();
-        Formula manaBeamEffectFormulaUpgrade1 = new Formula("current magic + 50", null);
-        Formula manaBeamEffectFormulaUpgrade2 = new Formula("current magic + 50", null);
-        Formula manaBeamEffectFormulaUpgrade3 = new Formula("current magic + 50", null);
+        Formula manaBeamEffectFormulaUpgrade1 = new Formula(" 50", null);
+        Formula manaBeamEffectFormulaUpgrade2 = new Formula(" 50", null);
+        Formula manaBeamEffectFormulaUpgrade3 = new Formula("50", null);
         ArrayList<Formula> manaBeamEffectFormulaUpgrades = new ArrayList<>();
         manaBeamEffectFormulaUpgrades.add(boostEffectFormulaUpgrade1);
         manaBeamEffectFormulaUpgrades.add(boostEffectFormulaUpgrade2);
         manaBeamEffectFormulaUpgrades.add(boostEffectFormulaUpgrade3);
         ArrayList<Formula> manaBeamCostFormula1 = new ArrayList<>();
         ArrayList<Formula> manaBeamCostFormula2 = new ArrayList<>();
-        Formula manaBeamCostEP1 = new Formula("EP - 1", null);
-        Formula manaBeamCostEP2 = new Formula("EP - 1", null);
-        Formula manaBeamCostEP3 = new Formula("EP - 1", null);
-        Formula manaBeamCostMagic1 = new Formula("current magic - 50", null);
-        Formula manaBeamCostMagic2 = new Formula("current magic - 50", null);
-        Formula manaBeamCostMagic3 = new Formula("current magic - 50", null);
+        Formula manaBeamCostEP1 = new Formula("0 - 1", null);
+        Formula manaBeamCostEP2 = new Formula("0 - 1", null);
+        Formula manaBeamCostEP3 = new Formula("0 - 1", null);
+        Formula manaBeamCostMagic1 = new Formula("0 - 50", null);
+        Formula manaBeamCostMagic2 = new Formula("0 - 50", null);
+        Formula manaBeamCostMagic3 = new Formula("0 - 50", null);
         manaBeamCostFormula1.add(manaBeamCostEP1);
         manaBeamCostFormula1.add(manaBeamCostEP2);
         manaBeamCostFormula1.add(manaBeamCostEP3);

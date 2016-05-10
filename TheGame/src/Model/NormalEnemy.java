@@ -7,19 +7,30 @@ import java.util.HashMap;
  */
 public class NormalEnemy extends Enemy
 {
+	String version;
+
+	public String getVersion()
+	{
+		return version;
+	}
+
+	public void setVersion(String version)
+	{
+		this.version = version;
+	}
+
+
 	public void setData(HashMap<String, Integer> data)
 	{
 		this.data = data;
 	}
 
 	private HashMap<String, Integer> data;
-    //private String name; Its handled in warrior :|
-    private int ID; // maybe move this to enemy group?
 
-	public NormalEnemy(String name, int ID, HashMap<String, Integer> data)
+	public NormalEnemy(String name, String version,HashMap<String, Integer> data)
 	{
+		setID(0);
 		setName(name);
-		setID(ID);
 		setData(data);
 	}
 	
@@ -28,28 +39,5 @@ public class NormalEnemy extends Enemy
 	{
         return data;
     }
-	
-	
-	/*public void setName(String name)
-	{
-		this.name = name;
-	}
-	
 
-    public String getName() 
-	{
-        return name;
-    }*/
-	
-	
-	public void setID(int ID)
-	{
-		this.ID = ID;
-	}
-	
-	
-    public int getID() 
-	{
-        return ID;
-    }
 }

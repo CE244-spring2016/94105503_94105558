@@ -25,7 +25,7 @@ public abstract class Ability
 
     public Ability(String name, String abilityTarget,ArrayList<Integer> upgradeXPs, ArrayList<Integer> luckPercents,
                    ArrayList<Integer> abilityCooldownNums, ArrayList<HashMap<String, Integer>> requiredAbilities,
-                   HashMap<String, ArrayList<Formula>> formulas, boolean instantEffective)
+                   HashMap<String, ArrayList<Formula>> formulas)
     {
         cooldownTurn = 0;
         currentUpgradeNum = 0;
@@ -36,7 +36,6 @@ public abstract class Ability
         setAbilityCooldownNums(abilityCooldownNums);
         setRequiredAbilities(requiredAbilities);
         setFormulas(formulas);
-        setInstantEffective(instantEffective);
     }
 
 	

@@ -5,52 +5,47 @@ import Model.Hero;
 
 import java.util.ArrayList;
 
-import static Auxiliary.commandsOrder.*;
-
 /**
  * Created by Vahid on 5/5/2016.
  */
-enum commandsOrder {
+enum commandsOrder
+{
     heroAttack,
-    userItem,
-    itemDescription,
-    abilityDescription,
-    heroDescription,
-    enemyDescription,
+    useItem,
+    Description,
     heroCastAbility,
     itemSell,
     itemBuy,
     heroAbilityDescription,
-    acquireAbility,
-    heroClassDescription;
+    acquireAbility;
 }
+
 public class StringParser
 {
-    //it smallize all the characters and sticks all of them together
-    public String normalizer(String input) {
+    ArrayList<Hero> heros = new ArrayList<>();
+
+    //it smallize all the characters
+    public String normalizer(String input)
+    {
         String result;
         result = input.toLowerCase();
-        result = result.replaceAll("\\s+","");
+        //result = result.replaceAll("\\s+","");
         return result;
     }
-    public void parseOrder(String command) {
-        if(whatIsOrder(command) != null)
+
+    public void parseOrder(String command)
+    {
+        if (whatIsOrder(command) != null)
         {
             switch (whatIsOrder(command))
             {
                 case heroAttack:
                     break;
-                case userItem:
+                case useItem:
                     break;
-                case itemDescription:
-                    break;
-                case abilityDescription:
+                case Description:
                     break;
                 case heroAbilityDescription:
-                    break;
-                case heroDescription:
-                    break;
-                case enemyDescription:
                     break;
                 case itemBuy:
                     break;
@@ -60,14 +55,12 @@ public class StringParser
                     break;
                 case acquireAbility:
                     break;
-                case heroClassDescription:
-                    break;
                 default:
                     break;
 
             }
-        }
-        else {
+        } else
+        {
             return "";
         }
         return "";
@@ -77,26 +70,82 @@ public class StringParser
 
     private commandsOrder whatIsOrder(String command)
     {
-        return null;
+        String[] commands = command.split(" ");
+        if (commands[0].equals("acquire") && checkBuyAbility(command))
+        {
+            return commandsOrder.acquireAbility;
+        } else if (commands[0].equals("sell") && checkSellItem(command))
+        {
+            return commandsOrder.itemSell;
+        } else if (commands[0].equals("buy") && checkBuyItem(command))
+        {
+            return commandsOrder.itemBuy;
+        } else if (commands[1].equals("cast") && checkCastAbility(command))
+        {
+            return commandsOrder.heroCastAbility;
+        } else if (commands[1].equals("use") && checkUseItem(command))
+        {
+            return commandsOrder.useItem;
+        } else if(commands[1].equals("?") && checkDescription(command)) {
+            return commandsOrder.Description;
+        } else if(commands[1].equals("attack") && checkHeroAttack(command)) {
+            return commandsOrder.heroAttack;
+        } else if(commands[2].equals("?") && checkHeroAbilityDescription(command)) {
+            return commandsOrder.heroAbilityDescription;
+        } else {
+            return null;
+        }
     }
 
-    public void introduceHeros(ArrayList<Hero> heros)
+    private boolean checkHeroAbilityDescription(String command)
     {
-
+        String[] commands = command.split(" ");
+        for (int i = 0; i < heros.size(); i++)
+        {
+            if(heros.get(i).getName().equals(commands[1])) {
+                for (int j = 0; j < heros.get(i).getAbilities().size(); j++)
+                {
+                    if(heros.get(i).getAbilities().get(i).getName().equals(commands[2])) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
-    public void showEnemyData(ArrayList<Enemy> enemis)
+    private boolean checkHeroAttack(String command)
     {
-
+        return false;
     }
 
-    public void heroUpgrading(ArrayList<Hero> heros)
+    private boolean checkDescription(String command)
     {
-
+        return false;
     }
 
-    public void shoping(ArrayList<Hero> heros)
+    private boolean checkUseItem(String command)
     {
+        return false;
+    }
 
+    private boolean checkCastAbility(String command)
+    {
+        return false;
+    }
+
+    private boolean checkBuyItem(String command)
+    {
+        return false;
+    }
+
+    private boolean checkSellItem(String command)
+    {
+        return false;
+    }
+
+    private boolean checkBuyAbility(String command)
+    {
+        return false;
     }
 }

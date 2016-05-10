@@ -8,5 +8,15 @@ import java.util.HashMap;
  */
 public class Enemy extends Warrior
 {
-	
+    public int getID()
+    {
+        return ID;
+    }
+
+    public void setID(int ID)
+    {
+        this.ID = ID;
+    }
+
+    private int ID;
 }

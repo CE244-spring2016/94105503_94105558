@@ -4,7 +4,8 @@ import java.util.ArrayList;
 
 public class EnemyGroup
 {
-    private ArrayList<Enemy> enemies;
+
+    private ArrayList<Enemy> enemies = new ArrayList<>();
     private int xp;
     private int money;
     private int battleNum;
@@ -15,6 +16,38 @@ public class EnemyGroup
         setMoney(money);
         setBattleNum(battleNum);
         setEnemies(enemies);
+        setEnemyIDs();
+    }
+
+    private void setEnemyIDs()
+    {
+        for (int i = 0; i < enemies.size(); i++)
+        {
+            if (enemies.get(i).getID() == 0)
+            {
+                ArrayList<Enemy> foundedEnemies = findEnemeis(enemies.get(i));
+                if (foundedEnemies.size() > 1)
+                {
+                    for (int j = 0; j < foundedEnemies.size(); j++)
+                    {
+                        foundedEnemies.get(i).setID(j + 1);
+                    }
+                }
+            }
+        }
+    }
+
+    private ArrayList<Enemy> findEnemeis(Enemy enemy)
+    {
+        ArrayList<Enemy> foundedEnemies = new ArrayList<>();
+        for (Enemy enemy1 : enemies)
+        {
+            if (enemy1.getName().equals(enemy.getName()))
+            {
+                foundedEnemies.add(enemy1);
+            }
+        }
+        return foundedEnemies;
     }
 
     public int getXP()
@@ -47,22 +80,24 @@ public class EnemyGroup
         this.battleNum = battleNum;
     }
 
+    public ArrayList<Enemy> getEnemies()
+    {
+        return enemies;
+    }
+
     public void setEnemies(ArrayList<Enemy> enemies)
     {
         this.enemies.addAll(enemies);
     }
 
-
-    public Enemy getEnemy(String name, String ID)
+    public int getXp()
     {
-        for (Enemy enemy : enemies)
-        {
-            if (enemy.getName().equals(name) && enemy.getID().equals(ID))
-            {
-                return enemy;
-            }
-        }
-
-        return null;
+        return xp;
     }
+
+    public void setXp(int xp)
+    {
+        this.xp = xp;
+    }
+
 }
