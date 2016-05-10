@@ -6,7 +6,7 @@ public class Inventory
 {
     private int maxSize;
     private int currentSize;
-    private ArrayList<Item> items;
+    private ArrayList<Item> items = new ArrayList<>();
 
     public Inventory(int size)
     {
@@ -22,6 +22,7 @@ public class Inventory
     {
         this.maxSize = maxSize;
     }
+	
 
     public void setSize(int size)
     {
