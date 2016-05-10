@@ -120,7 +120,7 @@ public class Hero extends Warrior
 		ArrayList<Warrior> abilityTargets = new ArrayList<>();
 		if(ability != null)
 		{
-			String target = ability.setAbilityTarget();
+			String target = ability.getAbilityTarget();
 			if(target.equals("himself"))
 			{
 				abilityTargets.add(this);
@@ -162,6 +162,55 @@ public class Hero extends Warrior
 	}
 	
 	
+	public useItem(String itemName, ArrayList<Enemy> enemies, ArrayList<Hero> allies)
+	{
+		Item item = findItem(itemName);
+		ArrayList<Warrior> itemTargets = new ArrayList<>();
+		
+		if(item != null)
+		{
+			String target = item.setTarget();
+			if(target.equals("himself"))
+			{
+				itemTargets.add(this);
+			}
+			else if(target.equals("an ally"))
+			{
+				int targetIndex = Luck(0, allies.size() - 1);
+				abilityTargets.add(allies.get(targetIndex));
+			}
+			else if(target.equals("all allies"))
+			{
+				itemTargets.addAll(allies);
+			}
+			else if(target.equals("an enemy"))
+			{
+				int targetIndex = Luck(0, enemies.size() - 1);
+				itemTargets.add(enemies.get(targetIndex));
+			}
+			else if(target.equals("all enemies"))
+			{
+				itemTargets.addAll(enemies);
+			}
+			else if(target.equals("everyone"))
+			{
+				itemTargets.addAll(allies);
+				itemTargets.addAll(enemies);
+			}
+			else
+			{
+				//invalid input
+			}
+			
+			item.takeEffect(itemTargets);
+		}
+		else
+		{
+			//invalid input
+		}
+	}
+	
+	
 	public Ability findAbility(String abilityName)
 	{
 		for(Ability ability : abilities)
@@ -173,5 +222,27 @@ public class Hero extends Warrior
 		}
 		
 		return null;
+	}
+	
+	
+	public Item findItem(String itemName)
+	{
+		return inventory.getItem(itemName);
+	}
+	
+	
+	public void sell(Item item)
+	{
+		inventory.removeItem(item);
+		inventory.setCurrentSize(inventory.getCurrentSize() - item.getItemSize());
+		// Is it really done?
+	}
+	
+	
+	public void buy(Item item)
+	{
+		inventory.addItem(item);
+		inventory.setCurrentSize(inventory.getCurrentSize() + item.getItemSize());
+		//Check instanteffectitem in gamescenario DAMNIT
 	}
 }

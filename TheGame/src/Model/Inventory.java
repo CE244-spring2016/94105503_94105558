@@ -40,6 +40,15 @@ public class Inventory
     {
         items.add(item);
     }
+	
+	
+	public void removeItem(Item item)
+	{
+		if(items.contains(item))
+		{
+			items.remove(item);
+		}
+	}
 
 
     public Item getItem(String itemName)
@@ -54,4 +63,15 @@ public class Inventory
 
         return null;
     }
+	
+	
+	public boolean isFreeSpace()
+	{
+		if(currentSize < maxSize)
+		{
+			return true;
+		}
+		
+		return false;
+	}
 }
