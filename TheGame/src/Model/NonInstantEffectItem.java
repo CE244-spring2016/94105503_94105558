@@ -19,10 +19,9 @@ public class NonInstantEffectItem extends Item
 {
 	private int useLimit;
 	
-	public NonInstantEffectItem(String name, int size, int useLimit)
+	public NonInstantEffectItem(String name, String target, int useLimit, HashMap<String, Integer> effects)
 	{
-		setName(name);
-		setItemSize(size);
+		super(name, target, effects);
 		setUseLimit(useLimit);
 	}
 	

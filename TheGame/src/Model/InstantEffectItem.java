@@ -9,6 +9,12 @@ import java.util.HashMap;
 
 public class InstantEffectItem extends Item
 {
+	public InstantEffectItem(String name, String target, HashMap<String, Integer> effects)
+	{
+		super(name, target, effects);
+	}
+	
+	
     public void takeEffect(ArrayList<Warrior> targets)
     {
         HashMap<String, Integer> effects = getEffects();
@@ -21,8 +27,9 @@ public class InstantEffectItem extends Item
                 HashMap<String, Integer> warriorData = ((Hero) warrior).getData();
                 if (effectType.startsWith("percent"))
                 {
-                    percentEffect(effectType, warriorData/*, true*/);
-                } else
+                    percentEffect(effectType, warriorData);
+                } 
+				else
                 {
                     normalEffect(effectType, warriorData);
                 }
@@ -31,14 +38,14 @@ public class InstantEffectItem extends Item
     }
 
 
-    public void percentEffect(String effectType, HashMap<String, Integer> warriorData/*, boolean isMaxPercent*/)
+    public void percentEffect(String effectType, HashMap<String, Integer> warriorData)
     {
         HashMap<String, Integer> effects = getEffects();
         Integer effectAmount = effects.get(effectType);
 
         effectType = effectType.substring(8);
 
-        Integer dataAmount = warriorData.get(effectType)/*, helperAmount = warriorData.get(helper)*/;
+        Integer dataAmount = warriorData.get(effectType);
         warriorData.put(effectType, dataAmount + (dataAmount / 100) * effectAmount);
     }
 

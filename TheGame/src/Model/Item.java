@@ -1,4 +1,5 @@
-package Model;/*
+package Model;
+/*
     Must check with teammate
 */
 
@@ -13,6 +14,14 @@ public abstract class Item
     protected HashMap<String, Integer> effects;
     protected String target;
 
+	public Item(String name, String target, HashMap<String, Integer> effects)
+	{
+		setName(name);
+		setTarget(target);
+		setEffects(effects);
+	}
+	
+	
     public int getItemSize()
     {
         return itemSize;
@@ -78,7 +87,7 @@ public abstract class Item
 
     public abstract void takeEffect(ArrayList<Warrior> warriors);
 
-    public abstract void normalEffect(String effectType, HashMap<String, Integer> warriorData);
+    //public abstract void normalEffect(String effectType, HashMap<String, Integer> warriorData);
 
-    public abstract void percentEffect(String effectType, HashMap<String, Integer> warriorData, boolean isMaxPercent);
+    //public abstract void percentEffect(String effectType, HashMap<String, Integer> warriorData, boolean isMaxPercent);
 }

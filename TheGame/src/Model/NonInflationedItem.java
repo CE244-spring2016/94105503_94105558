@@ -4,22 +4,9 @@ package Model;/*
 
 public class NonInflationedItem extends InstantEffectItem
 {
-    private int cost;
-
-    public NonInflationedItem(String name, int size, int cost)
+    public NonInflationedItem(String name, String target, HashMap<String, Integer> effects)
     {
-        setName(name);
-        setItemSize(size);
-        setCost(cost);
-    }
-
-    public int getCost()
-    {
-        return cost;
-    }
-
-    public void setCost(int cost)
-    {
-        this.cost = cost;
+		super(name, target, effects);
+		setItemSize(1);
     }
 }
