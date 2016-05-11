@@ -1,7 +1,6 @@
 package Controller;
 
 import Auxiliary.Formula;
-import Auxiliary.StringParser;
 import Model.*;
 
 import java.util.ArrayList;
@@ -12,17 +11,15 @@ public class GameScenario
 {
     private UserInterface userInterface;
 
-    private StringParser stringParser;
     private ArrayList<Warrior> warrior;
     private Scanner scanner;
     private ArrayList<EnemyGroup> enemyGroups = new ArrayList<>();
     private ArrayList<Hero> heros = new ArrayList<>();
     private Shop shop;
 
-    public GameScenario(UserInterface userInterface, StringParser stringParser, Scanner in)
+    public GameScenario(UserInterface userInterface, Scanner in)
     {
         this.userInterface = userInterface;
-        this.stringParser = stringParser;
         shop = new Shop(this.userInterface.getShopInflationValue(), this.userInterface.getShopItemMoneyCosts());
 
         scanner = in;
@@ -59,10 +56,14 @@ public class GameScenario
                     isInstantEffect = true;
                 }
 
-                if (stringParser.isSingleTarget(tragets))
+                if (isInstantEffect)
                 {
-                    abilities.add(new SingleTargetAbility(abilityName, abilityTarget, upgradeXP, luckPercents,
-                            abilityCooldownNums, requiredAbilities, formulas, isInstantEffect));
+                    abilities.add(new ActiveAbility(abilityName, abilityTarget, upgradeXP, luckPercents,
+                            abilityCooldownNums, requiredAbilities, formulas));
+                } else
+                {
+                    abilities.add(new PassiveAbility(abilityName, abilityTarget, upgradeXP, luckPercents,
+                            abilityCooldownNums, requiredAbilities, formulas));
                 }
             }
             Warrior hero = new Hero(heroName, heroClassName, heroData, inventorySize, abilities);
@@ -98,6 +99,7 @@ public class GameScenario
 
     }
 
+    //target is needed in creatign enemy (consructor)
     private ArrayList<Enemy> createEnemies(int gameTurn)
     {
         ArrayList<Enemy> enemies = new ArrayList<>();
@@ -120,7 +122,7 @@ public class GameScenario
                             break;
                         }
                     }
-                    Warrior enemy = new NormalEnemy(enemiesVersionAndName.split(" ")[1], enemiesVersionAndName.split(" ")[0], enemyVersionDatas)
+                    Warrior enemy = new NormalEnemy(enemiesVersionAndName.split(" ")[1], enemiesVersionAndName.split(" ")[0], enemyVersionDatas);
                     enemies.add((Enemy) enemy);
                     warrior.add(enemy);
 
@@ -136,7 +138,7 @@ public class GameScenario
     public void introduceHeros()//It is finished
     {
         introducingHeros(heros);
-        String order = stringParser.normalizer(this.scanner.next());
+        String order = normalizer(this.scanner.next());
         while (!order.equals("done"))
         {
             if (order.equals("help"))
@@ -148,9 +150,9 @@ public class GameScenario
                 introducingHeros(heros);
             } else
             {
-                stringParser.parseOrder(order);
+                parseOrder(order, "introduce heros", 0);
             }
-            order = stringParser.normalizer(this.scanner.next());
+            order = normalizer(this.scanner.next());
         }
     }
 
@@ -175,7 +177,7 @@ public class GameScenario
     {
 
         showingEnemyData(gameTurn);
-        String order = stringParser.normalizer(this.scanner.next());
+        String order = normalizer(this.scanner.next());
         while (!order.equals("done"))
         {
             if (order.equals("help"))
@@ -186,14 +188,98 @@ public class GameScenario
                 showingEnemyData(gameTurn);
             } else
             {
-                stringParser.parseOrder(order);
+                parseOrder(order, "show enemy data", gameTurn);
             }
-            order = stringParser.normalizer(this.scanner.next());
+            order = normalizer(this.scanner.next());
         }
 
     }
 
     //think about dying enemies
+    private ArrayList<String> normalEnemyFullNames(int gameTurn)
+    {
+        EnemyGroup enemyGroup;
+        enemyGroup = this.enemyGroups.get(gameTurn);
+        ArrayList<Enemy> enemies = enemyGroup.getEnemies();
+        ArrayList<NormalEnemy> normalEnemies = new ArrayList<>();
+        ArrayList<BossEnemy> bossEnemies = new ArrayList<>();
+        for (Enemy enemy : enemies)
+        {
+            if (enemy instanceof NormalEnemy)
+            {
+                normalEnemies.add((NormalEnemy) enemy);
+            } else if (enemy instanceof BossEnemy)
+            {
+                bossEnemies.add((BossEnemy) enemy);
+            }
+        }
+        ArrayList<String> normalEnemiesNames = new ArrayList<>();
+        ArrayList<String> bossEnemiesNames = new ArrayList<>();
+        for (NormalEnemy normalEnemy : normalEnemies)
+        {
+            if (normalEnemy.getID() == 0)
+            {
+                normalEnemiesNames.add(normalEnemy.getVersion() + normalEnemy.getName());
+            } else
+            {
+                normalEnemiesNames.add(normalEnemy.getVersion() + normalEnemy.getName() + normalEnemy.getID());
+            }
+        }
+        for (BossEnemy bossEnemy : bossEnemies)
+        {
+            if (bossEnemy.getID() == 0)
+            {
+                bossEnemiesNames.add(bossEnemy.getName());
+            } else
+            {
+                bossEnemiesNames.add(bossEnemy.getName() + bossEnemy.getID());
+            }
+        }
+        return normalEnemiesNames;
+    }
+
+    private ArrayList<String> bossEnemyFullNames(int gameTurn)
+    {
+        EnemyGroup enemyGroup;
+        enemyGroup = this.enemyGroups.get(gameTurn);
+        ArrayList<Enemy> enemies = enemyGroup.getEnemies();
+        ArrayList<NormalEnemy> normalEnemies = new ArrayList<>();
+        ArrayList<BossEnemy> bossEnemies = new ArrayList<>();
+        for (Enemy enemy : enemies)
+        {
+            if (enemy instanceof NormalEnemy)
+            {
+                normalEnemies.add((NormalEnemy) enemy);
+            } else if (enemy instanceof BossEnemy)
+            {
+                bossEnemies.add((BossEnemy) enemy);
+            }
+        }
+        ArrayList<String> normalEnemiesNames = new ArrayList<>();
+        ArrayList<String> bossEnemiesNames = new ArrayList<>();
+        for (NormalEnemy normalEnemy : normalEnemies)
+        {
+            if (normalEnemy.getID() == 0)
+            {
+                normalEnemiesNames.add(normalEnemy.getVersion() + normalEnemy.getName());
+            } else
+            {
+                normalEnemiesNames.add(normalEnemy.getVersion() + normalEnemy.getName() + normalEnemy.getID());
+            }
+        }
+        for (BossEnemy bossEnemy : bossEnemies)
+        {
+            if (bossEnemy.getID() == 0)
+            {
+                bossEnemiesNames.add(bossEnemy.getName());
+            } else
+            {
+                bossEnemiesNames.add(bossEnemy.getName() + bossEnemy.getID());
+            }
+        }
+        return bossEnemiesNames;
+    }
+
     private void showingEnemyData(int gameTurn)
     {
         EnemyGroup enemyGroup;
@@ -223,11 +309,13 @@ public class GameScenario
                 normalEnemiesNames.add(normalEnemy.getVersion() + normalEnemy.getName() + normalEnemy.getID());
             }
         }
-        for(BossEnemy bossEnemy : bossEnemies) {
-            if(bossEnemy.getID() == 0)
+        for (BossEnemy bossEnemy : bossEnemies)
+        {
+            if (bossEnemy.getID() == 0)
             {
                 bossEnemiesNames.add(bossEnemy.getName());
-            } else {
+            } else
+            {
                 bossEnemiesNames.add(bossEnemy.getName() + bossEnemy.getID());
             }
         }
@@ -247,20 +335,21 @@ public class GameScenario
     public void startUpgrading()
     {
         showHeroUpgrade();
-        String order = stringParser.normalizer(this.scanner.next());
+        String order = normalizer(this.scanner.next());
         while (!order.equals("done"))
         {
             if (order.equals("help"))
             {
-                //helping
+                System.out.println("(hero name) +(ability name) + ?\uF0E0 (ability description)");
+                System.out.println(" Acquire + (ability name) +  for  + (hero name)\uF0E0 (acquiring ability)");
             } else if (order.equals("again"))
             {
                 showHeroUpgrade();
             } else
             {
-                stringParser.parseOrder(order);
+                parseOrder(order, "start upgrading", 0);
             }
-            order = stringParser.normalizer(this.scanner.next());
+            order = normalizer(this.scanner.next());
         }
 
     }
@@ -301,30 +390,117 @@ public class GameScenario
 
     public void shopping()
     {
-        showShopping(heros);
-        String order = stringParser.normalizer(this.scanner.next());
+        showShopping();
+        String order = normalizer(this.scanner.next());
         while (!order.equals("done"))
         {
             if (order.equals("help"))
             {
-                //helping
+                System.out.println("(item name) + ? \uF0E0 (item description)");
+                System.out.println("Buy + (item name) +  for  + (hero name)\uF0E0 (buy item)");
+                System.out.println("Sell + (item name) +  of + (hero name)\uF0E0 (sell item)");
             } else if (order.equals("again"))
             {
-                showShopping(heros);
+                showShopping();
             } else
             {
-                stringParser.parseOrder(order);
+                parseOrder(order, "shopping", 0);
             }
-            order = stringParser.normalizer(this.scanner.next());
+            order = normalizer(this.scanner.next());
         }
     }
 
-    private void showShopping(ArrayList<Hero> heros)
+    private void showShopping()
     {
-        //Items
+        ArrayList<String> itemNames = userInterface.getShopItemNames();
+        System.out.printf("This shop offers you ");
+        for (String itemName : itemNames)
+        {
+            System.out.printf("%s for %d dollars,", itemName, shop.getItemNamesAndCost().get(itemName));
+        }
+        System.out.printf("\n");
+        for (Hero hero : heros)
+        {
+            System.out.printf("%s ", hero.getName());
+            ArrayList<Item> heroItems = new ArrayList<>();
+            heroItems = hero.getInventory().getItems();
+            for (Item heroItem : heroItems)
+            {
+                System.out.printf("has %s worth %d dollars, ", hero.getName(), heroItem.getName(), shop.getItemNamesAndCost().get(heroItem.getName()) / 2);
+            }
+            System.out.printf("\n");
+            System.out.printf("Your current wealth is %d\n:", Hero.getImmortalityPotionNum());
+        }
     }
 
-    public void startFighting(int i)
+    public void startFighting(int gameTurn)
+    {
+        ArrayList<Enemy> enemies = enemyGroups.get(gameTurn).getEnemies();
+        showStartFighting(gameTurn);
+        String order = normalizer(this.scanner.next());
+        while (enemies.size() != 0)
+        {
+            ArrayList<Enemy> deadEnemies = new ArrayList<>();
+            while (!order.equals("done"))
+            {
+                if (order.equals("help"))
+                {
+                    //helping
+                } else if (order.equals("again"))
+                {
+                    showStartFighting(gameTurn);
+                } else
+                {
+                    parseOrder(order, "fighting", gameTurn);
+                }
+                order = normalizer(this.scanner.next());
+            }
+            for (Enemy enemy : enemies)
+            {
+                if (enemy.getData().get("current health") <= 0)
+                {
+                    deadEnemies.add(enemy);
+                }
+            }
+            enemies.removeAll(deadEnemies);
+
+            for (Enemy enemy : enemies)
+            {
+                if (enemy instanceof BossEnemy)
+                {
+                    BossEnemy boss = (BossEnemy) enemy;
+                    int currentHealth = boss.getData().get("current health");
+                    int angerPoint = boss.getAngerPoint();
+                    if (currentHealth <= angerPoint)
+                    {
+                        boss.getAngry();
+                    }
+
+                }
+            }
+            enemiesMakeMove(gameTurn);
+        }
+    }
+
+    private void enemiesMakeMove(int gameTurn)
+    {
+        ArrayList<Enemy> enemies = enemyGroups.get(gameTurn).getEnemies();
+        for (Enemy enemy : enemies)
+        {
+            if (enemy instanceof BossEnemy)
+            {
+                ((BossEnemy) enemy).earlyTurnEffect(heros);
+            }
+        }
+        for (Enemy enemy : enemies)
+        {
+
+            enemy.startAMove(heros, enemies);
+
+        }
+    }
+
+    private void showStartFighting(int gameTurn)
     {
         for (Hero hero : heros)
         {
@@ -354,10 +530,1007 @@ public class GameScenario
             ArrayList<Item> heroItems = hero.getInventory().getItems();
             for (Item heroItem : heroItems)
             {
-                //item
+                System.out.printf("Can use %s\n", heroItem.getName());
             }
         }
-        //enemies
+        EnemyGroup enemyGroup;
+        enemyGroup = this.enemyGroups.get(gameTurn);
+        ArrayList<Enemy> enemies = enemyGroup.getEnemies();
+        ArrayList<NormalEnemy> normalEnemies = new ArrayList<>();
+        ArrayList<BossEnemy> bossEnemies = new ArrayList<>();
+        for (Enemy enemy : enemies)
+        {
+            if (enemy instanceof NormalEnemy)
+            {
+                normalEnemies.add((NormalEnemy) enemy);
+            } else if (enemy instanceof BossEnemy)
+            {
+                bossEnemies.add((BossEnemy) enemy);
+            }
+        }
+        ArrayList<String> normalEnemiesNames = new ArrayList<>();
+        ArrayList<String> bossEnemiesNames = new ArrayList<>();
+        for (NormalEnemy normalEnemy : normalEnemies)
+        {
+            if (normalEnemy.getID() == 0)
+            {
+                normalEnemiesNames.add(normalEnemy.getVersion() + normalEnemy.getName());
+            } else
+            {
+                normalEnemiesNames.add(normalEnemy.getVersion() + normalEnemy.getName() + normalEnemy.getID());
+            }
+        }
+        for (BossEnemy bossEnemy : bossEnemies)
+        {
+            if (bossEnemy.getID() == 0)
+            {
+                bossEnemiesNames.add(bossEnemy.getName());
+            } else
+            {
+                bossEnemiesNames.add(bossEnemy.getName() + bossEnemy.getID());
+            }
+        }
+        for (int i = 0; i < normalEnemiesNames.size(); i++)
+        {
+            System.out.printf("%s Health: %d / %d", normalEnemiesNames.get(i), normalEnemies.get(i).getData().get("current health"), normalEnemies.get(i).getData().get("max health"));
+        }
+        for (int i = 0; i < bossEnemiesNames.size(); i++)
+        {
+            //munde
+        }
+    }
 
+    /***********/
+
+    //it smallize all the characters
+    public String normalizer(String input)
+    {
+        String result;
+        result = input.toLowerCase();
+        //result = result.replaceAll("\\s+","");
+        return result;
+    }
+
+    public void parseOrder(String command, String situation, int gameTurn)
+    {
+        if (whatIsOrder(command, situation, gameTurn) != null)
+        {
+            switch (whatIsOrder(command, situation, gameTurn))
+            {
+                case heroAttack:
+                    heroAttack(command, gameTurn);
+                    break;
+                case useItemEveryone:
+                    useItemEveryone(command, gameTurn);
+                    break;
+                case useItemSpecific:
+                    useItemSpecific(command, gameTurn);
+                case heroDescription:
+                    heroDescription(command);
+                    break;
+                case abilityDescription:
+                    abilityDescription(command);
+                    break;
+                case ItemDescription:
+                    itemDescription(command);
+                    break;
+                case enemyDescription:
+                    enemyDescription(command);
+                    break;
+                case heroClassDescription:
+                    heroClassDescription(command);
+                    break;
+                case heroAbilityDescription:
+                    heroAbilityDescription(command);
+                    break;
+                case itemBuy:
+                    itemBuy(command);
+                    break;
+                case itemSell:
+                    itemSell(command);
+                    break;
+                case heroCastAbilityOnEveryone:
+                    heroCastEveryoneAbility(command, gameTurn);
+                    break;
+                case heroCastAbilityOnSpecieficTarget:
+                    heroCastSpecieficAbility(command, gameTurn);
+                    break;
+                case acquireAbility:
+                    aquireAbility(command);
+                    break;
+
+                default:
+                    System.out.println("Invalid command");
+                    break;
+
+            }
+        } else
+        {
+            System.out.println("Invalid command");
+        }
+    }
+
+    private void useItemSpecific(String command, int gameTurn)
+    {
+        String[] commands = command.split(" ");
+        Hero hero = null;
+        for (Hero hero1 : heros)
+        {
+            if (hero1.getName().equals(commands[0]))
+                hero = hero1;
+        }
+        Item item = null;
+        if (hero != null)
+        {
+            item = hero.findItem(commands[2]);
+        }
+        if (hero != null && item != null)
+        {
+            if (item instanceof NonInstantEffectItem)
+            {
+                hero.useItem(item.getName(), enemyGroups.get(gameTurn).getEnemies(), heros, commands[4]);
+            } else
+            {
+                System.out.println("You don't have this item");
+            }
+        } else if (hero == null)
+        {
+            System.out.println("Invalid command");
+        } else
+        {
+            System.out.println("You don’t have this item");
+        }
+    }
+
+    private void useItemEveryone(String command, int gameTurn)
+    {
+        String[] commands = command.split(" ");
+        Hero hero = null;
+        for (Hero hero1 : heros)
+        {
+            if (hero1.getName().equals(commands[0]))
+                hero = hero1;
+        }
+        Item item = null;
+        if (hero != null)
+        {
+            item = hero.findItem(commands[2]);
+        }
+        if (hero != null && item != null)
+        {
+            if (item instanceof NonInstantEffectItem)
+            {
+                hero.useItem(item.getName(), enemyGroups.get(gameTurn).getEnemies(), heros, "everyone");
+            } else
+            {
+                System.out.println("You don't have this item");
+            }
+        } else if (hero == null)
+        {
+            System.out.println("Invalid command");
+        } else
+        {
+            System.out.println("You don’t have this item");
+        }
+    }
+
+    private void aquireAbility(String command)
+    {
+        String[] commands = command.split(" ");
+        Hero hero = null;
+        for (Hero hero1 : heros)
+        {
+            if (hero1.getName().equals(commands[3]))
+                hero = hero1;
+        }
+        if (hero != null && userInterface.getHerosAndTheirAbilities().get(hero.getName()).contains(commands[1]))
+        {
+            Ability ability = hero.findAbility(commands[1]);
+            if (ability != null)
+            {
+                if (ability.isUpgradeValid())
+                {
+                    ability.setCurrentUpgradeNum(ability.getCurrentUpgradeNum() + 1);
+                    //bugable
+                    Hero.setXP(Hero.getXP() - ability.getUpgradeXPs().get(ability.getCurrentUpgradeNum() - 1));
+                    if (ability.getCurrentUpgradeNum() == 1)
+                        System.out.printf("%s acquired successfully, your current experience is: %d\n", ability.getName(), Hero.getXP());
+                    else if (ability.getCurrentUpgradeNum() > 1)
+                        System.out.printf("%s upgraded successfully, your current experience is: %d\n", ability.getName(), Hero.getXP());
+                }
+            }
+        } else if (hero == null)
+        {
+            System.out.println("Invalid command");
+        } else
+        {
+            System.out.println("This hero can not acquire this ability");
+        }
+    }
+
+    private void heroCastEveryoneAbility(String command, int gameTurn)
+    {
+        String[] commands = command.split(" ");
+        Hero hero = null;
+        for (Hero hero1 : heros)
+        {
+            if (hero1.getName().equals(commands[0]))
+                hero = hero1;
+        }
+        if (hero != null && userInterface.getHerosAndTheirAbilities().get(hero.getName()).contains(commands[2]))
+        {
+            Ability ability = hero.findAbility(commands[2]);
+            if (ability != null)
+            {
+                hero.useAbility(ability.getName(), enemyGroups.get(gameTurn).getEnemies(), heros, "everyone");
+            }
+        } else if (hero == null)
+        {
+            System.out.println("Invalid command");
+        } else
+        {
+            System.out.println("This hero can not cast this ability");
+        }
+    }
+
+    private void heroCastSpecieficAbility(String command, int gameTurn)
+    {
+        String[] commands = command.split(" ");
+        Hero hero = null;
+        for (Hero hero1 : heros)
+        {
+            if (hero1.getName().equals(commands[0]))
+                hero = hero1;
+        }
+        if (hero != null && userInterface.getHerosAndTheirAbilities().get(hero.getName()).contains(commands[2]) && commands[3].equals("on"))
+        {
+            Ability ability = hero.findAbility(commands[2]);
+            if (ability != null)
+            {
+                hero.useAbility(ability.getName(), enemyGroups.get(gameTurn).getEnemies(), heros, commands[4]);
+            }
+        } else if (hero == null)
+        {
+            System.out.println("Invalid command");
+        } else
+        {
+            System.out.println("This hero can not cast this ability");
+        }
+    }
+
+    private void itemSell(String command)
+    {
+        String[] commands = command.split(" ");
+        Hero hero = null;
+        for (Hero hero1 : heros)
+        {
+            if (hero1.getName().equals(commands[3]))
+                hero = hero1;
+        }
+        if (hero != null && hero.getInventory().getItem(commands[1]) != null)
+        {
+            shop.buy(hero, hero.getInventory().getItem(commands[1]));
+        } else if (hero != null)
+        {
+            System.out.println(hero.getName() + "doesn't have" + commands[1]);
+        } else
+        {
+            System.out.println("Invalid command");
+        }
+    }
+
+    private void itemBuy(String command)
+    {
+        String[] commands = command.split(" ");
+        Hero hero = null;
+        for (Hero hero1 : heros)
+        {
+            if (hero1.getName().equals(commands[3]))
+                hero = hero1;
+        }
+        Item item;
+        if (userInterface.getInstantEffectItems().contains(commands[1]))
+        {
+            if (userInterface.getInflationedItems().contains(commands[1]))
+            {
+                item = new InflationedItem(commands[1], userInterface.getItemTargets().get(commands[1]), userInterface.getItemDatas().get(commands[1]));
+            } else
+            {
+                item = new NonInflationedItem(commands[1], userInterface.getItemTargets().get(commands[1]), userInterface.getItemDatas().get(commands[1]));
+            }
+        } else
+        {
+            item = new NonInstantEffectItem(commands[1], userInterface.getItemTargets().get(commands[1]), userInterface.getNonInstantEffectItemsUseLimit().get(commands[1]), userInterface.getItemDatas().get(commands[1]));
+        }
+        shop.sell(hero, item);
+        if (hero != null && item instanceof InstantEffectItem)
+        {
+            hero.useItem(item.getName(), new ArrayList<Enemy>(), heros, "himself");
+        }
+
+
+    }
+
+    private void heroAbilityDescription(String command)
+    {
+        String[] commands = command.split(" ");
+        Hero hero = null;
+        for (Hero hero1 : heros)
+        {
+            if (hero1.getName().equals(commands[0]))
+                hero = hero1;
+        }
+        if (hero != null)
+        {
+            if (userInterface.getHerosAndTheirAbilities().get(hero.getName()).contains(commands[1]))
+            {
+                switch (commands[1])
+                {
+                    case "fightTraining":
+                        System.out.println("Fight training\n" +
+                                "Permanently increases attack power\n" +
+                                "Upgrade1: +30 attack power for 2 xp points\n" +
+                                "Upgrade2: +30 attack power for 3 xp points\n" +
+                                "Upgrade3: +30 attack power for 4 xp points");
+
+                        break;
+                    case "workOut":
+                        System.out.println("Work out\n" +
+                                "Permanently increases maximum health\n" +
+                                "Upgrade 1: +50 maximum health for 2 xp points\n" +
+                                "Upgrade 2: +50 maximum health for 3 xp points\n" +
+                                "Upgrade 3: +50 maximum health for 4 xp points");
+                        break;
+                    case "quickAsBunny":
+                        System.out.println("Quick as a bunny\n" +
+                                "Permanently increases energy points\n" +
+                                "Upgrade1: +1 energy point for 2 xp points\n" +
+                                "Upgrade2: +1 energy point for 3 xp points\n" +
+                                "Upgrade3: +1 energy point for 4 xp points");
+                        break;
+                    case "magicLessons":
+                        System.out.println("Quick as a bunny\n" +
+                                "Permanently increases energy points\n" +
+                                "Upgrade1: +1 energy point for 2 xp points\n" +
+                                "Upgrade2: +1 energy point for 3 xp points\n" +
+                                "Upgrade3: +1 energy point for 4 xp points");
+                        break;
+                    case "overPoweredAttack":
+                        System.out.println("Overpowered attack\n" +
+                                "Attacks an enemy with N times power for 2 energy points and 50 magic points\n" +
+                                "Upgrade 1: N=1.2 for 2 xp points, needs Fight training upgrade 1\n" +
+                                "Upgrade 2: N=1.4 for 4 xp points, needs Fight training upgrade 2\n" +
+                                "Upgrade 3: N=1.6 for 6 xp points, needs Fight training upgrade 3");
+                        break;
+                    case "swirlingAttack":
+                        System.out.println("While attacking, non-targeted enemies also take P percent of its damage\n" +
+                                "Upgrade 1: P=10 for 2 xp points, needs Work out upgrade 1\n" +
+                                "Upgrade 2: P=20 for 3 xp points\n" +
+                                "Upgrade 3: P=30 for 4 xp points");
+                        break;
+                    case "sacrifice":
+                        System.out.println("Sacrifice\n" +
+                                "Damages all the enemies with 3H power at the cost of H of his own health, needs 3 energy points, 60 magic points and has a 1 turn cooldown\n" +
+                                "Upgrade 1: H=40 for 2 xp points, needs Work out upgrade 1\n" +
+                                "Upgrade 2: H=50 for 3 xp points, needs Work out upgrade 2\n" +
+                                "Upgrade 3: H=60 for 4 xp points, needs Work out upgrade 3");
+                        break;
+                    case "criticalStrike":
+                        System.out.println("Has a permanent P percent chance of doing an attack with double power (does not affect other abilities)\n" +
+                                "Upgrade 1: P=20 for 2 xp points, needs Fight training upgrade 1\n" +
+                                "Upgrade 2: P=30 for 3 xp points\n" +
+                                "Upgrade 3: P=40 for 4 xp points");
+                        break;
+                    case "elixir":
+                        System.out.println("Elixir\n" +
+                                "Refills H points of her own health or an ally’s, for 2 energy points and 60 magic points\n" +
+                                "Upgrade 1: H=100 for 2 xp points and takes 1 turn to cool down\n" +
+                                "Upgrade 2: H=150 for 3 xp points, takes 1 turn to cool down and needs Magic lessons upgrade 1\n" +
+                                "Upgrade 3: H=150 for 5 xp points, cools down instantly and needs Magic lessons upgrade 2");
+                        break;
+                    case "caretaker":
+                        System.out.println("Caretaker\n" +
+                                "Gives 1 energy point to an ally for 30 magic points (this ep does not last until the end of the battle and is only usable during the current turn)\n" +
+                                "Upgrade 1: takes 2 energy points and has a 1 turn cooldown for 2 xp points, needs Quick as a bunny upgrade 1\n" +
+                                "Upgrade 2: takes 2 energy points and cools down instantly for 3 xp points, needs Quick as a bunny upgrade 2\n" +
+                                "Upgrade 3 takes 1 energy point and cools down instantly for 5 xp points, needs Quick as a bunny upgrade 3");
+                        break;
+                    case "boots":
+                        System.out.println("Boost\n" +
+                                "Gives X bonus attack power to himself or an ally, which lasts till the end of the battle, for 2 energy points and 50 magic points (this bonus attack power can stack up)\n" +
+                                "Upgrade 1: A=20 for 2 xp points and takes 1 turn to cool down\n" +
+                                "Upgrade 2: A=30 for 3 xp points and takes 1 turn to cool down\n" +
+                                "Upgrade 3: A=30 for 5 xp points and cools down instantly");
+                        break;
+                    case "manaBeam":
+                        System.out.println("Mana beam\n" +
+                                "Gives M magic points to himself or an ally for 1 energy point and 50 magic points\n" +
+                                "Upgrade 1: M=50 for 2 xp points and takes 1 turn to cool down, needs magic lessons upgrade 1\n" +
+                                "Upgrade 2: M=80 for 3 xp points and takes 1 turn to cool down, needs magic lessons upgrade 2\n" +
+                                "Upgrade 3: M=80 for 4 xp points and cools down instantly, needs magic lessons upgrade 3");
+                        break;
+                    default:
+                        System.out.println("There is not ability with name" + commands[1]);
+                        break;
+                }
+                if (hero.findAbility(commands[1]) != null)
+                {
+                    Ability ability = hero.findAbility(commands[1]);
+                    System.out.println("Your upgrade is" + "upgrade" +ability.getCurrentUpgradeNum());
+                    System.out.println("You need " + ability.getUpgradeXPs().get(ability.getCurrentUpgradeNum() - 1) +"XP point" );
+                }
+            } else
+            {
+                System.out.println(hero.getName() + "doesn't have" + commands[1]);
+            }
+        }
+    }
+
+    private void heroClassDescription(String command)
+    {
+        String[] commands = command.split(" ");
+        if (userInterface.getHeroClassNames().contains(commands[0]))
+        {
+            switch (commands[0])
+            {
+                case "fighter":
+                    System.out.println("Fighter class:\n" +
+                            "Maximum health: 200\n" +
+                            "Health refill rate: 10 percent of maximum health\n" +
+                            "Maximum magic: 120\n" +
+                            "Magic refill rate: 5 percent of maximum magic\n" +
+                            "Attack power: 120\n" +
+                            "Energy points: 6\n" +
+                            "Inventory size: 2");
+                    break;
+                case "supporter":
+                    System.out.println("Maximum health: 220\n" +
+                            "Health refill rate: 5 percent of maximum health\n" +
+                            "Maximum magic: 200\n" +
+                            "Magic refill rate: 10 percent of maximum magic\n" +
+                            "Attack power: 80\n" +
+                            "Energy points: 5\n" +
+                            "Inventory size: 3");
+            }
+        } else
+        {
+            System.out.println("Invalid command");
+        }
+    }
+
+    private void enemyDescription(String command)
+    {
+        String[] commands = command.split(" ");
+        if (userInterface.getNormalEnemyNames().contains(commands[0]) || userInterface.getBossEnemyNames().contains(commands[0]))
+        {
+            switch (commands[0])
+            {
+                case "tank":
+                    System.out.println("Tank:\n" +
+                            "Attacks every one of your heroes in each turn\n" +
+                            "Weak version: Attack Power=30, Maximum health=400\n" +
+                            "Able version: Attack Power=90, Maximum health=500");
+                    break;
+                case "thug":
+                    System.out.println("Thug:\n" +
+                            "Attacks one of your heroes in each turn\n" +
+                            "Weak version: Attack Power=50, Maximum health=200\n" +
+                            "Able version: Attack Power=90, Maximum health=300\n" +
+                            "Mighty version: Attack Power=150, Maximum health=400");
+                    break;
+                case "angel":
+                    System.out.println("Angel:\n" +
+                            "Heals one of her allies in each turn\n" +
+                            "Weak version: Healing Amount=100, Maximum health=150\n" +
+                            "Able version: Healing Amount =150, Maximum health=250");
+                    break;
+                case "final boss":
+                    System.out.println("Final Boss:\n" +
+                            "Burns 2 to 4 energy points of each hero and attacks 2 of them in each turn\n" +
+                            "Maximum health: 1000\n" +
+                            "Attack power when his current health is higher than 400: 150\n" +
+                            "Attack power when his current health is below 400: 250");
+                    break;
+            }
+        } else
+        {
+            System.out.println("Invalid command");
+        }
+    }
+
+    private void itemDescription(String command)
+    {
+        String[] commands = command.split(" ");
+        switch (commands[1]) {
+            case "toughen":
+                System.out.println("+20 maximum health");
+                break;
+            case "guide":
+                System.out.println("+20 maximum magic");
+                break;
+            case "defy":
+                System.out.println("+8 attack power");
+                break;
+            case "sword":
+                System.out.println("+80 attack power, costs 25 dollars");
+                break;
+            case "energyboots":
+                System.out.println("+1 energy point, costs 20 dollars");
+                break;
+            case "armor":
+                System.out.println("+200 maximum health, costs 25 dollars");
+                break;
+            case "magicstick":
+                System.out.println("+150 maximum magic, costs 28 dollars");
+                break;
+            case "healthpotion":
+                System.out.println("+100 health points for the user or one of his/her allies, costs 15 dollars");
+                break;
+            case "magicpotion":
+                System.out.println("+50 magic points for the user or one of his/her allies, costs 15 dollars");
+                break;
+            default:
+                System.out.println("Invalid command");
+                break;
+        }
+    }
+
+    private void abilityDescription(String command)
+    {
+        String[] commands = command.split(" ");
+        switch (commands[0])
+        {
+            case "fightTraining":
+                System.out.println("Fight training\n" +
+                        "Permanently increases attack power\n" +
+                        "Upgrade1: +30 attack power for 2 xp points\n" +
+                        "Upgrade2: +30 attack power for 3 xp points\n" +
+                        "Upgrade3: +30 attack power for 4 xp points");
+
+                break;
+            case "workOut":
+                System.out.println("Work out\n" +
+                        "Permanently increases maximum health\n" +
+                        "Upgrade 1: +50 maximum health for 2 xp points\n" +
+                        "Upgrade 2: +50 maximum health for 3 xp points\n" +
+                        "Upgrade 3: +50 maximum health for 4 xp points");
+                break;
+            case "quickAsBunny":
+                System.out.println("Quick as a bunny\n" +
+                        "Permanently increases energy points\n" +
+                        "Upgrade1: +1 energy point for 2 xp points\n" +
+                        "Upgrade2: +1 energy point for 3 xp points\n" +
+                        "Upgrade3: +1 energy point for 4 xp points");
+                break;
+            case "magicLessons":
+                System.out.println("Quick as a bunny\n" +
+                        "Permanently increases energy points\n" +
+                        "Upgrade1: +1 energy point for 2 xp points\n" +
+                        "Upgrade2: +1 energy point for 3 xp points\n" +
+                        "Upgrade3: +1 energy point for 4 xp points");
+                break;
+            case "overPoweredAttack":
+                System.out.println("Overpowered attack\n" +
+                        "Attacks an enemy with N times power for 2 energy points and 50 magic points\n" +
+                        "Upgrade 1: N=1.2 for 2 xp points, needs Fight training upgrade 1\n" +
+                        "Upgrade 2: N=1.4 for 4 xp points, needs Fight training upgrade 2\n" +
+                        "Upgrade 3: N=1.6 for 6 xp points, needs Fight training upgrade 3");
+                break;
+            case "swirlingAttack":
+                System.out.println("While attacking, non-targeted enemies also take P percent of its damage\n" +
+                        "Upgrade 1: P=10 for 2 xp points, needs Work out upgrade 1\n" +
+                        "Upgrade 2: P=20 for 3 xp points\n" +
+                        "Upgrade 3: P=30 for 4 xp points");
+                break;
+            case "sacrifice":
+                System.out.println("Sacrifice\n" +
+                        "Damages all the enemies with 3H power at the cost of H of his own health, needs 3 energy points, 60 magic points and has a 1 turn cooldown\n" +
+                        "Upgrade 1: H=40 for 2 xp points, needs Work out upgrade 1\n" +
+                        "Upgrade 2: H=50 for 3 xp points, needs Work out upgrade 2\n" +
+                        "Upgrade 3: H=60 for 4 xp points, needs Work out upgrade 3");
+                break;
+            case "criticalStrike":
+                System.out.println("Has a permanent P percent chance of doing an attack with double power (does not affect other abilities)\n" +
+                        "Upgrade 1: P=20 for 2 xp points, needs Fight training upgrade 1\n" +
+                        "Upgrade 2: P=30 for 3 xp points\n" +
+                        "Upgrade 3: P=40 for 4 xp points");
+                break;
+            case "elixir":
+                System.out.println("Elixir\n" +
+                        "Refills H points of her own health or an ally’s, for 2 energy points and 60 magic points\n" +
+                        "Upgrade 1: H=100 for 2 xp points and takes 1 turn to cool down\n" +
+                        "Upgrade 2: H=150 for 3 xp points, takes 1 turn to cool down and needs Magic lessons upgrade 1\n" +
+                        "Upgrade 3: H=150 for 5 xp points, cools down instantly and needs Magic lessons upgrade 2");
+                break;
+            case "caretaker":
+                System.out.println("Caretaker\n" +
+                        "Gives 1 energy point to an ally for 30 magic points (this ep does not last until the end of the battle and is only usable during the current turn)\n" +
+                        "Upgrade 1: takes 2 energy points and has a 1 turn cooldown for 2 xp points, needs Quick as a bunny upgrade 1\n" +
+                        "Upgrade 2: takes 2 energy points and cools down instantly for 3 xp points, needs Quick as a bunny upgrade 2\n" +
+                        "Upgrade 3 takes 1 energy point and cools down instantly for 5 xp points, needs Quick as a bunny upgrade 3");
+                break;
+            case "boots":
+                System.out.println("Boost\n" +
+                        "Gives X bonus attack power to himself or an ally, which lasts till the end of the battle, for 2 energy points and 50 magic points (this bonus attack power can stack up)\n" +
+                        "Upgrade 1: A=20 for 2 xp points and takes 1 turn to cool down\n" +
+                        "Upgrade 2: A=30 for 3 xp points and takes 1 turn to cool down\n" +
+                        "Upgrade 3: A=30 for 5 xp points and cools down instantly");
+                break;
+            case "manaBeam":
+                System.out.println("Mana beam\n" +
+                        "Gives M magic points to himself or an ally for 1 energy point and 50 magic points\n" +
+                        "Upgrade 1: M=50 for 2 xp points and takes 1 turn to cool down, needs magic lessons upgrade 1\n" +
+                        "Upgrade 2: M=80 for 3 xp points and takes 1 turn to cool down, needs magic lessons upgrade 2\n" +
+                        "Upgrade 3: M=80 for 4 xp points and cools down instantly, needs magic lessons upgrade 3");
+                break;
+            default:
+                System.out.println("There is not ability with name" + commands[1]);
+                break;
+        }
+    }
+
+    private void heroDescription(String command)
+    {
+        String[] commands = command.split(" ");
+        switch (commands[0]) {
+            case "eley":
+                System.out.println("Eley:\n" +
+                        "Class: Fighter\n" +
+                        "Ability 3: Overpowered attack\n" +
+                        "Attacks an enemy with N times power for 2 energy points and 50 magic points\n" +
+                        "Upgrade 1: N=1.2 for 2 xp points, needs Fight training upgrade 1\n" +
+                        "Upgrade 2: N=1.4 for 4 xp points, needs Fight training upgrade 2\n" +
+                        "Upgrade 3: N=1.6 for 6 xp points, needs Fight training upgrade 3\n" +
+                        "Success message: “Eley just did an overpowered attack on “ + (target) + “ with “ + (damage done) + “ damage”\n" +
+                        "Ability 4: Swirling attack\n" +
+                        "While attacking, non-targeted enemies also take P percent of its damage\n" +
+                        "Upgrade 1: P=10 for 2 xp points, needs Work out upgrade 1\n" +
+                        "Upgrade 2: P=20 for 3 xp points\n" +
+                        "Upgrade 3: P=30 for 4 xp points");
+                break;
+            case "chrome":
+                System.out.println("Chrome:\n" +
+                        "Class: Fighter\n" +
+                        "Ability 3: Sacrifice\n" +
+                        "Damages all the enemies with 3H power at the cost of H of his own health, needs 3 energy points, 60 magic points and has a 1 turn cooldown\n" +
+                        "Upgrade 1: H=40 for 2 xp points, needs Work out upgrade 1\n" +
+                        "Upgrade 2: H=50 for 3 xp points, needs Work out upgrade 2\n" +
+                        "Upgrade 3: H=60 for 4 xp points, needs Work out upgrade 3\n" +
+                        "Success message: “Chrome just sacrificed himself to damage all his enemies with “ + (damage done) + “ power“\n" +
+                        "Ability 4: Critical strike\n" +
+                        "Has a permanent P percent chance of doing an attack with double power (does not affect other abilities)\n" +
+                        "Upgrade 1: P=20 for 2 xp points, needs Fight training upgrade 1\n" +
+                        "Upgrade 2: P=30 for 3 xp points\n" +
+                        "Upgrade 3: P=40 for 4 xp points");
+                break;
+            case "meryl":
+                System.out.println("Meryl:\n" +
+                        "Class: Supporter\n" +
+                        "Ability 3: Elixir\n" +
+                        "Refills H points of her own health or an ally’s, for 2 energy points and 60 magic points\n" +
+                        "Upgrade 1: H=100 for 2 xp points and takes 1 turn to cool down\n" +
+                        "Upgrade 2: H=150 for 3 xp points, takes 1 turn to cool down and needs Magic lessons upgrade 1\n" +
+                        "Upgrade 3: H=150 for 5 xp points, cools down instantly and needs Magic lessons upgrade 2\n" +
+                        "Success message: “Meryl just healed “ + (target) + “ with “ + (healing amount) + “ health points”\n" +
+                        "Ability 4: Caretaker\n" +
+                        "Gives 1 energy point to an ally for 30 magic points (this ep does not last until the end of the battle and is only usable during the current turn)\n" +
+                        "Upgrade 1: takes 2 energy points and has a 1 turn cooldown for 2 xp points, needs Quick as a bunny upgrade 1\n" +
+                        "Upgrade 2: takes 2 energy points and cools down instantly for 3 xp points, needs Quick as a bunny upgrade 2\n" +
+                        "Upgrade 3 takes 1 energy point and cools down instantly for 5 xp points, needs Quick as a bunny upgrade 3\n" +
+                        "Success message: “Meryl just gave “ + (target) + “ 1 energy point”");
+                break;
+            case "bolti":
+                System.out.println("Bolti:\n" +
+                        "Class: Supporter\n" +
+                        "Ability 3: Boost\n" +
+                        "Gives X bonus attack power to himself or an ally, which lasts till the end of the battle, for 2 energy points and 50 magic points (this bonus attack power can stack up)\n" +
+                        "Upgrade 1: A=20 for 2 xp points and takes 1 turn to cool down\n" +
+                        "Upgrade 2: A=30 for 3 xp points and takes 1 turn to cool down\n" +
+                        "Upgrade 3: A=30 for 5 xp points and cools down instantly\n" +
+                        "Success message: “Bolti just boosted “ + (target) + “ with “ + (A) + “ power”\n" +
+                        "Ability 4: Mana beam\n" +
+                        "Gives M magic points to himself or an ally for 1 energy point and 50 magic points\n" +
+                        "Upgrade 1: M=50 for 2 xp points and takes 1 turn to cool down, needs magic lessons upgrade 1\n" +
+                        "Upgrade 2: M=80 for 3 xp points and takes 1 turn to cool down, needs magic lessons upgrade 2\n" +
+                        "Upgrade 3: M=80 for 4 xp points and cools down instantly, needs magic lessons upgrade 3\n" +
+                        "Success message: “Bolti just helped “ + (target) + “ with “ + (M) + “ magic points”");
+                break;
+            default:
+                System.out.println("invalid command");
+                break;
+        }
+    }
+
+    private void heroAttack(String command, int gameTurn)
+    {
+        String[] commands = command.split(" ");
+        Hero hero = null;
+        for (Hero hero1 : heros)
+        {
+            if (hero1.getName().equals(commands[0]))
+                hero = hero1;
+        }
+        ArrayList<Enemy> enemies = enemyGroups.get(gameTurn).getEnemies();
+        ArrayList<String> normalEnemyFullName = normalEnemyFullNames(gameTurn);
+        ArrayList<String> bossEnemyFullName = bossEnemyFullNames(gameTurn);
+        if (hero != null && commands[1].equals("attack") && (normalEnemyFullName.contains(commands[2]) ||
+                bossEnemyFullName.contains(commands[2])))
+        {
+            hero.regularAttack(enemies, commands[3]);
+        } else
+        {
+            System.out.println("Invalid command");
+        }
+    }
+
+    private commandsOrder whatIsOrder(String command, String situation, int gameTurn)
+    {
+        String[] commands = command.split(" ");
+        if (commands.length == 4 && commands[0].equals("acquire") && checkBuyAbility(command) && situation.equals("start upgrading"))
+        {
+            return commandsOrder.acquireAbility;
+        } else if (commands.length == 4 && commands[0].equals("sell") && checkSellItem(command) && situation.equals("shopping"))
+        {
+            return commandsOrder.itemSell;
+        } else if (commands.length == 4 && commands[0].equals("buy") && checkBuyItem(command) && situation.equals("shopping"))
+        {
+            return commandsOrder.itemBuy;
+        } else if (commands.length == 3 && commands[1].equals("cast") && checkCastEveryoneAbility(command, gameTurn) && situation.equals("fighting"))
+        {
+            return commandsOrder.heroCastAbilityOnEveryone;
+        } else if (commands.length == 5 && commands[1].equals("cast") && checkCastSpecieficAbility(command, gameTurn) && situation.equals("fighting"))
+        {
+            return commandsOrder.heroCastAbilityOnSpecieficTarget;
+        } else if (commands.length == 3 && commands[1].equals("use") && checkUseItemEveryone(command, gameTurn) && situation.equals("fighting"))
+        {
+            return commandsOrder.useItemEveryone;
+
+        } else if (commands.length == 5 && commands[1].equals("use") && checkUseItemSpecific(command, gameTurn) && situation.equals("fighting"))
+        {
+            return commandsOrder.useItemSpecific;
+        } else if (commands.length == 2 && commands[1].equals("?") && checkHeroDescription(command) && (situation.equals("introduce heros") ||
+                situation.equals("fighting")))
+        {
+            return commandsOrder.heroDescription;
+        } else if (commands.length == 2 && commands[1].equals("?") && checkAbilityDescription(command) && situation.equals("fighting"))
+        {
+            return commandsOrder.abilityDescription;
+        } else if (commands.length == 2 && commands[1].equals("?") && checkItemDescription(command) && (situation.equals("shopping")) ||
+                situation.equals("fighting"))
+        {
+            return commandsOrder.ItemDescription;
+        } else if (commands.length == 2 && commands[1].equals("?") && checkEnemyDescription(command) && (situation.equals("fighting")) ||
+                situation.equals("show enemy data"))
+        {
+            return commandsOrder.enemyDescription;
+        } else if (commands.length == 2 && commands[1].equals("?") && checkHeroClassDescription(command) && situation.equals("introduce heros"))
+        {
+            return commandsOrder.heroClassDescription;
+        } else if (commands.length == 3 && commands[1].equals("attack") && checkHeroAttack(command, gameTurn) && situation.equals("fighting"))
+        {
+            return commandsOrder.heroAttack;
+        } else if (commands.length == 3 && commands[2].equals("?") && checkHeroAbilityDescription(command) && situation.equals("start upgrading"))
+        {
+            return commandsOrder.heroAbilityDescription;
+        } else
+        {
+            return null;
+        }
+    }
+
+    private boolean checkUseItemSpecific(String command, int gameTurn)
+    {
+        ArrayList<String> heroNames = new ArrayList<>();
+        ArrayList<String> normalEnemyFullNames = new ArrayList<>();
+        ArrayList<String> bossEnemyFullNames = new ArrayList<>();
+        String[] commands = command.split(" ");
+        for (Hero hero : heros)
+        {
+            heroNames.add(hero.getName());
+        }
+        normalEnemyFullNames = normalEnemyFullNames(gameTurn);
+        bossEnemyFullNames = bossEnemyFullNames(gameTurn);
+        if (heroNames.contains(commands[0]) && userInterface.getItemNames().contains(commands[2]) &&
+                commands[3].equals("on") && (normalEnemyFullNames.contains(commands[3]) || bossEnemyFullNames.contains(commands[4]) || heroNames.contains(commands[3])))
+        {
+            return true;
+        } else
+        {
+            return false;
+        }
+    }
+
+    private boolean checkUseItemEveryone(String command, int gameTurn)
+    {
+        ArrayList<String> heroNames = new ArrayList<>();
+        ArrayList<String> normalEnemyFullNames = new ArrayList<>();
+        ArrayList<String> bossEnemyFullNames = new ArrayList<>();
+        String[] commands = command.split(" ");
+        for (Hero hero : heros)
+        {
+            heroNames.add(hero.getName());
+        }
+        if (heroNames.contains(commands[0]) && userInterface.getItemNames().contains(commands[2]))
+        {
+            return true;
+        } else
+        {
+            return false;
+        }
+    }
+
+    private boolean checkHeroClassDescription(String command)
+    {
+        String[] commands = command.split(" ");
+        if (userInterface.getHeroClassNames().contains(commands[0]))
+            return true;
+        else
+            return false;
+    }
+
+    private boolean checkEnemyDescription(String command)
+    {
+        String[] commands = command.split(" ");
+        if (userInterface.getNormalEnemyNames().contains(commands[0]) || userInterface.getBossEnemyNames().contains(commands[0]))
+            return true;
+        else
+            return false;
+    }
+
+    private boolean checkItemDescription(String command)
+    {
+        String[] commands = command.split(" ");
+        if (userInterface.getItemNames().contains(commands[0]))
+            return true;
+        else
+            return false;
+    }
+
+    private boolean checkAbilityDescription(String command)
+    {
+        String[] commands = command.split(" ");
+        if (userInterface.getAbilityNames().contains(commands[0]))
+            return true;
+        else
+            return false;
+    }
+
+    private boolean checkHeroDescription(String command)
+    {
+        String[] commands = command.split(" ");
+        if (userInterface.getHeroNames().contains(commands[0]))
+            return true;
+        else
+            return false;
+    }
+
+    private boolean checkHeroAbilityDescription(String command)
+    {
+        String[] commands = command.split(" ");
+        for (int i = 0; i < heros.size(); i++)
+        {
+            if (heros.get(i).getName().equals(commands[0]))
+            {
+                for (int j = 0; j < heros.get(i).getAbilities().size(); j++)
+                {
+                    if (heros.get(i).getAbilities().get(i).getName().equals(commands[1]))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean checkHeroAttack(String command, int gameTurn)
+    {
+        String[] commands = command.split(" ");
+        ArrayList<String> normalEnemyFullName = normalEnemyFullNames(gameTurn);
+        ArrayList<String> bossEnemyFullName = bossEnemyFullNames(gameTurn);
+        for (Hero hero : heros)
+        {
+            if (hero.getName().equals(commands[0]))
+            {
+                if (normalEnemyFullName.contains(commands[2]) || bossEnemyFullName.contains(commands[2]))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkCastEveryoneAbility(String command, int gameTurn)
+    {
+        ArrayList<String> heroNames = new ArrayList<>();
+        ArrayList<String> normalEnemyFullNames = new ArrayList<>();
+        ArrayList<String> bossEnemyFullNames = new ArrayList<>();
+        String[] commands = command.split(" ");
+        for (Hero hero : heros)
+        {
+            heroNames.add(hero.getName());
+        }
+        normalEnemyFullNames = normalEnemyFullNames(gameTurn);
+        bossEnemyFullNames = bossEnemyFullNames(gameTurn);
+        if (heroNames.contains(commands[0]) && userInterface.getAbilityNames().contains(commands[2]) && commands[3].equals("on") &&
+                (normalEnemyFullNames.contains(commands[3]) || bossEnemyFullNames.contains(commands[4]) || heroNames.contains(commands[3])))
+        {
+            return true;
+        } else
+            return false;
+    }
+
+    private boolean checkCastSpecieficAbility(String command, int gameTurn)
+    {
+        ArrayList<String> heroNames = new ArrayList<>();
+        String[] commands = command.split(" ");
+        for (Hero hero : heros)
+        {
+            heroNames.add(hero.getName());
+        }
+        if (heroNames.contains(commands[0]) && userInterface.getAbilityNames().contains(commands[2]))
+        {
+            return true;
+        } else
+            return false;
+    }
+
+    private boolean checkBuyItem(String command)
+    {
+        ArrayList<String> heroNames = new ArrayList<>();
+        String[] commands = command.split(" ");
+        for (Hero hero : heros)
+        {
+            heroNames.add(hero.getName());
+        }
+        if (userInterface.getItemNames().contains(commands[1]) && commands[2].equals("for") && heroNames.contains(commands[3]))
+        {
+            return true;
+        } else
+            return false;
+    }
+
+    private boolean checkSellItem(String command)
+    {
+        ArrayList<String> heroNames = new ArrayList<>();
+        String[] commands = command.split(" ");
+        for (Hero hero : heros)
+        {
+            heroNames.add(hero.getName());
+        }
+        if (userInterface.getItemNames().contains(commands[1]) && commands[2].equals("of") && heroNames.contains(commands[3]))
+        {
+            return true;
+        } else
+            return false;
+    }
+
+    private boolean checkBuyAbility(String command)
+    {
+        ArrayList<String> heroNames = new ArrayList<>();
+        String[] commands = command.split(" ");
+        for (Hero hero : heros)
+        {
+            heroNames.add(hero.getName());
+        }
+        if (userInterface.getAbilityNames().contains(commands[1]) && commands[2].equals("for") && heroNames.contains(commands[3]))
+        {
+            return true;
+        } else
+            return false;
+    }
+
+    /***********/
+    enum commandsOrder
+    {
+        heroAttack,
+        ItemDescription,
+        abilityDescription,
+        heroDescription,
+        heroClassDescription,
+        enemyDescription,
+        itemSell,
+        itemBuy,
+        heroAbilityDescription,
+        acquireAbility, heroCastAbilityOnEveryone, heroCastAbilityOnSpecieficTarget, useItemEveryone, useItemSpecific;
     }
 }
