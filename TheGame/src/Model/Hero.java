@@ -114,10 +114,11 @@ public class Hero extends Warrior
     }
 	
 	
-	public void useAbility(String abilityName, ArrayList<Enemy> enemies, ArrayList<Hero> allies)
+	public void useAbility(String abilityName, ArrayList<Enemy> enemies, ArrayList<Hero> allies, String moreSpecificTarget)
 	{
 		Ability ability = findAbility(abilityName);
 		ArrayList<Warrior> abilityTargets = new ArrayList<>();
+		ArrayList<Warrior> secondaryTargets = new ArrayList<>();
 		if(ability != null)
 		{
 			String target = ability.getAbilityTarget();
@@ -127,8 +128,25 @@ public class Hero extends Warrior
 			}
 			else if(target.equals("an ally"))
 			{
-				int targetIndex = Luck(0, allies.size() - 1);
-				abilityTargets.add(allies.get(targetIndex));
+				Hero targetAlly = null;
+				if(moreSpecificTarget.equals("everyone"))
+				{
+					// needs input
+					return;
+				}
+				for(Hero ally : allies)
+				{
+					if(ally.getName().equals(moreSpecificTarget))
+					{
+						abilityTargets.add(targetAlly);
+					}
+				}
+				
+				if(targetAlly == null)
+				{
+					// invalid name
+					return;
+				}
 			}
 			else if(target.equals("all allies"))
 			{
@@ -136,8 +154,29 @@ public class Hero extends Warrior
 			}
 			else if(target.equals("an enemy"))
 			{
-				int targetIndex = Luck(0, enemies.size() - 1);
-				abilityTargets.add(enemies.get(targetIndex));
+				Enemy targetEnemy = null;
+				if(moreSpecificTarget.equals("everyone"))
+				{
+					// needs input
+					return;
+				}
+				for(Enemy enemy : enemies)
+				{
+					if(enemy.getFullName().equals(moreSpecificTarget))
+					{
+						abilityTargets.add(enemy);
+					}
+					else
+					{
+						secondaryTargets.add(enemy);
+					}
+				}
+				
+				if(targetEnemy == null)
+				{
+					// invalid name
+					return;
+				}
 			}
 			else if(target.equals("all enemies"))
 			{
@@ -153,7 +192,7 @@ public class Hero extends Warrior
 				//invalid input
 			}
 			
-			ability.castAbility(abilityTargets);
+			ability.castAbility(abilityTargets, secondaryTargets);
 		}
 		else
 		{
@@ -162,22 +201,39 @@ public class Hero extends Warrior
 	}
 	
 	
-	public useItem(String itemName, ArrayList<Enemy> enemies, ArrayList<Hero> allies)
+	public useItem(String itemName, ArrayList<Enemy> enemies, ArrayList<Hero> allies, String moreSpecificTarget)
 	{
 		Item item = findItem(itemName);
 		ArrayList<Warrior> itemTargets = new ArrayList<>();
 		
 		if(item != null)
 		{
-			String target = item.setTarget();
+			String target = item.getTarget();
 			if(target.equals("himself"))
 			{
 				itemTargets.add(this);
 			}
 			else if(target.equals("an ally"))
 			{
-				int targetIndex = Luck(0, allies.size() - 1);
-				abilityTargets.add(allies.get(targetIndex));
+				Hero targetAlly = null;
+				if(moreSpecificTarget.equals("everyone"))
+				{
+					// needs input
+					return;
+				}
+				for(Hero ally : allies)
+				{
+					if(ally.getName().equals(moreSpecificTarget))
+					{
+						abilityTargets.add(targetAlly);
+					}
+				}
+				
+				if(targetAlly == null)
+				{
+					// invalid name
+					return;
+				}
 			}
 			else if(target.equals("all allies"))
 			{
@@ -185,8 +241,29 @@ public class Hero extends Warrior
 			}
 			else if(target.equals("an enemy"))
 			{
-				int targetIndex = Luck(0, enemies.size() - 1);
-				itemTargets.add(enemies.get(targetIndex));
+				Enemy targetEnemy = null;
+				if(moreSpecificTarget.equals("everyone"))
+				{
+					// needs input
+					return;
+				}
+				for(Enemy enemy : enemies)
+				{
+					if(enemy.getFullName().equals(moreSpecificTarget))
+					{
+						abilityTargets.add(enemy);
+					}
+					else
+					{
+						secondaryTargets.add(enemy);
+					}
+				}
+				
+				if(targetEnemy == null)
+				{
+					// invalid name
+					return;
+				}
 			}
 			else if(target.equals("all enemies"))
 			{
@@ -244,5 +321,54 @@ public class Hero extends Warrior
 		inventory.addItem(item);
 		inventory.setCurrentSize(inventory.getCurrentSize() + item.getItemSize());
 		//Check instanteffectitem in gamescenario DAMNIT
+	}
+	
+	
+	public void regularAttack(ArrayList<Enemy> enemies, String specificName)
+	{
+		int criticalEffect = 1;
+		Enemy mainTarget;
+		ArrayList<Enemy> secondaryTargets = new ArrayList<>();
+		for(Enemy enemy : enemies)
+		{
+			if(enemy.getFullName().equals(specificName))
+			{
+				mainTarget = enemy;
+			}
+			else
+			{
+				secondaryTargets.add(enemy);
+			}
+		}
+		
+		if(mainTarget == null)
+		{
+			// wrong name
+			return;
+		}
+		
+		if(data.get("current EP") < 2)
+		{
+			// not enough ep
+			return;
+		}
+		
+		if(Luck.isLikely(criticalChance))
+		{
+			criticalEffect = 2;
+		}
+		
+		HashMap<String, Integer> mainTargetData = mainTarget.getData();
+		int mainTargetHealth = mainTargetData.get("current health");
+		mainTargetData.put("current health", mainTargetData - (data.get("attack") + data.get("temp attack"))*criticalEffect);
+		
+		for(Enemy enemy : secondaryTargets)
+		{
+			HashMap<String, Integer> secondaryTargetData = enemy.getData();
+			int secondaryTargetHealth = secondaryTargetData.get("current health");
+			secondaryTargetData.put("current health", secondaryTargetData - (data.get("attack") + data.get("temp attack"))*criticalEffect);
+		}
+		
+		//Fing done :|
 	}
 }
