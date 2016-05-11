@@ -290,7 +290,7 @@ public abstract class Ability
 	private void doDamage(ArrayList<Warrior> mainTargets, ArrayList<Warrior> secondaryTargets, int damageAmount)
 	{
 		HashMap<String, Integer> targetData = new HashMap<>();
-		int criticalChance = hero.getCriticalChance, criticalEffect = 1, secondaryTargetsShare = hero.getNonTargetedEnemiesShare();
+		int criticalChance = hero.getCriticalChance(), criticalEffect = 1, secondaryTargetsShare = hero.getNonTargetedEnemiesShare();
 		
 		if(Luck.isLikely(criticalChance))
 		{
@@ -300,8 +300,15 @@ public abstract class Ability
 		for(Warrior target : mainTargets)
 		{
 			targetData = ((enemy)warrior).getData();
-			int currentHealth = targetData.get("health");
-			targetData.put("health", currentHealth + damageAmount);
+			int currentHealth = targetData.get("current health");
+			targetData.put("current health", currentHealth + (damageAmount * criticalEffect));
+		}
+		
+		for(Warrior target : secondaryTargets)
+		{
+			targetData = ((enemy)warrior).getData();
+			int currentHealth = targetData.get("current health");
+			targetData.put("current health", currentHealth + (damageAmount * criticalEffect * secondaryTargetsShare)/100);
 		}
 	}
 	
