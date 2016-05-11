@@ -40,22 +40,18 @@ public class UserInterface
     private ArrayList<String> enemyAttributes;                        // must make this fully in the constructor
 	private ArrayList<String> possibleNormalEnemyTargets; // A new variable
 
-    public HashMap<String, ArrayList<String>> getEnemyVersionNames()
-    {
-        return enemyVersionNames;
-    }
-
-    public void setEnemyVersionNames(HashMap<String, ArrayList<String>> enemyVersionNames)
-    {
-        this.enemyVersionNames = enemyVersionNames;
-    }
 
     private HashMap<String, ArrayList<String>> enemyVersionNames;
 	
     private ArrayList<String> bossEnemyNames;
     private HashMap<String, HashMap<String, Integer>> bossEnemyDatas;
-    private HashMap<String, ArrayList<String>> bossEnemySpecialConditions;
-    private HashMap<String, ArrayList<String>> bossEnemyEarlyTurnEffects;
+	private ArrayList<String> bossEnemyAttributes;
+	private ArrayList<String> changableBossEnemyAttributes;
+	private HashMap<String, Integer> bossEnemyAngerPoints;
+	private HashMap<String, HashMap<String, Integer>> bossEnemyAngerAdditions;
+	private HashMap<String, HashMap<String, String>> bossEnemyEarlyEffects;
+	private ArrayList<String> possibleBossEnemyTargets;
+	private HashMap<String, String> bossEnemyTargets;
 
     private ArrayList<String> itemNames;
     private HashMap<String, HashMap<String, Integer>> itemDatas;
@@ -131,8 +127,8 @@ public class UserInterface
         storyEnemyGroups4.add("able tank");
         storyEnemyGroups4.add("able tank");
         storyEnemyGroups5.add("collector");
-        ArrayList<String>
-        enemyVersionNames.put("thug", )
+        //ArrayList<String>;
+        //enemyVersionNames.put("thug", );
 
         storyEnemyGroups.add(storyEnemyGroups1);
         storyEnemyGroups.add(storyEnemyGroups2);
@@ -1123,13 +1119,15 @@ public class UserInterface
         ArrayList<String> earlySpecialEffects = new ArrayList<>();
         HashMap<String, Integer> bossData = new HashMap<>();
 
-        while (true) {
+        while (true) // Boss Enemy name
+		{
             System.out.print("Please enter the name of the boss enemy you want to make: ");
             bossName = in.next();
 
             System.out.println("Are you sure?(Enter the right number)");
 
-            if (yesNoQuestion(in)) {
+            if (yesNoQuestion(in)) 
+			{
                 bossEnemyNames.add(bossName);
                 break;
             }
@@ -1137,7 +1135,8 @@ public class UserInterface
 
         System.out.println("Please enter the amount you want for each attribute");
 
-        for (int i = 0; i < enemyAttributes.size(); i++) {
+        for (int i = 0; i < enemyAttributes.size(); i++) //Boss Enemy data
+		{
             while (true) {
                 String attributeName = enemyAttributes.get(i); // It will be nice if it goes up
 
@@ -1157,6 +1156,117 @@ public class UserInterface
         bossEnemyDatas.put(bossName, bossData);
 
         // Must handle Condition and early effects
+		System.out.println("Sometimes Boss Enemies get angry.. When their health gets lower than a specific amount...");
+		System.out.println("When they get angry the way they make their moves will change!");
+		System.out.println("So how much is that specific amount for this boss?");
+		//check invalid input
+		int angerPoint = in.nextInt();
+		bossEnemyAngerPoints.put(bossName, angerPoint);
+		HashMap<String, Integer> angerAdditions = new HashMap<>();
+		
+		while(true) // getting anger data
+		{
+			System.out.println("Which of the following will change because of anger?");
+			showChangableBossEnemyAttributes();
+			//check invalid input
+			String changableAttribute = in.next();
+			if(changableBossEnemyAttributes.contains(changableAttribute))
+			{
+				System.out.println("By how much?");
+				//check invalid input
+				int additionAmount = in.nextInt();
+				angerAdditions.put(changableAttribute, additionAmount);
+			}
+			else
+			{
+				System.out.println("Invalid input! Please try again");
+				continue;
+			}
+			
+			System.out.println("Will anger have any more effect?");
+			
+			if(!yesNoQuestion(in))
+			{
+				break;
+			}
+		}
+		bossEnemyAngerAdditions.put(bossName, angerAdditions);
+		
+		System.out.println("Bosses cause some effects at the start of each turn");
+		System.out.println("The amount of that cause will be a random number in a given range");
+		HashMap<String, String> earlyEffects = new HashMap<>();
+		
+		while(true)
+		{
+			System.out.println("Which of the following will change?");
+			showHeroAttributes();
+			//check invalid input
+			String chosenAttribute = in.next();
+			if(heroAttributes.contains(chosenAttribute))
+			{
+				System.out.println("Enter the range(a to b)");
+				System.out.print("a: ");
+				//check invalid input
+				String a = in.next();
+				System.out.print("b: ");
+				String b = in.next();
+				String effectRange = a + " to " + b;
+				earlyEffects.put(chosenAttribute, effectRange);
+			}
+			else
+			{
+				System.out.println("Invalid input! Please try again");
+				continue;
+			}
+			
+			System.out.println("More effects?");
+			
+			if(!yesNoQuestion(in))
+			{
+				break;
+			}
+		}
+		
+		bossEnemyEarlyEffects.put(bossName, earlyEffects);
+		
+		while(true)
+		{
+			System.out.println("Please enter the target of this boss enemy");
+			showPossibleBossEnemyTargets();
+			//check invalid input
+			String target = in.next();
+			if(target.equals("specific number"))
+			{
+				System.out.println("How many?");
+				//check invalid input
+				String targetNum = in.next();
+				while(true)
+				{
+					System.out.println("Enemy or Hero?");
+					String targetKind = in.next();
+					target = targetNum + " " + targetKind;
+					if(targetKind.equals("enemy") || targetKind.equals("hero"))
+					{
+						bossEnemyTargets.put(bossName, target);
+						break;
+					}
+					
+					System.out.println("Invalid input! Please try again");
+				}
+			}
+			else if(possibleBossEnemyTargets.contains(target))
+			{
+				bossEnemyTargets.put(bossName, target);
+				break;
+			}
+			else
+			{
+				System.out.println("Invalid input! Please try again");
+				continue;
+			}
+		}
+		
+		System.out.println("Boss Enemy was made!");
     }
 	
 	
@@ -2417,5 +2527,15 @@ public class UserInterface
     public void setPossibleNormalEnemyTargets(ArrayList<String> possibleNormalEnemyTargets)
     {
         this.possibleNormalEnemyTargets = possibleNormalEnemyTargets;
+    }
+	
+    public HashMap<String, ArrayList<String>> getEnemyVersionNames()
+    {
+        return enemyVersionNames;
+    }
+
+    public void setEnemyVersionNames(HashMap<String, ArrayList<String>> enemyVersionNames)
+    {
+        this.enemyVersionNames = enemyVersionNames;
     }
 }
