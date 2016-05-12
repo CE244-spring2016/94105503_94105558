@@ -1,5 +1,7 @@
 package Model;
 
+import Auxiliary.Luck;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -29,8 +31,27 @@ public class Hero extends Warrior
         setData(data);
     }
 
-	
-    public static int getMoney()
+	public int getNonTargetedEnemiesShare()
+	{
+		return nonTargetedEnemiesShare;
+	}
+
+	public void setNonTargetedEnemiesShare(int nonTargetedEnemiesShare)
+	{
+		this.nonTargetedEnemiesShare = nonTargetedEnemiesShare;
+	}
+
+	public int getCriticalChance()
+	{
+		return criticalChance;
+	}
+
+	public void setCriticalChance(int criticalChance)
+	{
+		this.criticalChance = criticalChance;
+	}
+
+	public static int getMoney()
     {
         return money;
     }
@@ -201,7 +222,7 @@ public class Hero extends Warrior
 	}
 	
 	
-	public useItem(String itemName, ArrayList<Enemy> enemies, ArrayList<Hero> allies, String moreSpecificTarget)
+	public void useItem(String itemName, ArrayList<Enemy> enemies, ArrayList<Hero> allies, String moreSpecificTarget)
 	{
 		Item item = findItem(itemName);
 		ArrayList<Warrior> itemTargets = new ArrayList<>();
@@ -225,7 +246,7 @@ public class Hero extends Warrior
 				{
 					if(ally.getName().equals(moreSpecificTarget))
 					{
-						abilityTargets.add(targetAlly);
+						itemTargets.add(targetAlly);
 					}
 				}
 				
@@ -251,11 +272,11 @@ public class Hero extends Warrior
 				{
 					if(enemy.getFullName().equals(moreSpecificTarget))
 					{
-						abilityTargets.add(enemy);
+						itemTargets.add(enemy);
 					}
 					else
 					{
-						secondaryTargets.add(enemy);
+						itemTargets.add(enemy);
 					}
 				}
 				
@@ -327,7 +348,7 @@ public class Hero extends Warrior
 	public void regularAttack(ArrayList<Enemy> enemies, String specificName)
 	{
 		int criticalEffect = 1;
-		Enemy mainTarget;
+		Enemy mainTarget = null;
 		ArrayList<Enemy> secondaryTargets = new ArrayList<>();
 		for(Enemy enemy : enemies)
 		{
@@ -360,13 +381,13 @@ public class Hero extends Warrior
 		
 		HashMap<String, Integer> mainTargetData = mainTarget.getData();
 		int mainTargetHealth = mainTargetData.get("current health");
-		mainTargetData.put("current health", mainTargetData - (data.get("attack") + data.get("temp attack"))*criticalEffect);
+		mainTargetData.put("current health", mainTargetHealth - (data.get("attack") + data.get("temp attack"))*criticalEffect);
 		
 		for(Enemy enemy : secondaryTargets)
 		{
 			HashMap<String, Integer> secondaryTargetData = enemy.getData();
 			int secondaryTargetHealth = secondaryTargetData.get("current health");
-			secondaryTargetData.put("current health", secondaryTargetData - (data.get("attack") + data.get("temp attack"))*criticalEffect);
+			secondaryTargetData.put("current health", secondaryTargetHealth - (data.get("attack") + data.get("temp attack"))*criticalEffect);
 		}
 		
 		//Fing done :|

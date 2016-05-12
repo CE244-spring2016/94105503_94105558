@@ -13,6 +13,16 @@ public class Inventory
         setMaxSize(size);
     }
 
+    public ArrayList<Item> getItems()
+    {
+        return items;
+    }
+
+    public void setItems(ArrayList<Item> items)
+    {
+        this.items = items;
+    }
+
     public int getMaxSize()
     {
         return maxSize;
@@ -22,9 +32,9 @@ public class Inventory
     {
         this.maxSize = maxSize;
     }
-	
 
-    public void setSize(int size)
+
+    public void setCurrentSize(int size)
     {
         this.currentSize = size;
     }
@@ -40,15 +50,15 @@ public class Inventory
     {
         items.add(item);
     }
-	
-	
-	public void removeItem(Item item)
-	{
-		if(items.contains(item))
-		{
-			items.remove(item);
-		}
-	}
+
+
+    public void removeItem(Item item)
+    {
+        if (items.contains(item))
+        {
+            items.remove(item);
+        }
+    }
 
 
     public Item getItem(String itemName)
@@ -63,15 +73,15 @@ public class Inventory
 
         return null;
     }
-	
-	
-	public boolean isFreeSpace()
-	{
-		if(currentSize < maxSize)
-		{
-			return true;
-		}
-		
-		return false;
-	}
+
+
+    public boolean isFreeSpace()
+    {
+        if (currentSize < maxSize)
+        {
+            return true;
+        }
+
+        return false;
+    }
 }

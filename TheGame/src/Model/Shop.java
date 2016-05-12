@@ -75,7 +75,7 @@ public class Shop
 		itemSellingValue = (itemBuyingValue / 2);
 		if(item instanceof NonInstantEffectItem)
 		{
-			itemSellingValue = itemSellingValue * (item.getUseLimit() / item.getMaxUseLimit);
+			itemSellingValue = itemSellingValue * (((NonInstantEffectItem)item).getUseLimit() / ((NonInstantEffectItem)item).getMaxUseLimit());
 		}
 		Hero.setMoney(Hero.getMoney() + itemSellingValue);
 		hero.sell(item);

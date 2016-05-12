@@ -1,5 +1,8 @@
 package Model;
 
+import Auxiliary.Luck;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -7,8 +10,7 @@ import java.util.HashMap;
  */
 public class NormalEnemy extends Enemy
 {
-	String version;
-	private HashMap<String, Integer> data;
+	private String version;
 
 	public String getVersion()
 	{
@@ -27,11 +29,11 @@ public class NormalEnemy extends Enemy
 	}
 
 
-	public NormalEnemy(String name, String version,HashMap<String, Integer> data)
+	public NormalEnemy(String name, String version, String target, HashMap<String, Integer> data)
 	{
+		super(name, target, data);
 		setID(0);
-		setName(name);
-		setData(data);
+		setVersion(version);
 	}
 	
 	
@@ -43,54 +45,55 @@ public class NormalEnemy extends Enemy
 	public void startAMove(ArrayList<Hero> heros, ArrayList<Enemy> allies)
 	{
 		ArrayList<Warrior> enemyMoveTargets = new ArrayList<>();
-		
-		if(target.equals("himself"))
+
+		switch (target)
 		{
-			enemyMoveTargets.add(this);
-		}
-		else if(target.equals("an ally"))
-		{
-			int targetIndex = Luck(0, allies.size() - 1);
-			enemyMoveTargets.add(allies.get(targetIndex));
-		}
-		else if(target.equals("all allies"))
-		{
-			enemyMoveTargets.addAll(allies);
-		}
-		else if(target.equals("a hero"))
-		{
-			int targetIndex = Luck(0, enemies.size() - 1);
-			enemyMoveTargets.add(enemies.get(targetIndex));
-		}
-		else if(target.equals("all heros"))
-		{
-			enemyMoveTargets.addAll(enemies);
-		}
-		else if(target.equals("everyone"))
-		{
-			enemyMoveTargets.addAll(allies);
-			enemyMoveTargets.addAll(heros);
-		}
-		else
-		{
-			//invalid input
+			case "himself":
+				enemyMoveTargets.add(this);
+				break;
+			case "an ally":
+			{
+				int targetIndex = Luck.getRandom(0, allies.size() - 1);
+				enemyMoveTargets.add(allies.get(targetIndex));
+				break;
+			}
+			case "all allies":
+				enemyMoveTargets.addAll(allies);
+				break;
+			case "a hero":
+			{
+				int targetIndex = Luck.getRandom(0, heros.size() - 1);
+				enemyMoveTargets.add(heros.get(targetIndex));
+				break;
+			}
+			case "all heros":
+				enemyMoveTargets.addAll(heros);
+				break;
+			case "everyone":
+				enemyMoveTargets.addAll(allies);
+				enemyMoveTargets.addAll(heros);
+				break;
+			default:
+				//invalid input
+				break;
 		}
 		
 		makeAMove(enemyMoveTargets);
 	}
 	
 	
-	public void makeAMove(ArrayList<Warrior> targets)
+	private void makeAMove(ArrayList<Warrior> targets)
 	{
 		for(Warrior warrior : targets)
 		{
+			HashMap<String, Integer> warriorData = new HashMap<>();
 			if(warrior instanceof Hero)
 			{
-				HashMap<String, Integer> warriorData = ((Hero)warrior).getData();
+				warriorData = ((Hero)warrior).getData();
 			}
 			else if(warrior instanceof Enemy)
 			{
-				HashMap<String, Integer> warriorData = ((Enemy)warrior).getData();
+				warriorData = ((Enemy) warrior).getData();
 			}
 			for(String moveAttribute : data.keySet())
 			{

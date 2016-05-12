@@ -1,6 +1,7 @@
 package Model;
 
 import Auxiliary.Formula;
+import Auxiliary.Luck;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,8 +13,8 @@ public abstract class Ability
 {
     protected int cooldownTurn;
     protected int currentUpgradeNum;
-    protected String name = new String();
-    protected String abilityTarget = new String();
+    protected String name = "";
+    protected String abilityTarget = "";
     protected Hero hero;
     protected ArrayList<Integer> upgradeXPs = new ArrayList<>();
     protected ArrayList<Integer> luckPercents = new ArrayList<>();
@@ -38,8 +39,8 @@ public abstract class Ability
         setFormulas(formulas);
     }
 
-	
-    public int getCooldownTurn()
+
+	public int getCooldownTurn()
     {
         return cooldownTurn;
     }
@@ -157,30 +158,17 @@ public abstract class Ability
     {
         this.formulas = formulas;
     }
-
-	
-    public boolean isInstantEffective()
-    {
-        return instantEffective;
-    }
-
-	
-    public void setInstantEffective(boolean instantEffective)
-    {
-        this.instantEffective = instantEffective;
-    }
 	
 	
 	public void castAbility(ArrayList<Warrior> mainTargets, ArrayList<Warrior> secondaryTargets)
 	{
 		int luckPercent = 0;
-		HashMap<String, Integer> userData = hero.getData();
-		
+
 		if(luckPercents.size() != 0)
 		{
 			luckPercent = luckPercents.get(currentUpgradeNum - 1);
 		}
-		
+
 		if(Luck.isLikely(luckPercent))
 		{
 			castWithLuck(mainTargets, secondaryTargets);
@@ -194,6 +182,7 @@ public abstract class Ability
 	
 	private void castWithLuck(ArrayList<Warrior> mainTargets, ArrayList<Warrior> secondaryTargets)
 	{
+		HashMap<String, Integer> userData = hero.getData();
 		for(Warrior warrior : mainTargets)
 		{
 			HashMap<String, Integer> targetData = new HashMap<>();
@@ -203,15 +192,15 @@ public abstract class Ability
 			}
 			else
 			{
-				targetData = ((enemy)warrior).getData();
+				targetData = ((Enemy)warrior).getData();
 			}
-			
+
 			for(String attribute : formulas.keySet())
 			{
 				Formula formula = formulas.get(attribute).get(currentUpgradeNum - 1);
 				int effectAmount = formula.parseFormula(userData);
 				String[] attributeNameParts = attribute.split(" ");
-				
+
 				if(attributeNameParts.length > 1 && attributeNameParts[0].equals("luck") && attributeNameParts[1].equals("cost"))
 				{
 					attribute = attribute.substring(10);
@@ -225,14 +214,13 @@ public abstract class Ability
 				{
 					attribute = attribute.substring(5);
 					int attributeAmount = targetData.get(attribute);
-					
+
 					if((warrior instanceof Enemy) && attribute.equals("health") && (attributeAmount < 0))
 					{
 						doDamage(mainTargets, secondaryTargets, attributeAmount);
 					}
 					else if(targetData.keySet().contains(attribute))
 					{
-						int attributeAmount = targetData.get(attribute);
 						targetData.put(attribute, attributeAmount + effectAmount);
 					}
 				}
@@ -243,16 +231,17 @@ public abstract class Ability
 	
 	private void castWithoutLuck(ArrayList<Warrior> mainTargets, ArrayList<Warrior> secondaryTargets)
 	{
-		for(Warrior warrior : targets)
+		HashMap<String, Integer> userData = hero.getData();
+		for(Warrior warrior : mainTargets)
 		{
-			HashMap<String, Integer> targetData = new HashMap<>();
+			HashMap<String, Integer> targetData;
 			if(warrior instanceof Hero)
 			{
 				targetData = ((Hero)warrior).getData();
 			}
 			else
 			{
-				targetData = ((enemy)warrior).getData();
+				targetData = ((Enemy)warrior).getData();
 			}
 			
 			for(String attribute : formulas.keySet())
@@ -272,13 +261,14 @@ public abstract class Ability
 				}
 				else if(!attributeNameParts[0].equals("luck"))
 				{
+					int attributeAmount = targetData.get(attribute);
 					if((warrior instanceof Enemy) && attribute.equals("health") && (attributeAmount < 0))
 					{
 						doDamage(mainTargets, secondaryTargets, attributeAmount);
 					}
 					else if(targetData.keySet().contains(attribute))
 					{
-						int attributeAmount = targetData.get(attribute) * criticalEffect; // MUST CHECK WITH TEAMMATE
+						attributeAmount = targetData.get(attribute); // MUST CHECK WITH TEAMMATE
 						targetData.put(attribute, attributeAmount + effectAmount);
 					}
 				}
@@ -289,7 +279,7 @@ public abstract class Ability
 	
 	private void doDamage(ArrayList<Warrior> mainTargets, ArrayList<Warrior> secondaryTargets, int damageAmount)
 	{
-		HashMap<String, Integer> targetData = new HashMap<>();
+		HashMap<String, Integer> targetData;
 		int criticalChance = hero.getCriticalChance(), criticalEffect = 1, secondaryTargetsShare = hero.getNonTargetedEnemiesShare();
 		
 		if(Luck.isLikely(criticalChance))
@@ -299,14 +289,14 @@ public abstract class Ability
 		
 		for(Warrior target : mainTargets)
 		{
-			targetData = ((enemy)warrior).getData();
+			targetData = ((Enemy)target).getData();
 			int currentHealth = targetData.get("current health");
 			targetData.put("current health", currentHealth + (damageAmount * criticalEffect));
 		}
 		
 		for(Warrior target : secondaryTargets)
 		{
-			targetData = ((enemy)warrior).getData();
+			targetData = ((Enemy)target).getData();
 			int currentHealth = targetData.get("current health");
 			targetData.put("current health", currentHealth + (damageAmount * criticalEffect * secondaryTargetsShare)/100);
 		}
@@ -350,6 +340,7 @@ public abstract class Ability
 	
 	public boolean isCastValid()
 	{
+		HashMap<String, Integer> userData = hero.getData();
 		for(String attribute : formulas.keySet())
 		{
 			if(attribute.equals("cost health"))
@@ -361,7 +352,6 @@ public abstract class Ability
 			if(attributeNameParts[0].equals("cost"))
 			{
 				Formula formula = formulas.get(attribute).get(currentUpgradeNum - 1);
-				HashMap<String, Integer> userDate = new HashMap<>();
 				attribute = attribute.substring(5);
 				if(userData.get(attribute) < formula.parseFormula(userData))
 				{

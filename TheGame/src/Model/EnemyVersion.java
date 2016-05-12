@@ -5,10 +5,10 @@ import java.util.HashMap;
 
 public class EnemyVersion
 {
-    String name;
-    String mainEnemyName;
-    HashMap<String, Integer> data;
-    String target;
+    private String name;
+    private String mainEnemyName;
+    private HashMap<String, Integer> data;
+    private String target;
 
 
     public EnemyVersion(String name, String mainEnemyName, HashMap<String, Integer> data, String target)
@@ -18,11 +18,6 @@ public class EnemyVersion
         setName(name);
         setMainEnemyName(mainEnemyName);
         setTarget(target);
-    }
-
-    public EnemyVersion(String name, String mainEnemyName, HashMap<String, Integer> data)
-    {
-
     }
 
     public String getMainEnemyName()
