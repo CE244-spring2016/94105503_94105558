@@ -24,6 +24,7 @@ public class NonInstantEffectItem extends Item
     {
         super(name, target, effects);
         setUseLimit(useLimit);
+        setItemSize(1);
         setMaxUseLimit(useLimit);
     }
 

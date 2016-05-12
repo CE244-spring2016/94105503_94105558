@@ -253,11 +253,20 @@ public abstract class Ability
 				if(attributeNameParts[0].equals("cost"))
 				{
 					attribute = attribute.substring(5);
+					attribute = "current " + attribute;
 					if(userData.keySet().contains(attribute))
 					{
 						int attributeAmount = userData.get(attribute);
 						userData.put(attribute, attributeAmount + effectAmount);
 					}
+				}
+				else if(attributeNameParts[0].equals("nontargetedshare"))
+				{
+					hero.setNonTargetedEnemiesShare(effectAmount);
+				}
+				else if(attributeNameParts[0].equals("criticalstrike"))
+				{
+					hero.setCriticalChance(effectAmount);
 				}
 				else if(!attributeNameParts[0].equals("luck"))
 				{
@@ -282,9 +291,9 @@ public abstract class Ability
 		HashMap<String, Integer> targetData;
 		int criticalChance = hero.getCriticalChance(), criticalEffect = 1, secondaryTargetsShare = hero.getNonTargetedEnemiesShare();
 		
-		if(Luck.isLikely(criticalChance))
+		if(Luck.isLikely(criticalChance)) //MUST REMOVE CRITICAL FROM ABILITIES
 		{
-			criticalEffect = 2;
+			criticalEffect = 1;
 		}
 		
 		for(Warrior target : mainTargets)
@@ -310,12 +319,15 @@ public abstract class Ability
 			return false;
 		}
 		
-		if(Hero.getXP() < upgradeXPs.get(currentUpgradeNum - 1))
+		if(Hero.getXP() < upgradeXPs.get(currentUpgradeNum ))
 		{
 			return false;
 		}
+		HashMap<String, Integer> mustHaveAbilities = new HashMap<>();
+		if(requiredAbilities.size() > 0) {
 		
-		HashMap<String, Integer> mustHaveAbilities = requiredAbilities.get(currentUpgradeNum - 1);
+		 mustHaveAbilities = requiredAbilities.get(currentUpgradeNum); }
+
 		
 		for(String mustHaveAbilityName : mustHaveAbilities.keySet())
 		{

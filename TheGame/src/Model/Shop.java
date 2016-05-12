@@ -47,13 +47,13 @@ public class Shop
 		int currentItemCost = itemNamesAndCost.get(itemName);
 		if(Hero.getMoney() < itemNamesAndCost.get(itemName))
 		{
-			// buy not possible
+			System.out.println("You don’t have enough money");
 			return;
 		}
 		
-		if(!hero.getInventory().isFreeSpace())
+		if(item.getItemSize() != 0 && !hero.getInventory().isFreeSpace())
 		{
-			// buy not possible
+			System.out.println(hero.getName() +"’s inventory is full");
 			return;
 		}
 		
@@ -61,6 +61,7 @@ public class Shop
 		{
 			Hero.setMoney(Hero.getMoney() - currentItemCost);
 			hero.buy(item);
+			System.out.println(itemName + "bought successfully, your current wealth is: " + Hero.getMoney());
 			if(item instanceof InflationedItem)
 			{
 				itemNamesAndCost.put(itemName, currentItemCost + inflationValue);
@@ -75,7 +76,7 @@ public class Shop
 		itemSellingValue = (itemBuyingValue / 2);
 		if(item instanceof NonInstantEffectItem)
 		{
-			itemSellingValue = itemSellingValue * (((NonInstantEffectItem)item).getUseLimit() / ((NonInstantEffectItem)item).getMaxUseLimit());
+			itemSellingValue = itemSellingValue * ((((NonInstantEffectItem) item).getUseLimit() / ((NonInstantEffectItem) item).getMaxUseLimit()));
 		}
 		Hero.setMoney(Hero.getMoney() + itemSellingValue);
 		hero.sell(item);

@@ -175,7 +175,7 @@ public class Hero extends Warrior
 			}
 			else if(target.equals("an enemy"))
 			{
-				Enemy targetEnemy = null;
+			//	Enemy targetEnemy = null;
 				if(moreSpecificTarget.equals("everyone"))
 				{
 					// needs input
@@ -193,7 +193,7 @@ public class Hero extends Warrior
 					}
 				}
 				
-				if(targetEnemy == null)
+				if(abilityTargets.size() == 0)
 				{
 					// invalid name
 					return;
@@ -364,13 +364,13 @@ public class Hero extends Warrior
 		
 		if(mainTarget == null)
 		{
-			// wrong name
+			System.out.println("wrong name");
 			return;
 		}
 		
 		if(data.get("current EP") < 2)
 		{
-			// not enough ep
+			System.out.println("not enough ep");
 			return;
 		}
 		
@@ -382,12 +382,12 @@ public class Hero extends Warrior
 		HashMap<String, Integer> mainTargetData = mainTarget.getData();
 		int mainTargetHealth = mainTargetData.get("current health");
 		mainTargetData.put("current health", mainTargetHealth - (data.get("attack") + data.get("temp attack"))*criticalEffect);
-		
+
 		for(Enemy enemy : secondaryTargets)
 		{
 			HashMap<String, Integer> secondaryTargetData = enemy.getData();
 			int secondaryTargetHealth = secondaryTargetData.get("current health");
-			secondaryTargetData.put("current health", secondaryTargetHealth - (data.get("attack") + data.get("temp attack"))*criticalEffect);
+			secondaryTargetData.put("current health", secondaryTargetHealth - (((data.get("attack") + data.get("temp attack"))*criticalEffect) * nonTargetedEnemiesShare) / 100);
 		}
 		
 		//Fing done :|

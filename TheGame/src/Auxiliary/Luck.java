@@ -1,7 +1,5 @@
 package Auxiliary;
 
-import org.omg.CORBA.PUBLIC_MEMBER;
-
 import java.util.Random;
 
 /**
@@ -11,19 +9,23 @@ public class Luck
 {
     public static boolean isLikely(int luckPercent)
     {
-        if(luckPercent < 100)
+        if (luckPercent < 100)
         {
             Random rand = new Random();
             int n = rand.nextInt(100) + 1;
-            if (n >= 1 && n <= luckPercent)
+            if (n >= 1 && n <= luckPercent) {
                 return true;
-            else
+            } else {
                 return false;
+            }
+
         } else
             return true;
 
     }
-    public static int getRandom(int first, int second) {
+
+    public static int getRandom(int first, int second)
+    {
         Random random = new Random();
         return (random.nextInt(second - first + 1) + first);
     }

@@ -30,7 +30,7 @@ public class EnemyGroup
                 {
                     for (int j = 0; j < foundedEnemies.size(); j++)
                     {
-                        foundedEnemies.get(i).setID(j + 1);
+                        foundedEnemies.get(j).setID(j + 1);
                     }
                 }
             }
