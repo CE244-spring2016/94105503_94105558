@@ -100,13 +100,9 @@ public class GameScenario
         Hero.setMoney(userInterface.getInitialMoney());
         Hero.setImmortalityPotionNum(userInterface.getImmortalityPotionNum());
         introduceHeros();//ok
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < userInterface.getGameTurns(); i++)
         {
             enemyGroups.add(new EnemyGroup(createEnemies(i), userInterface.getEnemyGroupXPs().get(i), userInterface.getEnemyGroupMoneys().get(i), i));
-        }
-        for (int i = userInterface.getGameTurns() - 1; i < userInterface.getGameTurns(); i++)
-        {
-
             tellStory(i);
             showEnemyData(i);
             startUpgrading();
@@ -475,6 +471,18 @@ public class GameScenario
                 }
                 order = normalizer(this.scanner.nextLine());
             }
+            //FK
+            for (Hero hero : heros)
+            {
+                for (int j = 0; j < hero.getAbilities().size(); j++)
+                {
+                    if (hero.getAbilities().get(j).getCooldownTurn() > 0)
+                    {
+                        hero.getAbilities().get(j).setCooldownTurn(hero.getAbilities().get(j).getCooldownTurn() - 1);
+                    }
+                }
+            }
+            //FK
             for (Enemy enemy : enemies)
             {
                 if (enemy.getData().get("current health") <= 0)
@@ -497,9 +505,17 @@ public class GameScenario
                     }
 
                 }
+            }//FK
+            for (int i = 0; i < deadEnemies.size(); i++)
+            {
+                System.out.println(deadEnemies.get(i).getFullName() + " has died");
             }
+            //FK
             enemiesMakeMove(gameTurn);
         }
+        //FK
+        System.out.println("Vitory! You’ve defeated all of your enemies");
+        //FK
 
         Hero.setXP(Hero.getXP() + xpAmount);
         Hero.setMoney((Hero.getMoney() + moneyAmount));
@@ -534,7 +550,7 @@ public class GameScenario
                         Hero.setImmortalityPotionNum(Hero.getImmortalityPotionNum() - 1);
                         reviveHero(hero);
                         System.out.println(hero.getName() + " is dying, immortality potion was used for reincarnation process, you now have “" +
-                                 Hero.getImmortalityPotionNum()+ " immortality potions left");
+                                Hero.getImmortalityPotionNum() + " immortality potions left");
                     }
                 }
             }
@@ -626,12 +642,14 @@ public class GameScenario
         ArrayList<String> bossEnemiesNames = bossEnemyFullNames(gameTurn);
         for (int i = 0; i < normalEnemiesNames.size(); i++)
         {
+            //FK
             System.out.printf("%s Health: %d / %d", normalEnemiesNames.get(i), normalEnemies.get(i).getData().get("current health"), normalEnemies.get(i).getData().get("max health"));
+            //FK
         }
         System.out.println("\n");
         for (int i = 0; i < bossEnemiesNames.size(); i++)
         {
-            System.out.println(bossEnemiesNames.get(i) + " Health: "+bossEnemies.get(i).getData().get("current health" + " / " + bossEnemies.get(i).getData().get("max health")));
+            System.out.println(bossEnemiesNames.get(i) + " Health: " + bossEnemies.get(i).getData().get("current health") + " / " + bossEnemies.get(i).getData().get("max health"));
         }
     }
     //VAHIDCHECK
@@ -670,7 +688,6 @@ public class GameScenario
                     abilityDescription(command);
                     break;
                 case ItemDescription:
-                    System.out.println("come and fuck...");
                     itemDescription(command);
                     break;
                 case enemyDescription:
@@ -699,14 +716,12 @@ public class GameScenario
                     break;
 
                 default:
-                    System.out.println("Fuck1");
                     System.out.println("Invalid command");
                     break;
 
             }
         } else
         {
-            System.out.println("fuck2");
             System.out.println("Invalid command");
         }
     }
@@ -737,7 +752,6 @@ public class GameScenario
             }
         } else if (hero == null)
         {
-            System.out.println("fuck3");
             System.out.println("Invalid command");
         } else
         {
@@ -770,7 +784,6 @@ public class GameScenario
             }
         } else if (hero == null)
         {
-            System.out.println("fuck 5");
             System.out.println("Invalid command");
         } else
         {
@@ -799,7 +812,7 @@ public class GameScenario
                     {
                         hero.useAbility(ability.getName(), new ArrayList<Enemy>(), heros, "himself");
                     }
-                    correctCurrentAttributes(hero);
+                    setCurrentAttributesToMax(hero);
                     //bugable no
                     Hero.setXP(Hero.getXP() - ability.getUpgradeXPs().get(ability.getCurrentUpgradeNum() - 1));
                     if (ability.getCurrentUpgradeNum() == 1)
@@ -810,7 +823,6 @@ public class GameScenario
             }
         } else if (hero == null)
         {
-            System.out.println("fuck 10");
             System.out.println("Invalid command");
         } else
         {
@@ -818,7 +830,7 @@ public class GameScenario
         }
     }
 
-    private void correctCurrentAttributes(Hero hero)
+    private void setCurrentAttributesToMax(Hero hero)
     {
         HashMap<String, Integer> data = hero.getData();
         for (String attribute : data.keySet())
@@ -856,7 +868,6 @@ public class GameScenario
             }
         } else if (hero == null)
         {
-            System.out.println("fuck 10");
             System.out.println("Invalid command");
         } else
         {
@@ -907,7 +918,6 @@ public class GameScenario
             System.out.println(hero.getName() + "doesn't have" + commands[1]);
         } else
         {
-            System.out.println("FUck you asshole");
             System.out.println("Invalid command");
         }
     }
@@ -939,8 +949,12 @@ public class GameScenario
         if (hero != null && item instanceof InstantEffectItem)
         {
             hero.useItem(item.getName(), new ArrayList<Enemy>(), heros, "himself");
+            //FK
+            if (item instanceof InflationedItem)
+                hero.getInventory().removeItem(item);
+            //FK
         }
-        correctCurrentAttributes(hero);
+        setCurrentAttributesToMax(hero);
 
     }
 
@@ -1128,7 +1142,7 @@ public class GameScenario
             }
         } else
         {
-            System.out.println("There is no enemy with name "+ commands[0]);
+            System.out.println("There is no enemy with name " + commands[0]);
         }
     }
 
@@ -1333,7 +1347,6 @@ public class GameScenario
                         "Success message: “Bolti just helped “ + (target) + “ with “ + (M) + “ magic points”");
                 break;
             default:
-                System.out.println("WHAT THE fuck WE are doing now");
                 System.out.println("invalid command");
                 break;
         }
@@ -1357,7 +1370,6 @@ public class GameScenario
             hero.regularAttack(enemies, commands[2]);
         } else
         {
-            System.out.println("NZOOOO");
             System.out.println("Invalid command");
         }
     }
@@ -1408,14 +1420,12 @@ public class GameScenario
             return commandsOrder.heroClassDescription;
         } else if (commands.length == 3 && commands[1].equals("attack") && checkHeroAttack(command, gameTurn) && situation.equals("fighting"))
         {
-            System.out.println("f u c ...");
             return commandsOrder.heroAttack;
         } else if (commands.length == 3 && commands[2].equals("?") && checkHeroAbilityDescription(command) && situation.equals("start upgrading"))
         {
             return commandsOrder.heroAbilityDescription;
         } else
         {
-            System.out.println("YSSSS");
             return null;
         }
     }
@@ -1522,11 +1532,14 @@ public class GameScenario
             {
                 for (int j = 0; j < heros.get(i).getAbilities().size(); j++)
                 {
-                    if (heros.get(i).getAbilities().get(i).getName().equals(commands[1]))
+                    //FK
+                    if (heros.get(i).getAbilities().get(j).getName().equals(commands[1]))
                     {
                         return true;
                     }
+                    //FK
                 }
+                System.out.println("This ability is not for " + commands[0]);
             }
         }
         return false;
@@ -1534,7 +1547,6 @@ public class GameScenario
 
     private boolean checkHeroAttack(String command, int gameTurn)
     {
-        System.out.println("fuckdo");
         String[] commands = command.split(" ");
         ArrayList<String> normalEnemyFullName = normalEnemyFullNames(gameTurn);
         ArrayList<String> bossEnemyFullName = bossEnemyFullNames(gameTurn);

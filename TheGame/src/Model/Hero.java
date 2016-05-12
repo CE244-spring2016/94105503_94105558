@@ -371,7 +371,7 @@ public class Hero extends Warrior
 		
 		if(data.get("current EP") < 2)
 		{
-			System.out.println("not enough ep");
+			System.out.println("You don’t have enough energy points");
 			return;
 		}
 		
@@ -382,8 +382,14 @@ public class Hero extends Warrior
 		
 		HashMap<String, Integer> mainTargetData = mainTarget.getData();
 		int mainTargetHealth = mainTargetData.get("current health");
+		//FK
+		System.out.println(this.getName()+ "has successfully attacked " + mainTarget.getFullName() + " with " + data.get("attack") + data.get("temp attack") + " attack power" );
+		//FK
 		mainTargetData.put("current health", mainTargetHealth - (data.get("attack") + data.get("temp attack"))*criticalEffect);
 		this.getData().put("current EP", this.getData().get("current EP") - 2);
+		if(this.getData().get("current EP") < 0) {
+			this.getData().put("current EP", 0);
+		}
 
 		for(Enemy enemy : secondaryTargets)
 		{

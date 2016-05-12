@@ -57,19 +57,21 @@ public abstract class Enemy extends Warrior
 
         if (this instanceof NormalEnemy)
         {
-            fullName = ((NormalEnemy) this).getVersion() + name;
+            //FK
+            fullName = ((NormalEnemy) this).getVersion()+"-" + name;
             if (ID != 0)
             {
-                fullName += Integer.toString(ID);
+                fullName = fullName + "-"+ Integer.toString(ID);
             }
         } else if (this instanceof BossEnemy)
         {
             fullName = name;
             if (ID != 0)
             {
-                fullName += Integer.toString(ID);
+                fullName = fullName + "-" + Integer.toString(ID);
             }
         }
+        //FK
 
         return fullName;
     }

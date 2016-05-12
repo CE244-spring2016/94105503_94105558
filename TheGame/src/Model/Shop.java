@@ -80,5 +80,8 @@ public class Shop
 		}
 		Hero.setMoney(Hero.getMoney() + itemSellingValue);
 		hero.sell(item);
+		//FK
+		System.out.println(item.getName() +" successfully sold, your current wealth is: " + Hero.getMoney());
+		//FK
 	}
 }

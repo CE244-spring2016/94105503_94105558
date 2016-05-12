@@ -206,7 +206,7 @@ public class UserInterface
         //
 
         immortalityPotionNum = 3;
-        initialMoney = 100;
+        initialMoney = 40;
         initialXP = 15;
         gameTurns = 5;
         shopInflationValue = 2;

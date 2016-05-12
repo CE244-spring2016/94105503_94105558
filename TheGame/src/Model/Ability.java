@@ -378,6 +378,7 @@ public abstract class Ability
 		
 		if(cooldownTurn != 0)
 		{
+			System.out.println("Your desired ability is still in cooldown");
 			return false;
 		}
 		
