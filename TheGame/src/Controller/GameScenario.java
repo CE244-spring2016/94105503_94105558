@@ -2,6 +2,7 @@ package Controller;
 
 import Auxiliary.Formula;
 import Model.*;
+import com.sun.org.apache.xpath.internal.SourceTree;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +12,7 @@ public class GameScenario
 {
     private UserInterface userInterface;
 
-    private ArrayList<Warrior> warrior;
+    private ArrayList<Warrior> warrior = new ArrayList<>();
     private Scanner scanner;
     private ArrayList<EnemyGroup> enemyGroups = new ArrayList<>();
     private ArrayList<Hero> heros = new ArrayList<>();
@@ -40,23 +41,38 @@ public class GameScenario
                 String abilityName = heroAbilities.get(j);
                 String abilityTarget = this.userInterface.getAbilityTargets().get(abilityName);
                 ArrayList<Integer> upgradeXP = new ArrayList<>();
-                upgradeXP = this.userInterface.getAllAbilityUpgradeXPs().get(abilityName);
+                if(this.userInterface.getAllAbilityUpgradeXPs().get(abilityName) != null)
+                {
+                    upgradeXP = this.userInterface.getAllAbilityUpgradeXPs().get(abilityName);
+                }
                 ArrayList<Integer> luckPercents = new ArrayList<>();
-                luckPercents = this.userInterface.getAbilityLuckPercents().get(abilityName);
+                if(this.userInterface.getAbilityLuckPercents().get(abilityName) != null)
+                {
+                    luckPercents = this.userInterface.getAbilityLuckPercents().get(abilityName);
+                }
                 ArrayList<Integer> abilityCooldownNums = new ArrayList<>();
-                abilityCooldownNums = this.userInterface.getAllAbilityCooldowns().get(abilityName);
+                if(this.userInterface.getAllAbilityCooldowns().get(abilityName) != null)
+                {
+                    abilityCooldownNums = this.userInterface.getAllAbilityCooldowns().get(abilityName);
+                }
                 ArrayList<HashMap<String, Integer>> requiredAbilities = new ArrayList<>();
-                requiredAbilities = this.userInterface.getAllRequiredAbilities().get(abilityName);
+                if(this.userInterface.getAllRequiredAbilities().get(abilityName) != null)
+                {
+                    requiredAbilities = this.userInterface.getAllRequiredAbilities().get(abilityName);
+                }
                 HashMap<String, ArrayList<Formula>> formulas = new HashMap<>();
-                formulas.putAll(this.userInterface.getAllAbiliyFormulas().get(abilityName));
-                String tragets = this.userInterface.getAbilityTargets().get(abilityName);
+                if(this.userInterface.getAllAbiliyFormulas().get(abilityName) != null)
+                {
+                    formulas.putAll(this.userInterface.getAllAbiliyFormulas().get(abilityName));
+                }
+                String tragets = this.userInterface.getAbilityTargets().get(abilityName); // The hell is this?
                 boolean isInstantEffect = false;
                 if (this.userInterface.getInstantEffectConditionAbilities().contains(abilityName))
                 {
                     isInstantEffect = true;
                 }
 
-                if (isInstantEffect)
+                if (!isInstantEffect) // is this correct
                 {
                     abilities.add(new ActiveAbility(abilityName, abilityTarget, upgradeXP, luckPercents,
                             abilityCooldownNums, requiredAbilities, formulas));
@@ -113,16 +129,18 @@ public class GameScenario
                 {
                     ArrayList<EnemyVersion> enemyVersions = userInterface.getNormalEnemyDatas().get(enemiesVersionAndName.split(" ")[1]);
                     HashMap<String, Integer> enemyVersionDatas = new HashMap<>();
+                    String target = "";
 
                     for (EnemyVersion enemyVersion1 : enemyVersions)
                     {
                         if (enemyVersion1.getName().equals(enemiesVersionAndName.split(" ")[0]))
                         {
                             enemyVersionDatas.putAll(enemyVersion1.getData());
+                            target = enemyVersion1.getTarget();
                             break;
                         }
                     }
-                    Warrior enemy = new NormalEnemy(enemiesVersionAndName.split(" ")[1], enemiesVersionAndName.split(" ")[0], enemyVersionDatas);
+                    Warrior enemy = new NormalEnemy(enemiesVersionAndName.split(" ")[1], enemiesVersionAndName.split(" ")[0], target, enemyVersionDatas);
                     enemies.add((Enemy) enemy);
                     warrior.add(enemy);
 
@@ -130,6 +148,15 @@ public class GameScenario
             } else
             {
                 //createBoss
+                String target = userInterface.getBossEnemyTargets().get(enemiesVersionAndName);
+                HashMap<String, Integer> data = userInterface.getBossEnemyDatas().get(enemiesVersionAndName);
+                int angerPoint = userInterface.getBossEnemyAngerPoints().get(enemiesVersionAndName);
+                HashMap<String, Integer> angerEffects = userInterface.getBossEnemyAngerAdditions().get(enemiesVersionAndName);
+                HashMap<String, String> earlyTurnEffect = userInterface.getBossEnemyEarlyEffects().get(enemiesVersionAndName);
+
+                Warrior bossEnemy = new BossEnemy(enemiesVersionAndName, target, angerPoint, angerEffects, earlyTurnEffect, data);
+                enemies.add((Enemy) bossEnemy);
+                warrior.add(bossEnemy);
             }
         }
         return enemies;
@@ -436,11 +463,14 @@ public class GameScenario
     public void startFighting(int gameTurn)
     {
         ArrayList<Enemy> enemies = enemyGroups.get(gameTurn).getEnemies();
+        int xpAmount = userInterface.getEnemyGroupXPs().get(gameTurn);
+        int moneyAmount = userInterface.getEnemyGroupMoneys().get(gameTurn);
         showStartFighting(gameTurn);
         String order = normalizer(this.scanner.next());
         while (enemies.size() != 0)
         {
             ArrayList<Enemy> deadEnemies = new ArrayList<>();
+            ArrayList<Hero> deadHeros = new ArrayList<>();
             while (!order.equals("done"))
             {
                 if (order.equals("help"))
@@ -480,6 +510,11 @@ public class GameScenario
             }
             enemiesMakeMove(gameTurn);
         }
+
+        Hero.setXP(Hero.getXP() + xpAmount);
+        Hero.setMoney((Hero.getMoney() + moneyAmount));
+
+        // print wanted lines
     }
 
     private void enemiesMakeMove(int gameTurn)
@@ -497,7 +532,45 @@ public class GameScenario
 
             enemy.startAMove(heros, enemies);
 
+            for (Hero hero : heros)
+            {
+                if (hero.getData().get("current health") <= 0)
+                {
+                    if(Hero.getImmortalityPotionNum() == 0)
+                    {
+                        // Game Over
+                    }
+                    else
+                    {
+                        Hero.setImmortalityPotionNum(Hero.getImmortalityPotionNum() - 1);
+                        reviveHero(hero);
+                        // Print the wanted lines
+                    }
+                }
+            }
         }
+    }
+
+    private void reviveHero(Hero hero)
+    {
+        HashMap<String, Integer> data = hero.getData();
+        for (String attribute : data.keySet())
+        {
+            String[] attributeNameParts = attribute.split(" ");
+            if(attributeNameParts[0].equals("current"))
+            {
+                attributeNameParts[0] = "max";
+                String attributeMax = "";
+                for (String attributeNamePart : attributeNameParts)
+                {
+                    attributeMax += attributeNamePart;
+                }
+                int maxAmount = data.get(attributeMax);
+                data.put(attribute, maxAmount);
+            }
+        }
+
+        data.put("temp attack", 0);
     }
 
     private void showStartFighting(int gameTurn)
@@ -956,8 +1029,8 @@ public class GameScenario
                 if (hero.findAbility(commands[1]) != null)
                 {
                     Ability ability = hero.findAbility(commands[1]);
-                    System.out.println("Your upgrade is" + "upgrade" +ability.getCurrentUpgradeNum());
-                    System.out.println("You need " + ability.getUpgradeXPs().get(ability.getCurrentUpgradeNum() - 1) +"XP point" );
+                    System.out.println("Your upgrade is" + "upgrade" + ability.getCurrentUpgradeNum());
+                    System.out.println("You need " + ability.getUpgradeXPs().get(ability.getCurrentUpgradeNum() - 1) + "XP point");
                 }
             } else
             {
@@ -1041,7 +1114,8 @@ public class GameScenario
     private void itemDescription(String command)
     {
         String[] commands = command.split(" ");
-        switch (commands[1]) {
+        switch (commands[1])
+        {
             case "toughen":
                 System.out.println("+20 maximum health");
                 break;
@@ -1172,7 +1246,8 @@ public class GameScenario
     private void heroDescription(String command)
     {
         String[] commands = command.split(" ");
-        switch (commands[0]) {
+        switch (commands[0])
+        {
             case "eley":
                 System.out.println("Eley:\n" +
                         "Class: Fighter\n" +
