@@ -115,7 +115,7 @@ public class UserInterface
 
     public void init()
     {
-        //storyEnemyGroups
+        //storyEnemyGroups VAHIDCHECK
         ArrayList<String> storyEnemyGroups1 = new ArrayList<>();
         ArrayList<String> storyEnemyGroups2 = new ArrayList<>();
         ArrayList<String> storyEnemyGroups3 = new ArrayList<>();
@@ -149,8 +149,8 @@ public class UserInterface
         angelVersionNames.add("able");
         enemyVersionNames.put("angel", angelVersionNames);
         ArrayList<String> TankVersionNames = new ArrayList<>();
-        angelVersionNames.add("weak");
-        angelVersionNames.add("able");
+        TankVersionNames.add("weak");
+        TankVersionNames.add("able");
         enemyVersionNames.put("tank", TankVersionNames);
 
         storyEnemyGroups.add(storyEnemyGroups1);
@@ -158,18 +158,22 @@ public class UserInterface
         storyEnemyGroups.add(storyEnemyGroups3);
         storyEnemyGroups.add(storyEnemyGroups4);
         storyEnemyGroups.add(storyEnemyGroups5);
+        //VAHIDCHECK
 
-        //enemyGroupXP
+        //enemyGroupXP VAHIDCHECK
         enemyGroupXPs.add(20);
         enemyGroupXPs.add(25);
         enemyGroupXPs.add(30);
         enemyGroupXPs.add(35);
+        enemyGroupXPs.add(0);
         //enemyGroupMoneys
         enemyGroupMoneys.add(50);
         enemyGroupMoneys.add(60);
         enemyGroupMoneys.add(70);
         enemyGroupMoneys.add(80);
-        //gameStory
+        enemyGroupMoneys.add(0);
+        //VAHIDCHECK
+        //gameStory VAHIDCHECK
         gameStory.add("You’ve entered the castle, it takes a while for your eyes to get used to " +
                 "the darkness but the horrifying halo of your enemies is vaguely visible. " +
                 "Angel’s unsettling presence and the growling of thugs tell you that your first battle has BEGUN!");
@@ -186,7 +190,9 @@ public class UserInterface
         gameStory.add("The collector falls down on his knees, he’s strained and desperate but still tries to drag himself" +
                 " toward Epoch. He knows his era has come to an end. The ancient time machine calls you to end the disorder " +
                 "and bring unity under its glorious wings, now it’s your turn to be the MASTERS OF TIME!");
-        //shopd
+        //VAHIDCHECK
+
+        //shop
 
         shopItemMoneyCosts.put("guide", 4);
         shopItemMoneyCosts.put("toughen", 4);
@@ -386,57 +392,50 @@ public class UserInterface
         itemTargets.put("energyboots", "himself");
         itemTargets.put("armor", "himself");
         itemTargets.put("magicstick", "himself");
-        itemTargets.put("healthpotion", "himself or an ally");
-        itemTargets.put("magicpotion", "himself or an ally");
+        itemTargets.put("healthpotion", "an ally");
+        itemTargets.put("magicpotion", "an ally");
         //inflation Item
         inflationedItems.add("toughen");
         inflationedItems.add("guide");
         inflationedItems.add("defy");
-        //ItemData
+
+        //ItemData VAHIDCHECK
         HashMap<String, Integer> toughenData = new HashMap<>();
         toughenData.put("max health", 20);
-        //toughenData.put("cost", 4);
         itemDatas.put("toughen", toughenData);
 
         HashMap<String, Integer> guideData = new HashMap<>();
         guideData.put("max magic", 20);
-        //guideData.put("cost", 4);
         itemDatas.put("guide", guideData);
 
         HashMap<String, Integer> defyData = new HashMap<>();
         defyData.put("attack", 8);
-        //defyData.put("cost", 4);
         itemDatas.put("defy", defyData);
 
         HashMap<String, Integer> swordData = new HashMap<>();
         swordData.put("attack", 80);
-        //swordData.put("cost", 25);
         itemDatas.put("sword", swordData);
 
         HashMap<String, Integer> energyBootsData = new HashMap<>();
         energyBootsData.put("current EP", 1);
-        //energyBootsData.put("cost", 20);
         itemDatas.put("energyboots", energyBootsData);
 
         HashMap<String, Integer> armorData = new HashMap<>();
         armorData.put("max health", 200);
-        //armorData.put("cost", 25);
         itemDatas.put("armor", armorData);
 
         HashMap<String, Integer> magicStickData = new HashMap<>();
         magicStickData.put("max magic", 150);
-        //magicStickData.put("cost", 28);
-        itemDatas.put("magicStick", magicStickData);
+        itemDatas.put("magicstick", magicStickData);
 
         HashMap<String, Integer> healthPotionData = new HashMap<>();
         healthPotionData.put("current health", 100);
-        //healthPotionData.put("cost", 15);
-        itemDatas.put("healthPotion", healthPotionData);
+        itemDatas.put("healthpotion", healthPotionData);
 
         HashMap<String, Integer> magicPotionData = new HashMap<>();
         magicPotionData.put("current magic", 50);
-        //magicPotionData.put("cost", 15);
-        itemDatas.put("magicPotion", magicPotionData);
+        itemDatas.put("magicpotion", magicPotionData);
+        //VAHIDCHECK
 
         shopItemNames.add("toughen");
         shopItemNames.add("guide");
@@ -540,7 +539,7 @@ public class UserInterface
         criticalStrikeXP.add(2);
         criticalStrikeXP.add(3);
         criticalStrikeXP.add(4);
-        allAbilityUpgradeXPs.put("criticalStrike", criticalStrikeXP);
+        allAbilityUpgradeXPs.put("criticalstrike", criticalStrikeXP);
 
         ArrayList<Integer> elixirXP = new ArrayList<>();
         elixirXP.add(2);

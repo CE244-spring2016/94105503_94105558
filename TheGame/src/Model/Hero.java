@@ -246,6 +246,7 @@ public class Hero extends Warrior
 				{
 					if(ally.getName().equals(moreSpecificTarget))
 					{
+						targetAlly = ally;
 						itemTargets.add(targetAlly);
 					}
 				}
@@ -382,6 +383,7 @@ public class Hero extends Warrior
 		HashMap<String, Integer> mainTargetData = mainTarget.getData();
 		int mainTargetHealth = mainTargetData.get("current health");
 		mainTargetData.put("current health", mainTargetHealth - (data.get("attack") + data.get("temp attack"))*criticalEffect);
+		this.getData().put("current EP", this.getData().get("current EP") - 2);
 
 		for(Enemy enemy : secondaryTargets)
 		{

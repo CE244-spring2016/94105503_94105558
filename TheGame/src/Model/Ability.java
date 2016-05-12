@@ -264,7 +264,7 @@ public abstract class Ability
 				{
 					hero.setNonTargetedEnemiesShare(effectAmount);
 				}
-				else if(attributeNameParts[0].equals("criticalstrike"))
+				else if(attributeNameParts[0].equals("criticalchance"))
 				{
 					hero.setCriticalChance(effectAmount);
 				}
@@ -316,11 +316,13 @@ public abstract class Ability
 	{
 		if(currentUpgradeNum == upgradeXPs.size())
 		{
+			System.out.println("This ability cannot be upgraded anymore");
 			return false;
 		}
 		
 		if(Hero.getXP() < upgradeXPs.get(currentUpgradeNum ))
 		{
+			System.out.println("Your experience is insufficient");
 			return false;
 		}
 		HashMap<String, Integer> mustHaveAbilities = new HashMap<>();
@@ -335,12 +337,14 @@ public abstract class Ability
 			
 			if(ability == null)
 			{
+				System.out.println("equired abilities aren’t acquired");
 				return false;
 			}
 			else
 			{
 				if(ability.getCurrentUpgradeNum() < mustHaveAbilities.get(mustHaveAbilityName))
 				{
+					System.out.println("equired abilities aren’t acquired");
 					return false;
 				}
 			}

@@ -100,13 +100,18 @@ public class GameScenario
         Hero.setMoney(userInterface.getInitialMoney());
         Hero.setImmortalityPotionNum(userInterface.getImmortalityPotionNum());
         introduceHeros();//ok
-        for (int i = 0; i < userInterface.getGameTurns(); i++)
+        for (int i = 0; i < 5; i++)
         {
             enemyGroups.add(new EnemyGroup(createEnemies(i), userInterface.getEnemyGroupXPs().get(i), userInterface.getEnemyGroupMoneys().get(i), i));
+        }
+        for (int i = userInterface.getGameTurns() - 1; i < userInterface.getGameTurns(); i++)
+        {
+
             tellStory(i);
             showEnemyData(i);
             startUpgrading();
             shopping();
+            // System.out.println(normalEnemyFullNames(i));
             startFighting(i);
         }
 
@@ -221,78 +226,50 @@ public class GameScenario
 
     }
 
-    //think about dying enemies
+    //OK
     private ArrayList<String> normalEnemyFullNames(int gameTurn)
     {
         EnemyGroup enemyGroup;
         enemyGroup = this.enemyGroups.get(gameTurn);
         ArrayList<Enemy> enemies = enemyGroup.getEnemies();
         ArrayList<NormalEnemy> normalEnemies = new ArrayList<>();
-        ArrayList<BossEnemy> bossEnemies = new ArrayList<>();
         for (Enemy enemy : enemies)
         {
             if (enemy instanceof NormalEnemy)
             {
                 normalEnemies.add((NormalEnemy) enemy);
-            } else if (enemy instanceof BossEnemy)
-            {
-                bossEnemies.add((BossEnemy) enemy);
             }
+
         }
         ArrayList<String> normalEnemiesNames = new ArrayList<>();
-        ArrayList<String> bossEnemiesNames = new ArrayList<>();
         for (NormalEnemy normalEnemy : normalEnemies)
         {
             if (normalEnemy.getID() == 0)
             {
-                normalEnemiesNames.add(normalEnemy.getVersion() + normalEnemy.getName());
+                normalEnemiesNames.add(normalEnemy.getVersion() + "-" + normalEnemy.getName());
             } else
             {
-                normalEnemiesNames.add(normalEnemy.getVersion() + normalEnemy.getName() + normalEnemy.getID());
-            }
-        }
-        for (BossEnemy bossEnemy : bossEnemies)
-        {
-            if (bossEnemy.getID() == 0)
-            {
-                bossEnemiesNames.add(bossEnemy.getName());
-            } else
-            {
-                bossEnemiesNames.add(bossEnemy.getName() + bossEnemy.getID());
+                normalEnemiesNames.add(normalEnemy.getVersion() + "-" + normalEnemy.getName() + "-" + normalEnemy.getID());
             }
         }
         return normalEnemiesNames;
     }
 
+    //OK
     private ArrayList<String> bossEnemyFullNames(int gameTurn)
     {
         EnemyGroup enemyGroup;
         enemyGroup = this.enemyGroups.get(gameTurn);
         ArrayList<Enemy> enemies = enemyGroup.getEnemies();
-        ArrayList<NormalEnemy> normalEnemies = new ArrayList<>();
         ArrayList<BossEnemy> bossEnemies = new ArrayList<>();
         for (Enemy enemy : enemies)
         {
-            if (enemy instanceof NormalEnemy)
-            {
-                normalEnemies.add((NormalEnemy) enemy);
-            } else if (enemy instanceof BossEnemy)
+            if (enemy instanceof BossEnemy)
             {
                 bossEnemies.add((BossEnemy) enemy);
             }
         }
-        ArrayList<String> normalEnemiesNames = new ArrayList<>();
         ArrayList<String> bossEnemiesNames = new ArrayList<>();
-        for (NormalEnemy normalEnemy : normalEnemies)
-        {
-            if (normalEnemy.getID() == 0)
-            {
-                normalEnemiesNames.add(normalEnemy.getVersion() + normalEnemy.getName());
-            } else
-            {
-                normalEnemiesNames.add(normalEnemy.getVersion() + normalEnemy.getName() + normalEnemy.getID());
-            }
-        }
         for (BossEnemy bossEnemy : bossEnemies)
         {
             if (bossEnemy.getID() == 0)
@@ -551,12 +528,13 @@ public class GameScenario
                 {
                     if (Hero.getImmortalityPotionNum() == 0)
                     {
-                        // Game Over
+                        System.out.println(hero.getName() + " is dead and so is the spirit of this adventure, Game Over!");
                     } else
                     {
                         Hero.setImmortalityPotionNum(Hero.getImmortalityPotionNum() - 1);
                         reviveHero(hero);
-                        // Print the wanted lines
+                        System.out.println(hero.getName() + " is dying, immortality potion was used for reincarnation process, you now have “" +
+                                 Hero.getImmortalityPotionNum()+ " immortality potions left");
                     }
                 }
             }
@@ -585,6 +563,7 @@ public class GameScenario
         data.put("temp attack", 0);
     }
 
+    //VAHIDCHECK
     private void showStartFighting(int gameTurn)
     {
         for (Hero hero : heros)
@@ -597,17 +576,19 @@ public class GameScenario
             ArrayList<Ability> heroAbilities = hero.getAbilities();
             for (Ability heroAbility : heroAbilities)
             {
-                if(heroAbility instanceof  ActiveAbility)
+                if (heroAbility instanceof ActiveAbility)
                 {
                     if (heroAbility.getCurrentUpgradeNum() > 0)
                     {
                         HashMap<String, ArrayList<Formula>> heroAbilityFormula = heroAbility.getFormulas();
                         System.out.println("can cast " + heroAbility.getName());
-                        if(heroAbilityFormula.containsKey("cost EP")) {
-                            System.out.println("for " +  -1 * heroAbilityFormula.get("cost EP").get(heroAbility.getCurrentUpgradeNum()).parseFormula(null) + " EP");
+                        if (heroAbilityFormula.containsKey("cost EP"))
+                        {
+                            System.out.println("for " + -1 * heroAbilityFormula.get("cost EP").get(heroAbility.getCurrentUpgradeNum()).parseFormula(null) + " EP");
                         }
-                        if(heroAbilityFormula.containsKey("cost magic")) {
-                            System.out.println("for " + -1 * heroAbilityFormula.get("cost magic").get(heroAbility.getCurrentUpgradeNum()).parseFormula(null) + " magic point" );
+                        if (heroAbilityFormula.containsKey("cost magic"))
+                        {
+                            System.out.println("for " + -1 * heroAbilityFormula.get("cost magic").get(heroAbility.getCurrentUpgradeNum()).parseFormula(null) + " magic point");
                         }
                         if (heroAbility.getCooldownTurn() > 0)
                         {
@@ -622,7 +603,7 @@ public class GameScenario
             ArrayList<Item> heroItems = hero.getInventory().getItems();
             for (Item heroItem : heroItems)
             {
-                if(heroItem instanceof  NonInstantEffectItem)
+                if (heroItem instanceof NonInstantEffectItem)
                     System.out.printf("Can use %s\n", heroItem.getName());
             }
         }
@@ -641,37 +622,19 @@ public class GameScenario
                 bossEnemies.add((BossEnemy) enemy);
             }
         }
-        ArrayList<String> normalEnemiesNames = new ArrayList<>();
-        ArrayList<String> bossEnemiesNames = new ArrayList<>();
-        for (NormalEnemy normalEnemy : normalEnemies)
-        {
-            if (normalEnemy.getID() == 0)
-            {
-                normalEnemiesNames.add(normalEnemy.getVersion() + normalEnemy.getName());
-            } else
-            {
-                normalEnemiesNames.add(normalEnemy.getVersion() + normalEnemy.getName() + normalEnemy.getID());
-            }
-        }
-        for (BossEnemy bossEnemy : bossEnemies)
-        {
-            if (bossEnemy.getID() == 0)
-            {
-                bossEnemiesNames.add(bossEnemy.getName());
-            } else
-            {
-                bossEnemiesNames.add(bossEnemy.getName() + bossEnemy.getID());
-            }
-        }
+        ArrayList<String> normalEnemiesNames = normalEnemyFullNames(gameTurn);
+        ArrayList<String> bossEnemiesNames = bossEnemyFullNames(gameTurn);
         for (int i = 0; i < normalEnemiesNames.size(); i++)
         {
             System.out.printf("%s Health: %d / %d", normalEnemiesNames.get(i), normalEnemies.get(i).getData().get("current health"), normalEnemies.get(i).getData().get("max health"));
         }
+        System.out.println("\n");
         for (int i = 0; i < bossEnemiesNames.size(); i++)
         {
-            //munde
+            System.out.println(bossEnemiesNames.get(i) + " Health: "+bossEnemies.get(i).getData().get("current health" + " / " + bossEnemies.get(i).getData().get("max health")));
         }
     }
+    //VAHIDCHECK
 
     /***********/
 
@@ -684,6 +647,7 @@ public class GameScenario
         return result;
     }
 
+    //VAHIDCHECK
     public void parseOrder(String command, String situation, int gameTurn)
     {
         if (whatIsOrder(command, situation, gameTurn) != null)
@@ -698,6 +662,7 @@ public class GameScenario
                     break;
                 case useItemSpecific:
                     useItemSpecific(command, gameTurn);
+                    break;
                 case heroDescription:
                     heroDescription(command);
                     break;
@@ -745,6 +710,7 @@ public class GameScenario
             System.out.println("Invalid command");
         }
     }
+    //VAHIDCHECK
 
     private void useItemSpecific(String command, int gameTurn)
     {
@@ -1152,7 +1118,7 @@ public class GameScenario
                             "Weak version: Healing Amount=100, Maximum health=150\n" +
                             "Able version: Healing Amount =150, Maximum health=250");
                     break;
-                case "final boss":
+                case "thecollector":
                     System.out.println("Final Boss:\n" +
                             "Burns 2 to 4 energy points of each hero and attacks 2 of them in each turn\n" +
                             "Maximum health: 1000\n" +
@@ -1162,8 +1128,7 @@ public class GameScenario
             }
         } else
         {
-            System.out.println("YESYESYESYESYESYES");
-            System.out.println("Invalid command");
+            System.out.println("There is no enemy with name "+ commands[0]);
         }
     }
 
@@ -1455,20 +1420,26 @@ public class GameScenario
         }
     }
 
+    //VAHIDCHECK
     private boolean checkUseItemSpecific(String command, int gameTurn)
     {
         ArrayList<String> heroNames = new ArrayList<>();
         ArrayList<String> normalEnemyFullNames = new ArrayList<>();
         ArrayList<String> bossEnemyFullNames = new ArrayList<>();
         String[] commands = command.split(" ");
-        for (Hero hero : heros)
+        Hero hero = null;
+        for (Hero hero1 : heros)
         {
-            heroNames.add(hero.getName());
+            heroNames.add(hero1.getName());
+            if (hero1.getName().equals(commands[0]))
+            {
+                hero = hero1;
+            }
         }
         normalEnemyFullNames = normalEnemyFullNames(gameTurn);
         bossEnemyFullNames = bossEnemyFullNames(gameTurn);
-        if (heroNames.contains(commands[0]) && userInterface.getItemNames().contains(commands[2]) &&
-                commands[3].equals("on") && (normalEnemyFullNames.contains(commands[3]) || bossEnemyFullNames.contains(commands[4]) || heroNames.contains(commands[3])))
+        if (hero != null && userInterface.getItemNames().contains(commands[2]) &&
+                commands[3].equals("on") && (normalEnemyFullNames.contains(commands[4]) || bossEnemyFullNames.contains(commands[4]) || heroNames.contains(commands[4])))
         {
             return true;
         } else
@@ -1476,6 +1447,7 @@ public class GameScenario
             return false;
         }
     }
+    //VAHIDCHECK
 
     private boolean checkUseItemEveryone(String command, int gameTurn)
     {
