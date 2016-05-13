@@ -121,21 +121,22 @@ public class UserInterface
 
     public void checkCustom(Scanner in)
     {
-        System.out.println("How do you want to start?(Enter the right number)");
-        System.out.println("1- Start normal game");
-        System.out.println("2- Start custom game(you can create your own game here)");
-
+//        System.out.println("How do you want to start?(Enter the right number)");
+//        System.out.println("1- Start normal game");
+//        System.out.println("2- Start custom game(you can create your own game here)");
+        System.out.println("Press any key to start the story...");
+        System.out.println("___costum game is under construction___");
         String input = in.nextLine();
         // Check wrong input
-        if (input.equals("2"))
-        {
-            this.customed = true;
-            startCreating(in);
-        } else
-        {
+//        if (input.equals("2"))
+//        {
+//            this.customed = true;
+//            startCreating(in);
+//        } else
+//        {
             this.customed = false;
             init();
-        }
+//        }
     }
 
 
