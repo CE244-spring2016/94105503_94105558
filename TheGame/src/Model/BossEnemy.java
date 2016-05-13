@@ -12,7 +12,8 @@ public class BossEnemy extends Enemy
 	//String target;
 	private HashMap<String, Integer> angerEffects = new HashMap<>();
 	private HashMap<String, String> earlyTurnEffects = new HashMap<>();
-	
+	private boolean angry = false;
+
 	public BossEnemy(String name, String target, int angerPoint, HashMap<String, Integer> angerEffects, HashMap<String, String> earlyTurnEffects, HashMap<String, Integer> data)
 	{
 		super(name, target, data);
@@ -84,11 +85,10 @@ public class BossEnemy extends Enemy
 			moveTargets.addAll(allies);
 			moveTargets.addAll(heros);
 		}
-		
+
 		makeAMove(moveTargets);
 	}
-	
-	
+
 	private void makeAMove(ArrayList<Warrior> targets)
 	{
 		for(Warrior warrior : targets)
@@ -118,28 +118,30 @@ public class BossEnemy extends Enemy
 					}
 				}
 			}
+
+			System.out.println("Collector just attacked " + warrior.getName() + " with " + data.get("move attack") + " power");
 		}
 	}
-	
-	
+
+
 	private ArrayList<Integer> getRandomNums(int x, int y)
 	{
 		ArrayList<Integer> result = new ArrayList<>();
-		
+
 		while(result.size() != x)
 		{
 			int randomNum = Luck.getRandom(0, y);
-			
+
 			if(!result.contains(randomNum))
 			{
 				result.add(randomNum);
 			}
 		}
-		
+
 		return result;
 	}
-	
-	
+
+
 	public void earlyTurnEffect(ArrayList<Hero> heros)
 	{
 		for(Hero hero : heros)
@@ -151,11 +153,12 @@ public class BossEnemy extends Enemy
 				String[] effectRange = earlyTurnEffects.get(attribute).split(" ");
 				int effectAmount = Luck.getRandom(Integer.parseInt(effectRange[0]), Integer.parseInt(effectRange[2]));
 				heroData.put(attribute, currentAmount - effectAmount);
+				System.out.println("Collector just burned " + effectAmount + " energy Points from " + hero.getName());
 			}
 		}
 	}
-	
-	
+
+
 	public void getAngry()
 	{
 		for(String angerEffect : angerEffects.keySet())
@@ -164,5 +167,18 @@ public class BossEnemy extends Enemy
 			int currentAmount = data.get(angerEffect);
 			data.put(angerEffect, currentAmount + effectAmount);
 		}
+
+		angry = true;
+	}
+
+
+	public boolean isAngry()
+	{
+		return angry;
+	}
+
+	public void setAngry(boolean angry)
+	{
+		this.angry = angry;
 	}
 }

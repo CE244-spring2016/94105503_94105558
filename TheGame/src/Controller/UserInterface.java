@@ -4,8 +4,11 @@ import Auxiliary.Formula;
 import Model.EnemyVersion;
 import com.sun.applet2.AppletParameters;
 
-import java.util.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashMap;
+import java.util.Scanner;
+import java.util.Set;
 
 /*
     We need init here!
@@ -82,6 +85,32 @@ public class UserInterface
     private ArrayList<Integer> enemyGroupXPs = new ArrayList<>();
     private ArrayList<Integer> enemyGroupMoneys = new ArrayList<>();
 
+    private HashMap<String, String> allAbilitySuccessMessages = new HashMap<>();
+
+    public HashMap<String, String> getAllEnemySuccessMessages()
+    {
+        return allEnemySuccessMessages;
+    }
+
+    public void setAllEnemySuccessMessages(HashMap<String, String> allEnemySuccessMessages)
+    {
+        this.allEnemySuccessMessages = allEnemySuccessMessages;
+    }
+
+    private HashMap<String, String> allEnemySuccessMessages = new HashMap<>();
+
+    public HashMap<String, String> getAllItemSuccessMessages()
+    {
+        return allItemSuccessMessages;
+    }
+
+    public void setAllItemSuccessMessages(HashMap<String, String> allItemSuccessMessages)
+    {
+        this.allItemSuccessMessages = allItemSuccessMessages;
+    }
+
+    private HashMap<String, String> allItemSuccessMessages = new HashMap();
+
     public UserInterface(Scanner in)
     {
         // create stuff
@@ -112,6 +141,20 @@ public class UserInterface
 
     public void init()
     {
+        //Enemy success Messages
+        allEnemySuccessMessages.put("tank", "damaged all of your heros");
+        allEnemySuccessMessages.put("thug", "");
+        allEnemySuccessMessages.put("angel", "");
+        //Item success Messages
+        allItemSuccessMessages.put("healthpotion", "just healed");
+        allItemSuccessMessages.put("magicpotion", "just ofered");
+        //Success Messages
+        allAbilitySuccessMessages.put("overpoweredattack", " just did an overpowered attack on");
+        allAbilitySuccessMessages.put("sacrifice", " just sacrificed himself to damage all his enemies with");
+        allAbilitySuccessMessages.put("elixir", " just healed");
+        allAbilitySuccessMessages.put("caretaker", " just gave");
+        allAbilitySuccessMessages.put("boost", " just boosted");
+        allAbilitySuccessMessages.put("manabeam", " just helped");
         //storyEnemyGroups VAHIDCHECK
         ArrayList<String> storyEnemyGroups1 = new ArrayList<>();
         ArrayList<String> storyEnemyGroups2 = new ArrayList<>();
@@ -487,7 +530,7 @@ public class UserInterface
         abilityTargets.put("criticalstrike", "himself");
         abilityTargets.put("elixir", "an ally");
         abilityTargets.put("caretaker", "an ally");
-        abilityTargets.put("boots", "an ally");
+        abilityTargets.put("boost", "an ally");
         abilityTargets.put("manabeam", "an ally");
         //upgradeXP
         ArrayList<Integer> fightTrainingXP = new ArrayList<>();
@@ -713,9 +756,9 @@ public class UserInterface
 
         //overPoweredAttack
         HashMap<String, ArrayList<Formula>> overPoweredAttackFormula = new HashMap<>();
-        Formula overPoweredAttackEffectFormulaUpgrade1 = new Formula("(0-1.2) * attack", null);
-        Formula overPoweredAttackEffectFormulaUpgrade2 = new Formula("(0-1.4) * attack", null);
-        Formula overPoweredAttackEffectFormulaUpgrade3 = new Formula("(0-1.6) * attack", null);
+        Formula overPoweredAttackEffectFormulaUpgrade1 = new Formula("(0-1.2) * (attack + temp attack)", null);
+        Formula overPoweredAttackEffectFormulaUpgrade2 = new Formula("(0-1.4) * (attack + temp attack)", null);
+        Formula overPoweredAttackEffectFormulaUpgrade3 = new Formula("(0-1.6) * (attack + temp attack)", null);
         ArrayList<Formula> overPoweredAttackEffectFormulaUpgrades = new ArrayList<>();
         overPoweredAttackEffectFormulaUpgrades.add(overPoweredAttackEffectFormulaUpgrade1);
         overPoweredAttackEffectFormulaUpgrades.add(overPoweredAttackEffectFormulaUpgrade2);
@@ -756,9 +799,9 @@ public class UserInterface
         //sacrifice
 
         HashMap<String, ArrayList<Formula>> sacrificeFormula = new HashMap<>();
-        Formula sacrificeEffectFormulaUpgrade1 = new Formula("120", null);
-        Formula sacrificeEffectFormulaUpgrade2 = new Formula("150", null);
-        Formula sacrificeEffectFormulaUpgrade3 = new Formula("180", null);
+        Formula sacrificeEffectFormulaUpgrade1 = new Formula("0 - 120", null);
+        Formula sacrificeEffectFormulaUpgrade2 = new Formula("0 - 150", null);
+        Formula sacrificeEffectFormulaUpgrade3 = new Formula("0 - 180", null);
         ArrayList<Formula> sacrificeEffectFormulaUpgrades = new ArrayList<>();
         sacrificeEffectFormulaUpgrades.add(sacrificeEffectFormulaUpgrade1);
         sacrificeEffectFormulaUpgrades.add(sacrificeEffectFormulaUpgrade2);
@@ -787,7 +830,7 @@ public class UserInterface
         sacrificeFormula.put("current health", sacrificeEffectFormulaUpgrades);
         sacrificeFormula.put("cost EP", sacrificeCostFormula1);
         sacrificeFormula.put("cost magic", sacrificeCostFormula2);
-        sacrificeFormula.put("cost current health", sacrificeCostFormula3);
+        sacrificeFormula.put("cost health", sacrificeCostFormula3);
         allAbiliyFormulas.put("sacrifice", sacrificeFormula);
         //coolDown
         ArrayList<Integer> sacrificeCooldownUpgrade = new ArrayList<>();
@@ -885,7 +928,7 @@ public class UserInterface
         HashMap<String, ArrayList<Formula>> boostFormula = new HashMap<>();
         Formula boostEffectFormulaUpgrade1 = new Formula("20", null);
         Formula boostEffectFormulaUpgrade2 = new Formula("30", null);
-        Formula boostEffectFormulaUpgrade3 = new Formula("50", null);
+        Formula boostEffectFormulaUpgrade3 = new Formula("30", null);
         ArrayList<Formula> boostEffectFormulaUpgrades = new ArrayList<>();
         boostEffectFormulaUpgrades.add(boostEffectFormulaUpgrade1);
         boostEffectFormulaUpgrades.add(boostEffectFormulaUpgrade2);
@@ -2043,7 +2086,7 @@ public class UserInterface
 
     private boolean isMultipuleTarget(String abilityTarget)
     {
-        if (abilityTarget.equals("all enemy") || abilityTarget.equals("all ally"))
+        if (abilityTarget.equals("all enemies") || abilityTarget.equals("all allies"))
         {
             return true;
         }
@@ -2768,5 +2811,14 @@ public class UserInterface
     public void setBossEnemyTargets(HashMap<String, String> bossEnemyTargets)
     {
         this.bossEnemyTargets = bossEnemyTargets;
+    }
+    public HashMap<String, String> getAllAbilitySuccessMessages()
+    {
+        return allAbilitySuccessMessages;
+    }
+
+    public void setAllAbilitySuccessMessages(HashMap<String, String> allAbilitySuccessMessages)
+    {
+        this.allAbilitySuccessMessages = allAbilitySuccessMessages;
     }
 }

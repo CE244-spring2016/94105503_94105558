@@ -40,11 +40,22 @@ public class EnemyGroup
     private ArrayList<Enemy> findEnemeis(Enemy enemy)
     {
         ArrayList<Enemy> foundedEnemies = new ArrayList<>();
-        for (Enemy enemy1 : enemies)
+        if(enemy instanceof NormalEnemy)
         {
-            if (enemy1.getName().equals(enemy.getName()))
+            for (Enemy enemy1 : enemies)
             {
-                foundedEnemies.add(enemy1);
+                if (enemy1.getName().equals(enemy.getName()) && ((NormalEnemy) enemy1).getVersion().equals(((NormalEnemy) enemy).getVersion()))
+                {
+                    foundedEnemies.add(enemy1);
+                }
+            }
+        }else if(enemy instanceof BossEnemy) {
+            for (Enemy enemy1 : enemies)
+            {
+                if (enemy1.getName().equals(enemy.getName()))
+                {
+                    foundedEnemies.add(enemy1);
+                }
             }
         }
         return foundedEnemies;

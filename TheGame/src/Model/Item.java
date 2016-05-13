@@ -11,6 +11,23 @@ public abstract class Item
     protected int itemSize;
     protected String name;
     protected Hero itemHolder;
+
+    public String getSuccessMessage()
+    {
+        return successMessage;
+    }
+
+    public void setSuccessMessage(String successMessage)
+    {
+        this.successMessage = successMessage;
+    }
+
+    public void setItemHolder(Hero itemHolder)
+    {
+        this.itemHolder = itemHolder;
+    }
+
+    protected String successMessage = "";
     protected HashMap<String, Integer> effects;
     protected String target;
 
@@ -86,6 +103,16 @@ public abstract class Item
     }
 
     public abstract void takeEffect(ArrayList<Warrior> warriors);
+
+    public void printSuccessMessage(ArrayList<Warrior> targets, String heroName) {
+        for (String effectFormula : effects.keySet())
+        {
+            for (Warrior target1 : targets)
+            {
+                System.out.println(heroName + " " + successMessage + " " + target1.getName() + " " + effects.get(effectFormula) + " " + effectFormula);
+            }
+        }
+    }
 
     //public abstract void normalEffect(String effectType, HashMap<String, Integer> warriorData);
 

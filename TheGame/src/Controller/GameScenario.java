@@ -89,6 +89,7 @@ public class GameScenario
             for (int j = 0; j < abilities.size(); j++)
             {
                 abilities.get(j).setHero((Hero) hero);
+                abilities.get(j).setSuccessMessage(userInterface.getAllAbilitySuccessMessages().get(abilities.get(j).getName()));
             }
             ((Hero) hero).setInventory(new Inventory(this.userInterface.getHeroClassInventorySizes().get(((Hero) hero).getHeroClassName())));
         }
@@ -101,18 +102,17 @@ public class GameScenario
         Hero.setMoney(userInterface.getInitialMoney());
         Hero.setImmortalityPotionNum(userInterface.getImmortalityPotionNum());
         introduceHeros();//ok
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < userInterface.getGameTurns(); i++)
         {
             enemyGroups.add(new EnemyGroup(createEnemies(i), userInterface.getEnemyGroupXPs().get(i), userInterface.getEnemyGroupMoneys().get(i), i));
         }
-        for (int i = 4/*userInterface.getGameTurns() - 2*/; i < userInterface.getGameTurns(); i++)
-        {
 
+        for (int i = 4; i < userInterface.getGameTurns(); i++)
+        {
             tellStory(i);
             showEnemyData(i);
             startUpgrading();
             shopping();
-            // System.out.println(normalEnemyFullNames(i));
             startFighting(i);
         }
 
@@ -146,6 +146,7 @@ public class GameScenario
                         }
                     }
                     Warrior enemy = new NormalEnemy(enemiesVersionAndName.split(" ")[1], enemiesVersionAndName.split(" ")[0], target, enemyVersionDatas);
+                    ((NormalEnemy) enemy).setSuccessMessage(userInterface.getAllEnemySuccessMessages().get(enemy.getName()));
                     enemies.add((Enemy) enemy);
                     warrior.add(enemy);
 
@@ -375,7 +376,7 @@ public class GameScenario
             System.out.printf("%s\n", hero.getName());
             System.out.printf("Health: %d/%d\n", hero.getData().get("current health"), hero.getData().get("max health"));
             System.out.printf("Magic: %d/%d\n", hero.getData().get("current magic"), hero.getData().get("max magic"));
-            System.out.printf("Energy Points: %d\n", hero.getData().get("current EP"));
+            System.out.printf("Energy Points: %d/%d\n", hero.getData().get("current EP"), hero.getData().get("max EP"));
             System.out.printf("Attak: %d\n", hero.getData().get("attack"));
             ArrayList<Ability> heroAbilities = new ArrayList<>();
             heroAbilities = hero.getAbilities();
@@ -446,15 +447,30 @@ public class GameScenario
         ArrayList<Enemy> enemies = enemyGroups.get(gameTurn).getEnemies();
         int xpAmount = userInterface.getEnemyGroupXPs().get(gameTurn);
         int moneyAmount = userInterface.getEnemyGroupMoneys().get(gameTurn);
+        for(Enemy enemy : enemies)
+        {
+            if(enemy instanceof BossEnemy)
+            {
+                ((BossEnemy) enemy).earlyTurnEffect(heros);
+            }
+        }
         showStartFighting(gameTurn);
 
         while (enemies.size() != 0)
         {
+//            for(Enemy enemy : enemies)
+//            {
+//                if(enemy instanceof BossEnemy)
+//                {
+//                    ((BossEnemy) enemy).earlyTurnEffect(heros);
+//                }
+//            }
             String order = normalizer(this.scanner.nextLine());
             ArrayList<Enemy> deadEnemies = new ArrayList<>();
-            ArrayList<Hero> deadHeros = new ArrayList<>();
+            //ArrayList<Hero> deadHeros = new ArrayList<>();
             while (!order.equals("done"))
             {
+
                 if (order.equals("help"))
                 {
                     System.out.println("(item name) + “?” \uF0E0 (item description)\n" +
@@ -473,6 +489,7 @@ public class GameScenario
                 {
                     parseOrder(order, "fighting", gameTurn);
                 }
+
                 for (Enemy enemy : enemies) // LOL
                 {
                     if (enemy.getData().get("current health") <= 0)
@@ -481,7 +498,29 @@ public class GameScenario
                         deadEnemies.add(enemy);
                     }
                 }
+
                 enemies.removeAll(deadEnemies);
+
+                if(enemies.size() == 0)
+                {
+                    break;
+                }
+
+                for (Enemy enemy : enemies)
+                {
+                    if (enemy instanceof BossEnemy && !((BossEnemy)enemy).isAngry())
+                    {
+                        BossEnemy boss = (BossEnemy) enemy;
+                        int currentHealth = boss.getData().get("current health");
+                        int angerPoint = boss.getAngerPoint();
+                        if (currentHealth <= angerPoint)
+                        {
+                            System.out.println(boss.getFullName() + " has mutated"); // LOL
+                            boss.getAngry();
+                        }
+
+                    }
+                }
                 order = normalizer(this.scanner.nextLine());
             }
             //FK
@@ -497,29 +536,67 @@ public class GameScenario
             }
             //FK
 
-            for (Enemy enemy : enemies)
+            enemiesMakeMove(gameTurn);
+            correctCurrentAttributes(enemies);
+            heroRefills();
+            for(Enemy enemy : enemies)
             {
-                if (enemy instanceof BossEnemy)
+                if(enemy instanceof BossEnemy)
                 {
-                    BossEnemy boss = (BossEnemy) enemy;
-                    int currentHealth = boss.getData().get("current health");
-                    int angerPoint = boss.getAngerPoint();
-                    if (currentHealth <= angerPoint)
-                    {
-                        System.out.println(boss.getFullName() + " has mutated"); // LOL
-                        boss.getAngry();
-                    }
-
+                    ((BossEnemy) enemy).earlyTurnEffect(heros);
                 }
             }
-            enemiesMakeMove(gameTurn);
-            heroRefills();
         }
         System.out.println("Victory! You've defeated all of your enemies"); // LOL
         Hero.setXP(Hero.getXP() + xpAmount);
         Hero.setMoney((Hero.getMoney() + moneyAmount));
+        for(Hero hero : heros)
+        {
+            setCurrentAttributesToMax(hero);
+        }
+        setTempToZero();
 
         // print wanted lines
+    }
+
+    private void setTempToZero()
+    {
+        for(Hero hero : heros)
+        {
+            HashMap<String, Integer> userData = hero.getData();
+            userData.put("temp attack", 0);
+        }
+    }
+
+    private void correctCurrentAttributes(ArrayList<Enemy> enemies)
+    {
+        for(Enemy enemy : enemies)
+        {
+            HashMap<String, Integer> data = enemy.getData();
+            for(String attribute : data.keySet())
+            {
+                String[] attributeNameParts = attribute.split(" ");
+                if (attributeNameParts[0].equals("current"))
+                {
+                    attributeNameParts[0] = "max ";
+                    String attributeMax = "";
+                    for (String attributeNamePart : attributeNameParts)
+                    {
+                        attributeMax += attributeNamePart;
+                    }
+                    int maxAmount = data.get(attributeMax);
+                    int currentAmount = data.get(attribute);
+                    if(currentAmount > maxAmount)
+                    {
+                        data.put(attribute, maxAmount);
+                    }
+                    else if(currentAmount < 0)
+                    {
+                        data.put(attribute, 0);
+                    }
+                }
+            }
+        }
     }
 
     private void heroRefills()
@@ -556,13 +633,13 @@ public class GameScenario
     private void enemiesMakeMove(int gameTurn)
     {
         ArrayList<Enemy> enemies = enemyGroups.get(gameTurn).getEnemies();
-        for (Enemy enemy : enemies)
-        {
-            if (enemy instanceof BossEnemy)
-            {
-                ((BossEnemy) enemy).earlyTurnEffect(heros);
-            }
-        }
+//        for (Enemy enemy : enemies)
+//        {
+//            if (enemy instanceof BossEnemy)
+//            {
+//                ((BossEnemy) enemy).earlyTurnEffect(heros);
+//            }
+//        }
         for (Enemy enemy : enemies)
         {
 
@@ -575,6 +652,7 @@ public class GameScenario
                     if (Hero.getImmortalityPotionNum() == 0)
                     {
                         System.out.println(hero.getName() + " is dead and so is the spirit of this adventure, Game Over!");
+                        System.exit(0);
                     } else
                     {
                         Hero.setImmortalityPotionNum(Hero.getImmortalityPotionNum() - 1);
@@ -618,7 +696,7 @@ public class GameScenario
             System.out.printf("Health: %d/%d\n", hero.getData().get("current health"), hero.getData().get("max health"));
             System.out.printf("Magic: %d/%d\n", hero.getData().get("current magic"), hero.getData().get("max magic"));
             System.out.printf("Energy Points: %d\n", hero.getData().get("current EP"));
-            System.out.printf("Attak: %d\n", hero.getData().get("attack"));
+            System.out.printf("Attack: %d\n", (hero.getData().get("attack") + hero.getData().get("temp attack")));
             ArrayList<Ability> heroAbilities = hero.getAbilities();
             for (Ability heroAbility : heroAbilities)
             {
@@ -672,7 +750,7 @@ public class GameScenario
         ArrayList<String> bossEnemiesNames = bossEnemyFullNames(gameTurn);
         for (int i = 0; i < normalEnemiesNames.size(); i++)
         {
-            System.out.printf("%s Health: %d / %d", normalEnemiesNames.get(i), normalEnemies.get(i).getData().get("current health"), normalEnemies.get(i).getData().get("max health"));
+            System.out.printf("%s Health: %d / %d ", normalEnemiesNames.get(i), normalEnemies.get(i).getData().get("current health"), normalEnemies.get(i).getData().get("max health"));
         }
         System.out.println("\n");
         for (int i = 0; i < bossEnemiesNames.size(); i++)
@@ -983,11 +1061,18 @@ public class GameScenario
         for (Hero hero1 : heros)
         {
             if (hero1.getName().equals(commands[3]))
+            {
                 hero = hero1;
+            }
         }
-        if (hero != null && hero.getInventory().getItem(commands[1]) != null)
+        Item item = hero.getInventory().getItem(commands[1]);
+        if (hero != null && item != null)
         {
-            shop.buy(hero, hero.getInventory().getItem(commands[1]));
+            shop.buy(hero, item);
+            if(item instanceof NonInflationedItem)
+            {
+                removeItemEffect(hero, item);
+            }
         } else if (hero != null)
         {
             System.out.println(hero.getName() + "doesn't have" + commands[1]);
@@ -995,6 +1080,24 @@ public class GameScenario
         {
             System.out.println("Invalid command");
         }
+    }
+
+    private void removeItemEffect(Hero hero, Item item)
+    {
+        HashMap<String, Integer> userData = hero.getData();
+        HashMap<String, Integer> itemData = item.getEffects();
+
+        for(String effect : itemData.keySet())
+        {
+            if(userData.containsKey(effect))
+            {
+                int effectAmount = itemData.get(effect);
+                int currentAmount = userData.get(effect);
+                userData.put(effect, currentAmount - effectAmount);
+            }
+        }
+
+        correctCurrentAttributes();
     }
 
     private void itemBuy(String command)
@@ -1019,6 +1122,7 @@ public class GameScenario
         } else
         {
             item = new NonInstantEffectItem(commands[1], userInterface.getItemTargets().get(commands[1]), userInterface.getNonInstantEffectItemsUseLimit().get(commands[1]), userInterface.getItemDatas().get(commands[1]));
+            item.setSuccessMessage(userInterface.getAllItemSuccessMessages().get(item.getName()));
         }
         shop.sell(hero, item);
         if (hero != null && item instanceof InstantEffectItem)
@@ -1176,7 +1280,7 @@ public class GameScenario
             }
         } else
         {
-            System.out.println("TREE OF LIFE");
+
             System.out.println("Invalid command");
         }
     }
@@ -1254,7 +1358,7 @@ public class GameScenario
                 System.out.println("+50 magic points for the user or one of his/her allies, costs 15 dollars");
                 break;
             default:
-                System.out.println("HOLYSHIt");
+
                 System.out.println("Invalid command");
                 break;
         }
@@ -1628,7 +1732,7 @@ public class GameScenario
         return false;
     }
 
-    private boolean checkCastEveryoneAbility(String command, int gameTurn)
+    private boolean checkCastSpecieficAbility(String command, int gameTurn)
     {
         ArrayList<String> heroNames = new ArrayList<>();
         ArrayList<String> normalEnemyFullNames = new ArrayList<>();
@@ -1641,14 +1745,14 @@ public class GameScenario
         normalEnemyFullNames = normalEnemyFullNames(gameTurn);
         bossEnemyFullNames = bossEnemyFullNames(gameTurn);
         if (heroNames.contains(commands[0]) && userInterface.getAbilityNames().contains(commands[2]) && commands[3].equals("on") &&
-                (normalEnemyFullNames.contains(commands[3]) || bossEnemyFullNames.contains(commands[4]) || heroNames.contains(commands[3])))
+                (normalEnemyFullNames.contains(commands[4]) || bossEnemyFullNames.contains(commands[4]) || heroNames.contains(commands[4])))
         {
             return true;
         } else
             return false;
     }
 
-    private boolean checkCastSpecieficAbility(String command, int gameTurn)
+    private boolean checkCastEveryoneAbility(String command, int gameTurn)
     {
         ArrayList<String> heroNames = new ArrayList<>();
         String[] commands = command.split(" ");

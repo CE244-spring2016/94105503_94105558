@@ -3,6 +3,7 @@ package Model;
 import Auxiliary.Formula;
 import Auxiliary.Luck;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -10,6 +11,9 @@ public abstract class Ability
 {
     protected int cooldownTurn;
     protected int currentUpgradeNum;
+
+
+    protected String successMessage = "";
     protected String name = "";
     protected String abilityTarget = "";
     protected Hero hero;
@@ -225,16 +229,16 @@ public abstract class Ability
     private void castWithoutLuck(ArrayList<Warrior> mainTargets, ArrayList<Warrior> secondaryTargets)
     {
         HashMap<String, Integer> userData = hero.getData();
-        for (Warrior warrior : mainTargets)
-        {
-            HashMap<String, Integer> targetData;
-            if (warrior instanceof Hero)
-            {
-                targetData = ((Hero) warrior).getData();
-            } else
-            {
-                targetData = ((Enemy) warrior).getData();
-            }
+        //for (Warrior warrior : mainTargets)
+        //{
+//            HashMap<String, Integer> targetData;
+//            if (warrior instanceof Hero)
+//            {
+//                targetData = ((Hero) warrior).getData();
+//            } else
+//            {
+//                targetData = ((Enemy) warrior).getData();
+//            }
 
             for (String attribute : formulas.keySet())
             {
@@ -259,18 +263,31 @@ public abstract class Ability
                     hero.setCriticalChance(effectAmount);
                 } else if (!attributeNameParts[0].equals("luck"))
                 {
-                    int attributeAmount = targetData.get(attribute);
-                    if ((warrior instanceof Enemy) && attribute.equals("current health") && (effectAmount < 0)) // LOL
+                    for(Warrior warrior : mainTargets)
                     {
-                        doDamage(mainTargets, secondaryTargets, effectAmount); // LOL
-                    } else if (targetData.keySet().contains(attribute))
-                    {
-                        attributeAmount = targetData.get(attribute); // MUST CHECK WITH TEAMMATE
-                        targetData.put(attribute, attributeAmount + effectAmount);
+                        HashMap<String, Integer> targetData;
+                        if (warrior instanceof Hero)
+                        {
+                            targetData = ((Hero) warrior).getData();
+                        } else
+                        {
+                            targetData = ((Enemy) warrior).getData();
+                        }
+                        int attributeAmount = targetData.get(attribute);
+                        if ((warrior instanceof Enemy) && attribute.equals("current health") && (effectAmount < 0)) // LOL
+                        {
+                            ArrayList<Warrior> mainTarget = new ArrayList<>();
+                            mainTarget.add(warrior);
+                            doDamage(mainTarget, secondaryTargets, effectAmount); // LOL
+                        } else if (targetData.keySet().contains(attribute))
+                        {
+                            attributeAmount = targetData.get(attribute); // MUST CHECK WITH TEAMMATE
+                            targetData.put(attribute, attributeAmount + effectAmount);
+                        }
                     }
                 }
             }
-        }
+        //}
     }
 
 
@@ -378,6 +395,40 @@ public abstract class Ability
             return false;
         }
 
+
+        if(this instanceof ActiveAbility && abilityCooldownNums.size() != 0)
+        {
+            cooldownTurn = abilityCooldownNums.get(currentUpgradeNum - 1);
+        }
         return true;
+    }
+    public String getSuccessMessage()
+    {
+        return successMessage;
+    }
+
+    public void setSuccessMessage(String successMessage)
+    {
+        this.successMessage = successMessage;
+    }
+    public void printSuccessMessage(ArrayList<Warrior> targets) {
+        for (String attribute : formulas.keySet())
+        {
+            String[] attributeNameParts = attribute.split(" ");
+            if(!attributeNameParts[0].equals("cost"))
+            {
+                for (int i = 0; i < targets.size(); i++)
+                {
+                    if(formulas.get(attribute).get(currentUpgradeNum - 1).parseFormula(hero.getData())  > 0)
+                    {
+                        System.out.println(hero.getName() + " " + successMessage + " " + targets.get(i).getName() + "'s " + attribute + " " + formulas.get(attribute).get(currentUpgradeNum - 1).parseFormula(hero.getData()));
+                    } else
+                    {
+                        System.out.println(hero.getName() + " " + successMessage + " " + targets.get(i).getName() + "'s " + attribute + " " + -1*formulas.get(attribute).get(currentUpgradeNum - 1).parseFormula(hero.getData()));
+
+                    }
+                }
+            }
+        }
     }
 }
