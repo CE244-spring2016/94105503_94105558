@@ -6,6 +6,7 @@ import Model.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.zip.Inflater;
 
 public class GameScenario
 {
@@ -100,9 +101,13 @@ public class GameScenario
         Hero.setMoney(userInterface.getInitialMoney());
         Hero.setImmortalityPotionNum(userInterface.getImmortalityPotionNum());
         introduceHeros();//ok
-        for (int i = 0; i < userInterface.getGameTurns(); i++)
+        for (int i = 0; i < 5; i++)
         {
             enemyGroups.add(new EnemyGroup(createEnemies(i), userInterface.getEnemyGroupXPs().get(i), userInterface.getEnemyGroupMoneys().get(i), i));
+        }
+        for (int i = 4/*userInterface.getGameTurns() - 2*/; i < userInterface.getGameTurns(); i++)
+        {
+
             tellStory(i);
             showEnemyData(i);
             startUpgrading();
@@ -466,9 +471,17 @@ public class GameScenario
                     showStartFighting(gameTurn);
                 } else
                 {
-
                     parseOrder(order, "fighting", gameTurn);
                 }
+                for (Enemy enemy : enemies) // LOL
+                {
+                    if (enemy.getData().get("current health") <= 0)
+                    {
+                        System.out.println(enemy.getFullName() + " has died"); // LOL
+                        deadEnemies.add(enemy);
+                    }
+                }
+                enemies.removeAll(deadEnemies);
                 order = normalizer(this.scanner.nextLine());
             }
             //FK
@@ -483,14 +496,6 @@ public class GameScenario
                 }
             }
             //FK
-            for (Enemy enemy : enemies)
-            {
-                if (enemy.getData().get("current health") <= 0)
-                {
-                    deadEnemies.add(enemy);
-                }
-            }
-            enemies.removeAll(deadEnemies);
 
             for (Enemy enemy : enemies)
             {
@@ -501,26 +506,51 @@ public class GameScenario
                     int angerPoint = boss.getAngerPoint();
                     if (currentHealth <= angerPoint)
                     {
+                        System.out.println(boss.getFullName() + " has mutated"); // LOL
                         boss.getAngry();
                     }
 
                 }
-            }//FK
-            for (int i = 0; i < deadEnemies.size(); i++)
-            {
-                System.out.println(deadEnemies.get(i).getFullName() + " has died");
             }
-            //FK
             enemiesMakeMove(gameTurn);
+            heroRefills();
         }
-        //FK
-        System.out.println("Vitory! You’ve defeated all of your enemies");
-        //FK
-
+        System.out.println("Victory! You've defeated all of your enemies"); // LOL
         Hero.setXP(Hero.getXP() + xpAmount);
         Hero.setMoney((Hero.getMoney() + moneyAmount));
 
         // print wanted lines
+    }
+
+    private void heroRefills()
+    {
+        for(Hero hero : heros)
+        {
+            HashMap<String, Integer> userData = hero.getData();
+            for(String attribute : userData.keySet())
+            {
+                String[] attributeNameParts = attribute.split(" ");
+                if(attributeNameParts.length > 1 && attributeNameParts[1].equals("refill"))
+                {
+                    String maxAttribute = "max " + attributeNameParts[0];
+                    String currentAttribute = "current " + attributeNameParts[0];
+                    int effectAmount = userData.get(attribute);
+                    int maxAttributeAmount = userData.get(maxAttribute);
+                    int currentAttributeAmount = userData.get(currentAttribute);
+                    effectAmount = currentAttributeAmount + (maxAttributeAmount * effectAmount) / 100;
+                    if(effectAmount > maxAttributeAmount)
+                    {
+                        userData.put(currentAttribute, maxAttributeAmount);
+                    }
+                    else
+                    {
+                        userData.put(currentAttribute, effectAmount);
+                    }
+                }
+            }
+            int maxEP = userData.get("max EP");
+            userData.put("current EP", maxEP);
+        }
     }
 
     private void enemiesMakeMove(int gameTurn)
@@ -550,7 +580,7 @@ public class GameScenario
                         Hero.setImmortalityPotionNum(Hero.getImmortalityPotionNum() - 1);
                         reviveHero(hero);
                         System.out.println(hero.getName() + " is dying, immortality potion was used for reincarnation process, you now have “" +
-                                Hero.getImmortalityPotionNum() + " immortality potions left");
+                                Hero.getImmortalityPotionNum()+ " immortality potions left");
                     }
                 }
             }
@@ -598,13 +628,13 @@ public class GameScenario
                     {
                         HashMap<String, ArrayList<Formula>> heroAbilityFormula = heroAbility.getFormulas();
                         System.out.println("can cast " + heroAbility.getName());
-                        if (heroAbilityFormula.containsKey("cost EP"))
+                        if (heroAbilityFormula.containsKey("cost EP")) // LOL
                         {
-                            System.out.println("for " + -1 * heroAbilityFormula.get("cost EP").get(heroAbility.getCurrentUpgradeNum()).parseFormula(null) + " EP");
+                            System.out.println("for " + -1 * heroAbilityFormula.get("cost EP").get(heroAbility.getCurrentUpgradeNum() - 1).parseFormula(null) + " EP");
                         }
                         if (heroAbilityFormula.containsKey("cost magic"))
                         {
-                            System.out.println("for " + -1 * heroAbilityFormula.get("cost magic").get(heroAbility.getCurrentUpgradeNum()).parseFormula(null) + " magic point");
+                            System.out.println("for " + -1 * heroAbilityFormula.get("cost magic").get(heroAbility.getCurrentUpgradeNum() - 1).parseFormula(null) + " magic point");
                         }
                         if (heroAbility.getCooldownTurn() > 0)
                         {
@@ -642,9 +672,7 @@ public class GameScenario
         ArrayList<String> bossEnemiesNames = bossEnemyFullNames(gameTurn);
         for (int i = 0; i < normalEnemiesNames.size(); i++)
         {
-            //FK
             System.out.printf("%s Health: %d / %d", normalEnemiesNames.get(i), normalEnemies.get(i).getData().get("current health"), normalEnemies.get(i).getData().get("max health"));
-            //FK
         }
         System.out.println("\n");
         for (int i = 0; i < bossEnemiesNames.size(); i++)
@@ -746,16 +774,51 @@ public class GameScenario
             if (item instanceof NonInstantEffectItem)
             {
                 hero.useItem(item.getName(), enemyGroups.get(gameTurn).getEnemies(), heros, commands[4]);
-            } else
+                correctCurrentAttributes(); // LOL
+            }
+            else
             {
-                System.out.println("You don't have this item");
+                // LOL
+                System.out.println("This item is not usable!");
             }
         } else if (hero == null)
         {
+            // LOL
             System.out.println("Invalid command");
         } else
         {
             System.out.println("You don’t have this item");
+        }
+    }
+
+    private void correctCurrentAttributes() // LOL
+    {
+        for(Hero hero : heros)
+        {
+            HashMap<String, Integer> data = hero.getData();
+            for(String attribute : data.keySet())
+            {
+                String[] attributeNameParts = attribute.split(" ");
+                if (attributeNameParts[0].equals("current"))
+                {
+                    attributeNameParts[0] = "max ";
+                    String attributeMax = "";
+                    for (String attributeNamePart : attributeNameParts)
+                    {
+                        attributeMax += attributeNamePart;
+                    }
+                    int maxAmount = data.get(attributeMax);
+                    int currentAmount = data.get(attribute);
+                    if(currentAmount > maxAmount)
+                    {
+                        data.put(attribute, maxAmount);
+                    }
+                    else if(currentAmount < 0)
+                    {
+                        data.put(attribute, 0);
+                    }
+                }
+            }
         }
     }
 
@@ -778,6 +841,7 @@ public class GameScenario
             if (item instanceof NonInstantEffectItem)
             {
                 hero.useItem(item.getName(), enemyGroups.get(gameTurn).getEnemies(), heros, "everyone");
+                correctCurrentAttributes(); // LOL
             } else
             {
                 System.out.println("You don't have this item");
@@ -862,16 +926,22 @@ public class GameScenario
         if (hero != null && userInterface.getHerosAndTheirAbilities().get(hero.getName()).contains(commands[2]))
         {
             Ability ability = hero.findAbility(commands[2]);
-            if (ability != null)
+            if (ability != null && ability instanceof ActiveAbility) // LOL
             {
                 hero.useAbility(ability.getName(), enemyGroups.get(gameTurn).getEnemies(), heros, "everyone");
+                correctCurrentAttributes(); // LOL
             }
-        } else if (hero == null)
+            else
+            {
+                System.out.println("This ability is not castable");
+            }
+        } else if(!userInterface.getHerosAndTheirAbilities().get(hero.getName()).contains(commands[2]))
         {
-            System.out.println("Invalid command");
+            // LOL
+            System.out.println("This hero can not cast this ability");
         } else
         {
-            System.out.println("This hero can not cast this ability");
+            System.out.println("Invalid Command"); // LOL
         }
     }
 
@@ -887,17 +957,22 @@ public class GameScenario
         if (hero != null && userInterface.getHerosAndTheirAbilities().get(hero.getName()).contains(commands[2]) && commands[3].equals("on"))
         {
             Ability ability = hero.findAbility(commands[2]);
-            if (ability != null)
+            if (ability != null && ability instanceof ActiveAbility) // LOL
             {
                 hero.useAbility(ability.getName(), enemyGroups.get(gameTurn).getEnemies(), heros, commands[4]);
+                correctCurrentAttributes();
             }
-        } else if (hero == null)
+            else
+            {
+                System.out.println("This ability is not castable"); // LOL
+            }
+        } else if(!userInterface.getHerosAndTheirAbilities().get(hero.getName()).contains(commands[2]))
         {
-            System.out.println("TRee");
-            System.out.println("Invalid command");
+            // LOL
+            System.out.println("This hero can not cast this ability");
         } else
         {
-            System.out.println("This hero can not cast this ability");
+            System.out.println("Invalid Command"); // LOL
         }
     }
 
@@ -949,10 +1024,10 @@ public class GameScenario
         if (hero != null && item instanceof InstantEffectItem)
         {
             hero.useItem(item.getName(), new ArrayList<Enemy>(), heros, "himself");
-            //FK
-            if (item instanceof InflationedItem)
+            if(item instanceof InflationedItem)
+            {
                 hero.getInventory().removeItem(item);
-            //FK
+            }
         }
         setCurrentAttributesToMax(hero);
 
@@ -996,11 +1071,11 @@ public class GameScenario
                                 "Upgrade3: +1 energy point for 4 xp points");
                         break;
                     case "magiclessons":
-                        System.out.println("Quick as a bunny\n" +
-                                "Permanently increases energy points\n" +
-                                "Upgrade1: +1 energy point for 2 xp points\n" +
-                                "Upgrade2: +1 energy point for 3 xp points\n" +
-                                "Upgrade3: +1 energy point for 4 xp points");
+                        System.out.println("Magic Lessons\n" +
+                                "Permanently increases maximum magic\n" +
+                                "Upgrade 1: +50 maximum magic for 2 xp points\n" +
+                                "Upgrade 2: +50 maximum magic for 3 xp points\n" +
+                                "Upgrade 3: +50 maximum magic for 4 xp points");
                         break;
                     case "overpoweredattack":
                         System.out.println("Overpowered attack\n" +
@@ -1042,7 +1117,7 @@ public class GameScenario
                                 "Upgrade 2: takes 2 energy points and cools down instantly for 3 xp points, needs Quick as a bunny upgrade 2\n" +
                                 "Upgrade 3 takes 1 energy point and cools down instantly for 5 xp points, needs Quick as a bunny upgrade 3");
                         break;
-                    case "boots":
+                    case "boost":
                         System.out.println("Boost\n" +
                                 "Gives X bonus attack power to himself or an ally, which lasts till the end of the battle, for 2 energy points and 50 magic points (this bonus attack power can stack up)\n" +
                                 "Upgrade 1: A=20 for 2 xp points and takes 1 turn to cool down\n" +
@@ -1142,7 +1217,7 @@ public class GameScenario
             }
         } else
         {
-            System.out.println("There is no enemy with name " + commands[0]);
+            System.out.println("There is no enemy with name "+ commands[0]);
         }
     }
 
@@ -1198,7 +1273,7 @@ public class GameScenario
                         "Upgrade3: +30 attack power for 4 xp points");
 
                 break;
-            case "worout":
+            case "workout":
                 System.out.println("Work out\n" +
                         "Permanently increases maximum health\n" +
                         "Upgrade 1: +50 maximum health for 2 xp points\n" +
@@ -1213,11 +1288,11 @@ public class GameScenario
                         "Upgrade3: +1 energy point for 4 xp points");
                 break;
             case "magiclessons":
-                System.out.println("Quick as a bunny\n" +
-                        "Permanently increases energy points\n" +
-                        "Upgrade1: +1 energy point for 2 xp points\n" +
-                        "Upgrade2: +1 energy point for 3 xp points\n" +
-                        "Upgrade3: +1 energy point for 4 xp points");
+                System.out.println("Magic Lessons\n" +
+                        "Permanently increases maximum magic\n" +
+                        "Upgrade 1: +50 maximum magic for 2 xp points\n" +
+                        "Upgrade 2: +50 maximum magic for 3 xp points\n" +
+                        "Upgrade 3: +50 maximum magic for 4 xp points");
                 break;
             case "overpoweredattack":
                 System.out.println("Overpowered attack\n" +
@@ -1239,7 +1314,7 @@ public class GameScenario
                         "Upgrade 2: H=50 for 3 xp points, needs Work out upgrade 2\n" +
                         "Upgrade 3: H=60 for 4 xp points, needs Work out upgrade 3");
                 break;
-            case "criticalStrike":
+            case "criticalstrike":
                 System.out.println("Has a permanent P percent chance of doing an attack with double power (does not affect other abilities)\n" +
                         "Upgrade 1: P=20 for 2 xp points, needs Fight training upgrade 1\n" +
                         "Upgrade 2: P=30 for 3 xp points\n" +
@@ -1259,7 +1334,7 @@ public class GameScenario
                         "Upgrade 2: takes 2 energy points and cools down instantly for 3 xp points, needs Quick as a bunny upgrade 2\n" +
                         "Upgrade 3 takes 1 energy point and cools down instantly for 5 xp points, needs Quick as a bunny upgrade 3");
                 break;
-            case "boots":
+            case "boost":
                 System.out.println("Boost\n" +
                         "Gives X bonus attack power to himself or an ally, which lasts till the end of the battle, for 2 energy points and 50 magic points (this bonus attack power can stack up)\n" +
                         "Upgrade 1: A=20 for 2 xp points and takes 1 turn to cool down\n" +
@@ -1274,7 +1349,7 @@ public class GameScenario
                         "Upgrade 3: M=80 for 4 xp points and cools down instantly, needs magic lessons upgrade 3");
                 break;
             default:
-                System.out.println("There is no ability with name" + commands[0]);
+                System.out.println("There is no ability with name " + commands[0]);
                 break;
         }
     }
@@ -1292,7 +1367,6 @@ public class GameScenario
                         "Upgrade 1: N=1.2 for 2 xp points, needs Fight training upgrade 1\n" +
                         "Upgrade 2: N=1.4 for 4 xp points, needs Fight training upgrade 2\n" +
                         "Upgrade 3: N=1.6 for 6 xp points, needs Fight training upgrade 3\n" +
-                        "Success message: “Eley just did an overpowered attack on “ + (target) + “ with “ + (damage done) + “ damage”\n" +
                         "Ability 4: Swirling attack\n" +
                         "While attacking, non-targeted enemies also take P percent of its damage\n" +
                         "Upgrade 1: P=10 for 2 xp points, needs Work out upgrade 1\n" +
@@ -1307,7 +1381,6 @@ public class GameScenario
                         "Upgrade 1: H=40 for 2 xp points, needs Work out upgrade 1\n" +
                         "Upgrade 2: H=50 for 3 xp points, needs Work out upgrade 2\n" +
                         "Upgrade 3: H=60 for 4 xp points, needs Work out upgrade 3\n" +
-                        "Success message: “Chrome just sacrificed himself to damage all his enemies with “ + (damage done) + “ power“\n" +
                         "Ability 4: Critical strike\n" +
                         "Has a permanent P percent chance of doing an attack with double power (does not affect other abilities)\n" +
                         "Upgrade 1: P=20 for 2 xp points, needs Fight training upgrade 1\n" +
@@ -1322,13 +1395,11 @@ public class GameScenario
                         "Upgrade 1: H=100 for 2 xp points and takes 1 turn to cool down\n" +
                         "Upgrade 2: H=150 for 3 xp points, takes 1 turn to cool down and needs Magic lessons upgrade 1\n" +
                         "Upgrade 3: H=150 for 5 xp points, cools down instantly and needs Magic lessons upgrade 2\n" +
-                        "Success message: “Meryl just healed “ + (target) + “ with “ + (healing amount) + “ health points”\n" +
                         "Ability 4: Caretaker\n" +
                         "Gives 1 energy point to an ally for 30 magic points (this ep does not last until the end of the battle and is only usable during the current turn)\n" +
                         "Upgrade 1: takes 2 energy points and has a 1 turn cooldown for 2 xp points, needs Quick as a bunny upgrade 1\n" +
                         "Upgrade 2: takes 2 energy points and cools down instantly for 3 xp points, needs Quick as a bunny upgrade 2\n" +
-                        "Upgrade 3 takes 1 energy point and cools down instantly for 5 xp points, needs Quick as a bunny upgrade 3\n" +
-                        "Success message: “Meryl just gave “ + (target) + “ 1 energy point”");
+                        "Upgrade 3: takes 1 energy point and cools down instantly for 5 xp points, needs Quick as a bunny upgrade 3\n");
                 break;
             case "bolti":
                 System.out.println("Bolti:\n" +
@@ -1338,13 +1409,11 @@ public class GameScenario
                         "Upgrade 1: A=20 for 2 xp points and takes 1 turn to cool down\n" +
                         "Upgrade 2: A=30 for 3 xp points and takes 1 turn to cool down\n" +
                         "Upgrade 3: A=30 for 5 xp points and cools down instantly\n" +
-                        "Success message: “Bolti just boosted “ + (target) + “ with “ + (A) + “ power”\n" +
                         "Ability 4: Mana beam\n" +
                         "Gives M magic points to himself or an ally for 1 energy point and 50 magic points\n" +
                         "Upgrade 1: M=50 for 2 xp points and takes 1 turn to cool down, needs magic lessons upgrade 1\n" +
                         "Upgrade 2: M=80 for 3 xp points and takes 1 turn to cool down, needs magic lessons upgrade 2\n" +
-                        "Upgrade 3: M=80 for 4 xp points and cools down instantly, needs magic lessons upgrade 3\n" +
-                        "Success message: “Bolti just helped “ + (target) + “ with “ + (M) + “ magic points”");
+                        "Upgrade 3: M=80 for 4 xp points and cools down instantly, needs magic lessons upgrade 3\n");
                 break;
             default:
                 System.out.println("invalid command");
@@ -1532,12 +1601,10 @@ public class GameScenario
             {
                 for (int j = 0; j < heros.get(i).getAbilities().size(); j++)
                 {
-                    //FK
                     if (heros.get(i).getAbilities().get(j).getName().equals(commands[1]))
                     {
                         return true;
                     }
-                    //FK
                 }
                 System.out.println("This ability is not for " + commands[0]);
             }

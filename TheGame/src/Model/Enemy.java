@@ -3,9 +3,7 @@ package Model;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by Vahid on 5/5/2016.
- */
+
 public abstract class Enemy extends Warrior
 {
     protected int ID;
@@ -51,27 +49,25 @@ public abstract class Enemy extends Warrior
     }
 
 
-    public String getFullName()
+    public String getFullName() // LOL
     {
         String fullName = "";
 
         if (this instanceof NormalEnemy)
         {
-            //FK
-            fullName = ((NormalEnemy) this).getVersion()+"-" + name;
+            fullName = ((NormalEnemy) this).getVersion() + "-" + name;
             if (ID != 0)
             {
-                fullName = fullName + "-"+ Integer.toString(ID);
+                fullName += "-" + Integer.toString(ID);
             }
         } else if (this instanceof BossEnemy)
         {
             fullName = name;
             if (ID != 0)
             {
-                fullName = fullName + "-" + Integer.toString(ID);
+                fullName += Integer.toString(ID);
             }
         }
-        //FK
 
         return fullName;
     }

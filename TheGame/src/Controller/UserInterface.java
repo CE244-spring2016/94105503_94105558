@@ -4,15 +4,12 @@ import Auxiliary.Formula;
 import Model.EnemyVersion;
 import com.sun.applet2.AppletParameters;
 
-import java.util.ArrayList;
+import java.util.*;
 import java.util.HashMap;
-import java.util.HashMap;
-import java.util.Scanner;
-import java.util.Set;
 
 /*
     We need init here!
-	
+
 	We could divide this class to 5-6 other classes
 */
 
@@ -477,7 +474,7 @@ public class UserInterface
         abilityNames.add("criticalstrike");
         abilityNames.add("elixir");
         abilityNames.add("caretaker");
-        abilityNames.add("boots");
+        abilityNames.add("boost"); // LOL
         abilityNames.add("manabeam");
         //targets
         abilityTargets.put("fighttraining", "himself");
@@ -573,7 +570,7 @@ public class UserInterface
             abilityLuckPercents.put("criticalStrike", criticalStrikePercent);
         */
         //abilityRequired
-
+        // LOL
 
         HashMap<String, Integer> overPoweredAttackUpgradeRequirement1 = new HashMap<>();
         overPoweredAttackUpgradeRequirement1.put("fighttraining", 1);
@@ -591,6 +588,8 @@ public class UserInterface
         swirlingAttackUpgradeRequirement1.put("workout", 1);
         ArrayList<HashMap<String, Integer>> swirlingAttackUpgradeRequirements = new ArrayList<>();
         swirlingAttackUpgradeRequirements.add(swirlingAttackUpgradeRequirement1);
+        swirlingAttackUpgradeRequirements.add(new HashMap<String, Integer>());
+        swirlingAttackUpgradeRequirements.add(new HashMap<String, Integer>());
         allRequiredAbilities.put("swirlingattack", swirlingAttackUpgradeRequirements);
 
         HashMap<String, Integer> sacrificeUpgradeRequirement1 = new HashMap<>();
@@ -609,6 +608,8 @@ public class UserInterface
         criticalStrikeUpgradeRequirement1.put("fighttraining", 1);
         ArrayList<HashMap<String, Integer>> criticalStrikeUpgradeRequirements = new ArrayList<>();
         criticalStrikeUpgradeRequirements.add(criticalStrikeUpgradeRequirement1);
+        criticalStrikeUpgradeRequirements.add(new HashMap<String, Integer>()); // LOL
+        criticalStrikeUpgradeRequirements.add(new HashMap<String, Integer>()); // LOL
         allRequiredAbilities.put("criticalstrike", criticalStrikeUpgradeRequirements);
 
         HashMap<String, Integer> elixirUpgradeRequirement1 = new HashMap<>();
@@ -620,7 +621,7 @@ public class UserInterface
         elixirUpgradeRequirements.add(elixirUpgradeRequirement1);
         elixirUpgradeRequirements.add(elixirUpgradeRequirement2);
         elixirUpgradeRequirements.add(elixirUpgradeRequirement3);
-        allRequiredAbilities.put("sacrifice", elixirUpgradeRequirements);
+        allRequiredAbilities.put("elixir", elixirUpgradeRequirements);
 
         HashMap<String, Integer> caretakerUpgradeRequirement1 = new HashMap<>();
         caretakerUpgradeRequirement1.put("quickasabunny", 1);
@@ -693,7 +694,7 @@ public class UserInterface
         quickAsBunnyEffectFormulaUpgrades.add(quickAsBunnyEffectFormulaUpgrade1);
         quickAsBunnyEffectFormulaUpgrades.add(quickAsBunnyEffectFormulaUpgrade2);
         quickAsBunnyEffectFormulaUpgrades.add(quickAsBunnyEffectFormulaUpgrade3);
-        quickAsBunnyFormula.put("EP", quickAsBunnyEffectFormulaUpgrades);
+        quickAsBunnyFormula.put("max EP", quickAsBunnyEffectFormulaUpgrades); // LOL
         allAbiliyFormulas.put("quickasabunny", quickAsBunnyFormula);
 
 
@@ -866,7 +867,7 @@ public class UserInterface
         caretakerCostFormula2.add(caretakerCostMagic1);
         caretakerCostFormula2.add(caretakerCostMagic2);
         caretakerCostFormula2.add(caretakerCostMagic3);
-        caretakerFormula.put("current EP", caretakerEffectFormulaUpgrades);
+        caretakerFormula.put("current EP", caretakerEffectFormulaUpgrades); // LOL
         caretakerFormula.put("cost EP", caretakerCostFormula1);
         caretakerFormula.put("cost magic", caretakerCostFormula2);
         allAbiliyFormulas.put("caretaker", caretakerFormula);
@@ -920,9 +921,9 @@ public class UserInterface
         Formula manaBeamEffectFormulaUpgrade2 = new Formula("80", null);
         Formula manaBeamEffectFormulaUpgrade3 = new Formula("80", null);
         ArrayList<Formula> manaBeamEffectFormulaUpgrades = new ArrayList<>();
-        manaBeamEffectFormulaUpgrades.add(boostEffectFormulaUpgrade1);
-        manaBeamEffectFormulaUpgrades.add(boostEffectFormulaUpgrade2);
-        manaBeamEffectFormulaUpgrades.add(boostEffectFormulaUpgrade3);
+        manaBeamEffectFormulaUpgrades.add(manaBeamEffectFormulaUpgrade1);
+        manaBeamEffectFormulaUpgrades.add(manaBeamEffectFormulaUpgrade2);
+        manaBeamEffectFormulaUpgrades.add(manaBeamEffectFormulaUpgrade3);
         ArrayList<Formula> manaBeamCostFormula1 = new ArrayList<>();
         ArrayList<Formula> manaBeamCostFormula2 = new ArrayList<>();
         Formula manaBeamCostEP1 = new Formula("0 - 1", null);

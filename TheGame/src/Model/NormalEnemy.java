@@ -5,9 +5,7 @@ import Auxiliary.Luck;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Created by Vahid on 5/5/2016.
- */
+
 public class NormalEnemy extends Enemy
 {
 	private String version;

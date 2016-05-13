@@ -5,9 +5,7 @@ import Controller.UserInterface;
 
 import java.util.Scanner;
 
-/**
- * Created by Vahid on 5/11/2016.
- */
+
 public class Runner
 {
     public static void main(String[] args)
