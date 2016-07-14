@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="15" height="17" tilewidth="32" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" name="Outside_A5" tilewidth="32" tileheight="32" tilecount="128" columns="8">
+  <image source="../../../Program Files (x86)/Common Files/Enterbrain/RGSS3/RPGVXAce/Graphics/Tilesets/Outside_A5.png" width="256" height="512"/>
+ </tileset>
+ <tileset firstgid="129" name="Inside_A2" tilewidth="32" tileheight="32" tilecount="192" columns="16">
+  <image source="../../../Program Files (x86)/Common Files/Enterbrain/RGSS3/RPGVXAce/Graphics/Tilesets/Inside_A2.png" width="512" height="384"/>
+ </tileset>
+ <tileset firstgid="321" name="Outside_A4" tilewidth="32" tileheight="32" tilecount="240" columns="16">
+  <image source="../../../Program Files (x86)/Common Files/Enterbrain/RGSS3/RPGVXAce/Graphics/Tilesets/Outside_A4.png" width="512" height="480"/>
+ </tileset>
+ <tileset firstgid="561" name="Inside_A4" tilewidth="32" tileheight="32" tilecount="240" columns="16">
+  <image source="../../../Program Files (x86)/Common Files/Enterbrain/RGSS3/RPGVXAce/Graphics/Tilesets/Inside_A4.png" width="512" height="480"/>
+ </tileset>
+ <tileset firstgid="801" name="Outside_B" tilewidth="32" tileheight="32" tilecount="256" columns="16">
+  <image source="../../../Program Files (x86)/Common Files/Enterbrain/RGSS3/RPGVXAce/Graphics/Tilesets/Outside_B.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="1057" name="Outside_C" tilewidth="32" tileheight="32" tilecount="256" columns="16">
+  <image source="../../../Program Files (x86)/Common Files/Enterbrain/RGSS3/RPGVXAce/Graphics/Tilesets/Outside_C.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="1313" name="World_B" tilewidth="32" tileheight="32" tilecount="256" columns="16">
+  <image source="../../../Program Files (x86)/Common Files/Enterbrain/RGSS3/RPGVXAce/Graphics/Tilesets/World_B.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="1569" name="IconSet" tilewidth="32" tileheight="32" tilecount="348" columns="12">
+  <image source="../../../Program Files (x86)/Common Files/Enterbrain/RGSS3/RPGVXAce/Graphics/System/IconSet.png" width="384" height="936"/>
+ </tileset>
+ <tileset firstgid="1917" name="Skull_32px_1178639_easyicon.net" tilewidth="32" tileheight="32" tilecount="1" columns="1">
+  <image source="D:/Sharif/Game/Titles/Skull_32px_1178639_easyicon.net.png" width="32" height="32"/>
+ </tileset>
+ <tileset firstgid="1918" name="love_heart_32px_582749_easyicon.net" tilewidth="32" tileheight="32" tilecount="1" columns="1">
+  <image source="D:/Sharif/Game/Titles/love_heart_32px_582749_easyicon.net.png" width="32" height="32"/>
+ </tileset>
+ <tileset firstgid="1919" name="Iron_Sword_32px_1124604_easyicon.net" tilewidth="32" tileheight="32" tilecount="1" columns="1">
+  <image source="D:/Sharif/Game/Titles/Iron_Sword_32px_1124604_easyicon.net.png" width="32" height="32"/>
+ </tileset>
+ <tileset firstgid="1920" name="thunder_32px_557887_easyicon.net" tilewidth="32" tileheight="32" tilecount="1" columns="1">
+  <image source="D:/Sharif/Game/Titles/thunder_32px_557887_easyicon.net.png" width="32" height="32"/>
+ </tileset>
+ <tileset firstgid="1921" name="key_32px_1201119_easyicon.net" tilewidth="32" tileheight="32" tilecount="1" columns="1">
+  <image source="D:/Sharif/Game/Titles/key_32px_1201119_easyicon.net.png" width="32" height="32"/>
+ </tileset>
+ <tileset firstgid="1922" name="key_32px_1175809_easyicon.net" tilewidth="32" tileheight="32" tilecount="1" columns="1">
+  <image source="D:/Sharif/Game/Titles/key_32px_1175809_easyicon.net.png" width="32" height="32"/>
+ </tileset>
+ <tileset firstgid="1923" name="Key_32px_551203_easyicon.net" tilewidth="32" tileheight="32" tilecount="1" columns="1">
+  <image source="D:/Sharif/Game/Titles/Key_32px_551203_easyicon.net.png" width="32" height="32"/>
+ </tileset>
+ <tileset firstgid="1924" name="book_32px_1186012_easyicon.net" tilewidth="32" tileheight="32" tilecount="1" columns="1">
+  <image source="D:/Sharif/Game/Titles/book_32px_1186012_easyicon.net.png" width="32" height="32"/>
+ </tileset>
+ <layer name="RADNEMISHE" width="15" height="17">
+  <data encoding="csv">
+66,66,66,66,66,66,66,66,66,66,66,66,66,66,66,
+66,0,0,0,0,0,0,0,0,0,0,0,66,1917,66,
+66,0,0,0,0,0,66,0,0,0,0,0,66,0,66,
+66,66,0,66,66,66,66,66,66,66,0,0,66,0,66,
+66,0,0,0,0,0,0,0,0,0,0,0,66,0,66,
+66,0,0,0,66,66,66,0,0,66,0,0,66,0,66,
+66,0,0,0,66,0,0,0,0,66,0,0,0,0,66,
+66,0,0,0,66,0,0,0,0,66,0,0,0,0,66,
+66,0,0,0,66,66,66,66,66,66,0,0,0,0,66,
+66,0,66,0,0,0,0,0,0,66,0,0,0,0,66,
+66,0,66,0,0,0,0,0,0,66,66,66,0,0,66,
+66,0,66,0,0,0,0,0,0,0,0,0,0,0,66,
+66,0,66,0,0,0,0,0,0,66,66,66,0,0,66,
+66,0,66,66,66,0,0,66,66,66,0,0,0,0,66,
+66,0,0,0,66,0,0,0,0,66,0,0,0,0,66,
+66,0,0,0,66,0,0,0,0,66,0,0,0,0,66,
+66,66,66,66,66,66,66,66,66,66,66,66,66,66,66
+</data>
+ </layer>
+ <layer name="FARSH" width="15" height="17" opacity="0.7">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,242,242,242,242,242,242,242,242,242,242,242,0,242,0,
+0,242,242,242,242,242,0,242,242,242,242,242,0,242,0,
+0,0,65,0,0,0,0,0,0,0,242,242,0,242,0,
+0,242,242,242,65,242,242,242,242,65,242,242,0,242,0,
+0,242,242,242,0,0,0,242,242,0,242,242,0,65,0,
+0,242,242,242,0,242,242,242,242,0,242,242,242,242,0,
+0,242,242,242,0,242,242,242,242,0,242,242,242,242,0,
+0,242,242,242,0,0,0,0,0,0,242,242,242,242,0,
+0,242,0,242,242,242,242,242,242,0,242,242,242,242,0,
+0,242,0,242,242,242,242,242,242,0,0,0,242,242,0,
+0,242,0,242,242,242,242,242,242,65,242,242,242,242,0,
+0,242,0,242,242,242,242,242,242,0,0,0,242,242,0,
+0,242,0,0,0,242,242,0,0,0,242,242,242,242,0,
+0,242,242,242,0,242,242,242,242,0,242,242,242,242,0,
+0,242,242,242,0,242,242,242,242,0,242,242,242,242,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <layer name="INSIDE" width="15" height="17">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,1923,0,0,0,0,1919,0,0,0,0,1920,0,1917,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,1350,0,0,0,0,0,0,0,0,0,0,1924,0,
+0,0,0,0,1350,0,1919,0,0,1350,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,1350,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,1923,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,1920,0,1560,0,0,0,0,
+0,1924,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,1350,0,1919,0,0,0,
+0,1919,0,1543,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,1559,0,0,0,0,1919,0,0,0,0,0,0,
+0,0,0,1920,0,0,0,0,0,0,1923,0,0,1924,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+</data>
+ </layer>
+</map>
