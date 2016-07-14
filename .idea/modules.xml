@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/94105503_94105558.iml" filepath="$PROJECT_DIR$/.idea/94105503_94105558.iml" />
-      <module fileurl="file://$PROJECT_DIR$/TheGame/TheGame.iml" filepath="$PROJECT_DIR$/TheGame/TheGame.iml" />
-      <module fileurl="file://$PROJECT_DIR$/TheGame/out.iml" filepath="$PROJECT_DIR$/TheGame/out.iml" />
+      <module fileurl="file://$PROJECT_DIR$/UIGui.iml" filepath="$PROJECT_DIR$/UIGui.iml" />
     </modules>
   </component>
 </project>
