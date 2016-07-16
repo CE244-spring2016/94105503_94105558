@@ -2,30 +2,33 @@ package Controller;
 
 import Auxiliary.Formula;
 import Model.EnemyVersion;
+
 import javafx.util.Pair;
 
-import javax.imageio.ImageIO;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Set;
 
-public class UserInterface
+/*
+    We need init here!
+
+	We could divide this class to 5-6 other classes
+*/
+
+public class UserInterface implements Serializable
 {
     private boolean customed;
-    private int BattleId;
+    private int BattleId = 0;
     private int initialXP = 0;
     private int initialMoney = 0;
     private int immortalityPotionNum;
     private int startingX;
     private int startingY;
     private String mapAddress;
-    private BufferedImage gameOverBackground;
-    private BufferedImage gameFinishBackground;
+    private UltimateImage gameOverBackground;
 
     private ArrayList<String> heroClassNames = new ArrayList<>(); // new it in the constructor
     private HashMap<String, HashMap<String, Integer>> heroClassDatas = new HashMap<>(); // new it in the constructor
@@ -34,17 +37,21 @@ public class UserInterface
     private HashMap<String, String> ItemDescription = new HashMap<>();
     private ArrayList<String> heroNames = new ArrayList<>();
     private ArrayList<String> heroAttributes = new ArrayList<>();                         // must make this fully in the constructor
+
     private HashMap<String, String> herosAndTheirClasses = new HashMap<>();
     private HashMap<String, ArrayList<String>> herosAndTheirAbilities = new HashMap<>();
-    private HashMap<BufferedImage, String> herosAndTheirImages = new HashMap<>();
+    private HashMap<UltimateImage, String> herosAndTheirImages = new HashMap<>();
     private HashMap<String, HashMap<String, ArrayList<HashMap<String, Integer>>>> allHeroRequiredAbilities = new HashMap<>();
+
     private ArrayList<String> normalEnemyNames = new ArrayList<>();
     private HashMap<String, ArrayList<EnemyVersion>> normalEnemyDatas = new HashMap<>();
-    private HashMap<BufferedImage, String> allNormalEnemyImages = new HashMap<>();
+    private HashMap<UltimateImage, String> allNormalEnemyImages = new HashMap<>();
     private HashMap<String, String> abilityDescription = new HashMap<>();
     private ArrayList<String> enemyAttributes = new ArrayList<>();                        // must make this fully in the constructor
     private ArrayList<String> possibleNormalEnemyTargets = new ArrayList<>(); // A new variable
+
     private HashMap<String, ArrayList<String>> enemyVersionNames = new HashMap<>();
+
     private ArrayList<String> bossEnemyNames = new ArrayList<>();
     private HashMap<String, HashMap<String, Integer>> bossEnemyDatas = new HashMap<>();
     private ArrayList<String> bossEnemyAttributes = new ArrayList<>();
@@ -54,7 +61,8 @@ public class UserInterface
     private HashMap<String, HashMap<String, String>> bossEnemyEarlyEffects = new HashMap<>();
     private ArrayList<String> possibleBossEnemyTargets = new ArrayList<>();
     private HashMap<String, String> bossEnemyTargets = new HashMap<>();
-    private HashMap<BufferedImage, String> bossEnemyImages = new HashMap<>();
+    private HashMap<UltimateImage, String> bossEnemyImages = new HashMap<>();
+
     private ArrayList<String> itemNames = new ArrayList<>();
     private HashMap<String, HashMap<String, Integer>> itemDatas = new HashMap<>();
     private HashMap<String, String> itemTargets = new HashMap<>();
@@ -63,6 +71,7 @@ public class UserInterface
     private ArrayList<String> inflationedItems = new ArrayList<>();
     private ArrayList<String> instantEffectItems = new ArrayList<>();
     private HashMap<String, Integer> nonInstantEffectItemsUseLimit = new HashMap<>();
+
     private ArrayList<String> abilityNames = new ArrayList<>();
     private HashMap<String, HashMap<String, ArrayList<Formula>>> allAbiliyFormulas = new HashMap<>(); // Even non targeted enemy share and cooldown is handled here
     private HashMap<String, String> abilityTargets = new HashMap<>();
@@ -75,78 +84,69 @@ public class UserInterface
     private HashMap<String, ArrayList<Integer>> secondaryTargetShares = new HashMap<>();
     private HashMap<String, ArrayList<Integer>> allAbilityCooldowns = new HashMap<>();
     private ArrayList<String> instantEffectConditionAbilities = new ArrayList<>();
+
     private ArrayList<ArrayList<String>> allShopItemNames = new ArrayList<>();
     private ArrayList<HashMap<String, Integer>> allShopItemMoneyCosts = new ArrayList<>();
     private ArrayList<Integer> allShopInflationValues = new ArrayList<>();
+
     private ArrayList<String> gameStory = new ArrayList<>();
     private ArrayList<ArrayList<String>> storyEnemyGroups = new ArrayList<>();
     private ArrayList<Integer> enemyGroupXPs = new ArrayList<>();
     private ArrayList<Integer> enemyGroupMoneys = new ArrayList<>();
+
     private HashMap<String, String> allAbilitySuccessMessages = new HashMap<>();
     private HashMap<String, String> allEnemySuccessMessages = new HashMap<>();
     private HashMap<String, String> allItemSuccessMessages = new HashMap<>();
+
     private ArrayList<String> tileSources = new ArrayList<>();
     private ArrayList<Integer> battleGidNums = new ArrayList<>();
-    private ArrayList<BufferedImage> battleBackgroundSources = new ArrayList<>();
+    private ArrayList<UltimateImage> battleBackgroundSources = new ArrayList<>();
     private ArrayList<Integer> shopGidNums = new ArrayList<>();
-    private ArrayList<BufferedImage> shopBackgroundSources = new ArrayList<>();
-    private ArrayList<BufferedImage> shopKeeperSources = new ArrayList<>();
+    private ArrayList<UltimateImage> shopBackgroundSources = new ArrayList<>();
+    private ArrayList<UltimateImage> shopKeeperSources = new ArrayList<>();
     private ArrayList<String> shopWelcomeMessages = new ArrayList<>();
     private ArrayList<Integer> abilityUpgradeGidNums = new ArrayList<>();
-    private ArrayList<BufferedImage> abilityUpgradeBackgroundSources = new ArrayList<>();
+    private ArrayList<UltimateImage> abilityUpgradeBackgroundSources = new ArrayList<>();
     private ArrayList<Pair<String, String>> heroEnteringMessage = new ArrayList<>();
-    private HashMap<String, BufferedImage> heroFaces = new HashMap<>();
+    private HashMap<String, UltimateImage> heroFaces = new HashMap<>();
     private ArrayList<Integer> storyGidNums = new ArrayList<>();
-    private ArrayList<BufferedImage> storyBackgroundSources = new ArrayList<>();
+    private ArrayList<UltimateImage> storyBackgroundSources = new ArrayList<>();
     private HashMap<Integer, Integer> doorsAndTheirDirections = new HashMap<>();
     private HashMap<Integer, Integer> doorsAndTheirKeys = new HashMap<>();
     private ArrayList<Integer> keyGidNums = new ArrayList<>();
 
-    public UserInterface(Scanner in)
+    private ArrayList<String> attributesWithMax = new ArrayList<>();
+    private ArrayList<String> attributeWithTemp = new ArrayList<>();
+
+    public UserInterface()
     {
         // create stuff
 
-        checkCustom(in);
+//        checkCustom(customed);
     }
 
-    public HashMap<String, String> getAbilityDescription()
+    public void checkCustom(boolean customed)
     {
-        return abilityDescription;
-    }
-
-    public void setAbilityDescription(HashMap<String, String> abilityDescription)
-    {
-        this.abilityDescription = abilityDescription;
-    }
-
-    public HashMap<String, String> getItemDescription()
-    {
-        return ItemDescription;
-    }
-
-    public void setItemDescription(HashMap<String, String> itemDescription)
-    {
-        ItemDescription = itemDescription;
-    }
-
-    public void checkCustom(Scanner in)
-    {
-        //        System.out.println("How do you want to start?(Enter the right number)");
-        //        System.out.println("1- Start normal game");
-        //        System.out.println("2- Start custom game(you can create your own game here)");
+        this.customed = customed;
+//        System.out.println("How do you want to start?(Enter the right number)");
+//        System.out.println("1- Start normal game");
+//        System.out.println("2- Start custom game(you can create your own game here)");
         System.out.println("Press any key to start the story...");
         System.out.println("___custom game is under construction___");
-        //        String input = in.nextLine();
+//        String input = in.nextLine();
         // Check wrong input
-        //        if (input.equals("2"))
-        //        {
-        //            this.customed = true;
-        //            startCreating(in);
-        //        } else
-        //        {
-        this.customed = false;
+//        if (input.equals("2"))
+//        {
+//            this.customed = true;
+//            startCreating(in);
+//        } else
+//        {
+        if (customed)
+        {
+            return;
+        }
         init();
-        //        }
+//        }
     }
 
 
@@ -247,7 +247,7 @@ public class UserInterface
                 " behind the only open door but there’s no other choice.");
         gameStory.add("The door behind you is shut with a thunderous sound and you progress into " +
                 "the next hall holding the first key that you’ve found, hoping to seek the second one.");
-        //        gameStory.add("Lol Optional"); // CHECK PLEASE
+//        gameStory.add("Lol Optional"); // CHECK PLEASE
         gameStory.add("Running with the second key in your hand, you unlock the door back to the first hall " +
                 "and use the first key to burst into your most terrifying nightmares.");
         gameStory.add("You feel hopeless and exhausted as you stalk to the final door. What’s behind that door makes" +
@@ -317,7 +317,7 @@ public class UserInterface
         allShopInflationValues.add(2);
         //
         immortalityPotionNum = 3;
-        initialMoney = 1000;
+        initialMoney = 40;
         initialXP = 15;
         BattleId = 6;
         //
@@ -386,55 +386,55 @@ public class UserInterface
         herosAndTheirAbilities.put("chrome", chromeAbilities);
         herosAndTheirAbilities.put("meryl", merylAbilities);
         herosAndTheirAbilities.put("bolti", boltiAbilities);
-        HashMap<String, String> abilityDescription = new HashMap<>();
-        abilityDescription.put("fighttraining", "Permanently increases attack power\n" +
-                "Upgrade1: +30 attack power for 2 xp points\n" +
-                "Upgrade2: +30 attack power for 3 xp points\n" +
+
+        abilityDescription.put("fighttraining", "Permanently increases attack power<br>" +
+                "Upgrade1: +30 attack power for 2 xp points<br>" +
+                "Upgrade2: +30 attack power for 3 xp points<br>" +
                 "Upgrade3: +30 attack power for 4 xp points");
 
-        abilityDescription.put("workout", "Permanently increases maximum health\n" +
-                "Upgrade 1: +50 maximum health for 2 xp points\n" +
-                "Upgrade 2: +50 maximum health for 3 xp points\n" +
+        abilityDescription.put("workout", "Permanently increases maximum health<br>" +
+                "Upgrade 1: +50 maximum health for 2 xp points<br>" +
+                "Upgrade 2: +50 maximum health for 3 xp points<br>" +
                 "Upgrade 3: +50 maximum health for 4 xp points");
-        abilityDescription.put("quickasabunny", "Permanently increases energy points\n" +
-                "Upgrade1: +1 energy point for 2 xp points\n" +
-                "Upgrade2: +1 energy point for 3 xp points\n" +
+        abilityDescription.put("quickasabunny", "Permanently increases energy points<br>" +
+                "Upgrade1: +1 energy point for 2 xp points<br>" +
+                "Upgrade2: +1 energy point for 3 xp points<br>" +
                 "Upgrade3: +1 energy point for 4 xp points");
-        abilityDescription.put("magiclessons", "Permanently increases maximum magic\n" +
-                "Upgrade 1: +50 maximum magic for 2 xp points\n" +
-                "Upgrade 2: +50 maximum magic for 3 xp points\n" +
+        abilityDescription.put("magiclessons", "Permanently increases maximum magic<br>" +
+                "Upgrade 1: +50 maximum magic for 2 xp points<br>" +
+                "Upgrade 2: +50 maximum magic for 3 xp points<br>" +
                 "Upgrade 3: +50 maximum magic for 4 xp points");
-        abilityDescription.put("overpoweredattack", "Attacks an enemy with N times attack power for 2 energy points and 50 magic points\n" +
-                "Upgrade 1: N=1.2 for 2 xp points\n" +
-                "Upgrade 2: N=1.4 for 4 xp points\n" +
+        abilityDescription.put("overpoweredattack", "Attacks an enemy with N times attack power for 2 energy points and 50 magic points<br>" +
+                "Upgrade 1: N=1.2 for 2 xp points<br>" +
+                "Upgrade 2: N=1.4 for 4 xp points<br>" +
                 "Upgrade 3: N=1.6 for 6 xp points");
-        abilityDescription.put("swirlingattack", "While attacking, non-targeted enemies also take P percent of its damage\n" +
-                "Upgrade 1: P=10 for 2 xp points\n" +
-                "Upgrade 2: P=20 for 3 xp points\n" +
+        abilityDescription.put("swirlingattack", "While attacking, non-targeted enemies also take P percent of its damage<br>" +
+                "Upgrade 1: P=10 for 2 xp points<br>" +
+                "Upgrade 2: P=20 for 3 xp points<br>" +
                 "Upgrade 3: P=30 for 4 xp points");
-        abilityDescription.put("sacrifice", "Damages all the enemies with 3H power at the cost of H of his own health, needs 3 energy points, 60 magic points and has a 1 turn cooldown\n" +
-                "Upgrade 1: H=40 for 2 xp points\n" +
-                "Upgrade 2: H=50 for 3 xp points\n" +
+        abilityDescription.put("sacrifice", "Damages all the enemies with 3H power at the cost of H of his own health, needs 3 energy points, 60 magic points and has a 1 turn cooldown<br>" +
+                "Upgrade 1: H=40 for 2 xp points<br>" +
+                "Upgrade 2: H=50 for 3 xp points<br>" +
                 "Upgrade 3: H=60 for 4 xp points");
-        abilityDescription.put("criticalstrike", "Has a permanent P percent chance of doing an attack with double power\n" +
-                "Upgrade 1: P=20 for 2 xp points\n" +
-                "Upgrade 2: P=30 for 3 xp points\n" +
+        abilityDescription.put("criticalstrike", "Has a permanent P percent chance of doing an attack with double power<br>" +
+                "Upgrade 1: P=20 for 2 xp points<br>" +
+                "Upgrade 2: P=30 for 3 xp points<br>" +
                 "Upgrade 3: P=40 for 4 xp points");
-        abilityDescription.put("elixir", "Refills H points of her own health or an ally’s, for 2 energy points and 60 magic points\n" +
-                "Upgrade 1: H=100 for 2 xp points and takes 1 turn to cool down\n" +
-                "Upgrade 2: H=150 for 3 xp points, takes 1 turn to cool down\n" +
+        abilityDescription.put("elixir", "Refills H points of her own health or an ally’s, for 2 energy points and 60 magic points<br>" +
+                "Upgrade 1: H=100 for 2 xp points and takes 1 turn to cool down<br>" +
+                "Upgrade 2: H=150 for 3 xp points, takes 1 turn to cool down<br>" +
                 "Upgrade 3: H=150 for 5 xp points, cools down instantly");
-        abilityDescription.put("caretaker", "Gives 1 energy point to an ally for 30 magic points (this ep does not last until the end of the battle and is only usable during the current turn)\n" +
-                "Upgrade 1: takes 2 energy points and has a 1 turn cooldown for 2 xp points\n" +
-                "Upgrade 2: takes 2 energy points and cools down instantly for 3 xp points\n" +
+        abilityDescription.put("caretaker", "Gives 1 energy point to an ally for 30 magic points (this ep does not last until the end of the battle and is only usable during the current turn)<br>" +
+                "Upgrade 1: takes 2 energy points and has a 1 turn cooldown for 2 xp points<br>" +
+                "Upgrade 2: takes 2 energy points and cools down instantly for 3 xp points<br>" +
                 "Upgrade 3 takes 1 energy point and cools down instantly for 5 xp points");
-        abilityDescription.put("boost", "Gives X bonus attack power to himself or an ally, which lasts till the end of the battle, for 2 energy points and 50 magic points (this bonus attack power can stack up)\n" +
-                "Upgrade 1: A=20 for 2 xp points and takes 1 turn to cool down\n" +
-                "Upgrade 2: A=30 for 3 xp points and takes 1 turn to cool down\n" +
+        abilityDescription.put("boost", "Gives X bonus attack power to himself or an ally, which lasts till the end of the battle, for 2 energy points and 50 magic points (this bonus attack power can stack up)<br>" +
+                "Upgrade 1: A=20 for 2 xp points and takes 1 turn to cool down<br>" +
+                "Upgrade 2: A=30 for 3 xp points and takes 1 turn to cool down<br>" +
                 "Upgrade 3: A=30 for 5 xp points and cools down instantly");
-        abilityDescription.put("Mana beam", "ives M magic points to himself or an ally for 1 energy point and 50 magic points\n" +
-                "Upgrade 1: M=50 for 2 xp points and takes 1 turn to cool down\n" +
-                "Upgrade 2: M=80 for 3 xp points and takes 1 turn to cool down\n" +
+        abilityDescription.put("manabeam", "ives M magic points to himself or an ally for 1 energy point and 50 magic points<br>" +
+                "Upgrade 1: M=50 for 2 xp points and takes 1 turn to cool down<br>" +
+                "Upgrade 2: M=80 for 3 xp points and takes 1 turn to cool down<br>" +
                 "Upgrade 3: M=80 for 4 xp points and cools down instantly");
 
         /*************/
@@ -1235,29 +1235,17 @@ public class UserInterface
         startingX = 32;
         startingY = 15 * 32;
         mapAddress = "Tiled/MyMap.tmx";
-        try
-        {
-            gameOverBackground = ImageIO.read(new File("Main Pics/Story/GameOver1.png"));
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        gameOverBackground = new UltimateImage("Main Pics/Story/GameOver1.png");
     }
 
     private void createStoryBackgrounds()
     {
-        try
-        {
-            storyBackgroundSources.add(ImageIO.read(new File("Main Pics/Story/DemonCastle.png")));
-            storyBackgroundSources.add(ImageIO.read(new File("Main Pics/Story/Dungeon5.png")));
-            storyBackgroundSources.add(ImageIO.read(new File("Main Pics/Story/Factory1.png")));
-            storyBackgroundSources.add(ImageIO.read(new File("Main Pics/Story/Devil.png")));
-            storyBackgroundSources.add(ImageIO.read(new File("Main Pics/Story/DarkSpace1.png")));
-            storyBackgroundSources.add(ImageIO.read(new File("Main Pics/Story/Space.png")));
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        storyBackgroundSources.add(new UltimateImage("Main Pics/Story/DemonCastle.png"));
+        storyBackgroundSources.add(new UltimateImage("Main Pics/Story/Dungeon5.png"));
+        storyBackgroundSources.add(new UltimateImage("Main Pics/Story/Factory1.png"));
+        storyBackgroundSources.add(new UltimateImage("Main Pics/Story/Devil.png"));
+        storyBackgroundSources.add(new UltimateImage("Main Pics/Story/DarkSpace1.png"));
+        storyBackgroundSources.add(new UltimateImage("Main Pics/Story/DarkSpace1.png"));
     }
 
     private void createStoryIcons()
@@ -1270,21 +1258,10 @@ public class UserInterface
 
     private void createHeroFaces()
     {
-        try
-        {
-            BufferedImage mainImage = ImageIO.read(new File("Main Pics/Faces/Actor1.png"));
-            BufferedImage chromeImage = mainImage.getSubimage(0, 0, 96, 96);
-            heroFaces.put("chrome", chromeImage);
-            BufferedImage eleyImage = mainImage.getSubimage(96, 0, 96, 96);
-            heroFaces.put("eley", eleyImage);
-            BufferedImage boltiImage = mainImage.getSubimage(192, 0, 96, 96);
-            heroFaces.put("bolti", boltiImage);
-            BufferedImage merylImage = mainImage.getSubimage(288, 0, 96, 96);
-            heroFaces.put("meryl", merylImage);
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        heroFaces.put("chrome", new UltimateImage(0, 0, 96, 96, "Main Pics/Faces/Actor1.png"));
+        heroFaces.put("eley", new UltimateImage(96, 0, 96, 96, "Main Pics/Faces/Actor1.png"));
+        heroFaces.put("bolti", new UltimateImage(192, 0, 96, 96, "Main Pics/Faces/Actor1.png"));
+        heroFaces.put("meryl", new UltimateImage(288, 0, 96, 96, "Main Pics/Faces/Actor1.png"));
     }
 
     private void createEnteringMessage()
@@ -1297,15 +1274,9 @@ public class UserInterface
 
     private void createAbilityUpgradeBackgrounds()
     {
-        try
-        {
-            abilityUpgradeBackgroundSources.add(ImageIO.read(new File("Backdrop/WireMesh.png")));
-            abilityUpgradeBackgroundSources.add(ImageIO.read(new File("Backdrop/Translucent.png")));
-            abilityUpgradeBackgroundSources.add(ImageIO.read(new File("Backdrop/Finalpanorama.png")));
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        abilityUpgradeBackgroundSources.add(new UltimateImage("Backdrop/WireMesh.png"));
+        abilityUpgradeBackgroundSources.add(new UltimateImage("Backdrop/Translucent.png"));
+        abilityUpgradeBackgroundSources.add(new UltimateImage("Backdrop/Finalpanorama.png"));
     }
 
     private void createAbilityUpgradeIcons()
@@ -1324,28 +1295,16 @@ public class UserInterface
 
     private void createShopKeepers()
     {
-        try
-        {
-            shopKeeperSources.add(ImageIO.read(new File("Main Pics/Characters/ShopKeeper1.png")));
-            shopKeeperSources.add(ImageIO.read(new File("Main Pics/Characters/ShopKeeper2.png")));
-            shopKeeperSources.add(ImageIO.read(new File("Main Pics/Characters/ShopKeeper3.png")));
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        shopKeeperSources.add(new UltimateImage("Main Pics/Characters/ShopKeeper1.png"));
+        shopKeeperSources.add(new UltimateImage("Main Pics/Characters/ShopKeeper2.png"));
+        shopKeeperSources.add(new UltimateImage("Main Pics/Characters/ShopKeeper3.png"));
     }
 
     private void createShopBackgrounds()
     {
-        try
-        {
-            shopBackgroundSources.add(ImageIO.read(new File("Backdrop/Factory.png")));
-            shopBackgroundSources.add(ImageIO.read(new File("Backdrop/Mine.png")));
-            shopBackgroundSources.add(ImageIO.read(new File("Backdrop/DemonicWorld.png")));
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        shopBackgroundSources.add(new UltimateImage("Backdrop/Factory.png"));
+        shopBackgroundSources.add(new UltimateImage("Backdrop/Mine.png"));
+        shopBackgroundSources.add(new UltimateImage("Backdrop/DemonicWorld.png"));
     }
 
     private void createShopIcons()
@@ -1357,18 +1316,12 @@ public class UserInterface
 
     private void createBattleBackgrounds()
     {
-        try
-        {
-            battleBackgroundSources.add(ImageIO.read(new File("Backdrop/Paranoia.png")));
-            battleBackgroundSources.add(ImageIO.read(new File("Backdrop/Fireee.png")));
-            battleBackgroundSources.add(ImageIO.read(new File("Backdrop/Forest.png")));
-            battleBackgroundSources.add(ImageIO.read(new File("Backdrop/Darkforest.png")));
-            battleBackgroundSources.add(ImageIO.read(new File("Backdrop/Decimatedtown.png")));
-            battleBackgroundSources.add(ImageIO.read(new File("Backdrop/Sewers.png")));
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        battleBackgroundSources.add(new UltimateImage("Backdrop/Paranoia.png"));
+        battleBackgroundSources.add(new UltimateImage("Backdrop/Fireee.png"));
+        battleBackgroundSources.add(new UltimateImage("Backdrop/Forest.png"));
+        battleBackgroundSources.add(new UltimateImage("Backdrop/Darkforest.png"));
+        battleBackgroundSources.add(new UltimateImage("Backdrop/Decimatedtown.png"));
+        battleBackgroundSources.add(new UltimateImage("Backdrop/Sewers.png"));
     }
 
     private void findTileSources()
@@ -1398,89 +1351,57 @@ public class UserInterface
             ArrayList<EnemyVersion> enemyVersions = normalEnemyDatas.get(enemyName);
             for (EnemyVersion enemyVersion : enemyVersions)
             {
-                BufferedImage bufferedImage = null;
+                UltimateImage ultimateImage= null;
                 if (enemyName.toLowerCase().equals("thug"))
                 {
-                    try
+                    switch (enemyVersion.getName())
                     {
-                        switch (enemyVersion.getName())
-                        {
-                            case "weak":
-                                bufferedImage = ImageIO.read(new File("Monsters/43.png"));
-                                break;
-                            case "able":
-                                bufferedImage = ImageIO.read(new File("Monsters/44.png"));
-                                break;
-                            case "mighty":
-                                bufferedImage = ImageIO.read(new File("Monsters/45.png"));
-                                break;
-                        }
-                    } catch (IOException e)
-                    {
-                        e.printStackTrace();
+                        case "weak":
+                            ultimateImage = new UltimateImage("Monsters/43.png");
+                            break;
+                        case "able":
+                            ultimateImage = new UltimateImage("Monsters/44.png");
+                            break;
+                        case "mighty":
+                            ultimateImage = new UltimateImage("Monsters/45.png");
+                            break;
                     }
                 } else if (enemyName.toLowerCase().equals("angel"))
                 {
-                    try
+                    switch (enemyVersion.getName())
                     {
-                        switch (enemyVersion.getName())
-                        {
-                            case "weak":
-                                bufferedImage = ImageIO.read(new File("Monsters/46.png"));
-                                break;
-                            case "able":
-                                bufferedImage = ImageIO.read(new File("Monsters/47.png"));
-                                break;
-                        }
-                    } catch (IOException e)
-                    {
-                        e.printStackTrace();
+                        case "weak":
+                            ultimateImage = new UltimateImage("Monsters/46.png");
+                            break;
+                        case "able":
+                            ultimateImage = new UltimateImage("Monsters/47.png");
+                            break;
                     }
                 } else if (enemyName.toLowerCase().equals("tank"))
                 {
-                    try
+                    switch (enemyVersion.getName())
                     {
-                        switch (enemyVersion.getName())
-                        {
-                            case "weak":
-                                bufferedImage = ImageIO.read(new File("Monsters/41.png"));
-                                break;
-                            case "able":
-                                bufferedImage = ImageIO.read(new File("Monsters/42.png"));
-                                break;
-                        }
-                    } catch (IOException e)
-                    {
-                        e.printStackTrace();
+                        case "weak":
+                            ultimateImage = new UltimateImage("Monsters/41.png");
+                            break;
+                        case "able":
+                            ultimateImage = new UltimateImage("Monsters/42.png");
+                            break;
                     }
                 }
-                allNormalEnemyImages.put(bufferedImage, enemyVersion.getName() + " " + enemyVersion.getMainEnemyName());
+                allNormalEnemyImages.put(ultimateImage, enemyVersion.getName() + " " + enemyVersion.getMainEnemyName());
             }
         }
 
-        try
-        {
-            BufferedImage bufferedImage = ImageIO.read(new File("Monsters/48.png"));
-            bossEnemyImages.put(bufferedImage, bossEnemyNames.get(0));
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        UltimateImage ultimateImage = new UltimateImage("Monsters/48.png");
+        bossEnemyImages.put(ultimateImage, bossEnemyNames.get(0));
     }
 
     private void createHeroImages()
     {
-        try
+        for (int i = 0; i < 4; i++)
         {
-            BufferedImage allFourImages = ImageIO.read(new File("Main Pics/Characters/Actor1.png"));
-            for (int i = 0; i < 4; i++)
-            {
-                BufferedImage oneHeroImages = allFourImages.getSubimage(i * 96, 0, 32 * 3, 32 * 4);
-                herosAndTheirImages.put(oneHeroImages, heroNames.get(i));
-            }
-        } catch (IOException e)
-        {
-            e.printStackTrace();
+            herosAndTheirImages.put(new UltimateImage(i * 96, 0, 96, 128, "Main Pics/Characters/Actor1.png"), heroNames.get(i));
         }
     }
 
@@ -2083,7 +2004,7 @@ public class UserInterface
                 showNormalDamageFormula(formulaString);
                 String luckFormulaString = getFormulaString(in);
                 ArrayList<Formula> differentLuckUpgradeFormulas = new ArrayList<>();
-                //				ArrayList<Integer> luckPercents = new ArrayList<>();
+//				ArrayList<Integer> luckPercents = new ArrayList<>();
 
                 for (int j = 0; j < upgradeNum; j++)
                 {
@@ -2096,12 +2017,12 @@ public class UserInterface
                     Formula formula = new Formula(luckFormulaString, formulaData);
                     differentLuckUpgradeFormulas.add(formula);
 
-                    //					System.out.print("Please enter the percent of this luck: ");
-                    //					int luckPercent = in.nextInt();
-                    //					luckPercents.add(luckPercent);
+//					System.out.print("Please enter the percent of this luck: ");
+//					int luckPercent = in.nextInt();
+//					luckPercents.add(luckPercent);
                 }
 
-                //				abilityLuckPercents.put(abilityName, luckPercents);
+//				abilityLuckPercents.put(abilityName, luckPercents);
                 formulas.put("luck " + abilityAttribute1, differentLuckUpgradeFormulas);
             }
         }
@@ -2222,7 +2143,7 @@ public class UserInterface
             String itemName = in.next();
             if (itemNames.contains(itemName))
             {
-                //                shopItemNames.add(itemName);
+//                shopItemNames.add(itemName);
             } else
             {
                 System.out.println("Invalid input! Please try again");
@@ -2232,7 +2153,7 @@ public class UserInterface
             System.out.println("Please enter it's cost: ");
             //check invalid input
             int itemCost = in.nextInt();
-            //            shopItemMoneyCosts.put(itemName, itemCost);
+//            shopItemMoneyCosts.put(itemName, itemCost);
 
             System.out.println("Do you want to add any other items to your shop?");
 
@@ -2245,7 +2166,7 @@ public class UserInterface
         System.out.println("How much will be the inflation in this shop?");
 
         //check invalid input
-        //        shopInflationValue = in.nextInt();
+//        shopInflationValue = in.nextInt();
 
         System.out.println("Shop data completed!");
     }
@@ -3227,32 +3148,32 @@ public class UserInterface
         this.allAbilitySuccessMessages = allAbilitySuccessMessages;
     }
 
-    public HashMap<BufferedImage, String> getHerosAndTheirImages()
+    public HashMap<UltimateImage, String> getHerosAndTheirImages()
     {
         return herosAndTheirImages;
     }
 
-    public void setHerosAndTheirImages(HashMap<BufferedImage, String> herosAndTheirImages)
+    public void setHerosAndTheirImages(HashMap<UltimateImage, String> herosAndTheirImages)
     {
         this.herosAndTheirImages = herosAndTheirImages;
     }
 
-    public HashMap<BufferedImage, String> getAllNormalEnemyImages()
+    public HashMap<UltimateImage, String> getAllNormalEnemyImages()
     {
         return allNormalEnemyImages;
     }
 
-    public void setAllNormalEnemyImages(HashMap<BufferedImage, String> allNormalEnemyImages)
+    public void setAllNormalEnemyImages(HashMap<UltimateImage, String> allNormalEnemyImages)
     {
         this.allNormalEnemyImages = allNormalEnemyImages;
     }
 
-    public HashMap<BufferedImage, String> getBossEnemyImages()
+    public HashMap<UltimateImage, String> getBossEnemyImages()
     {
         return bossEnemyImages;
     }
 
-    public void setBossEnemyImages(HashMap<BufferedImage, String> bossEnemyImages)
+    public void setBossEnemyImages(HashMap<UltimateImage, String> bossEnemyImages)
     {
         this.bossEnemyImages = bossEnemyImages;
     }
@@ -3327,12 +3248,12 @@ public class UserInterface
         this.mapAddress = mapAddress;
     }
 
-    public ArrayList<BufferedImage> getBattleBackgroundSources()
+    public ArrayList<UltimateImage> getBattleBackgroundSources()
     {
         return battleBackgroundSources;
     }
 
-    public void setBattleBackgroundSources(ArrayList<BufferedImage> battleBackgroundSources)
+    public void setBattleBackgroundSources(ArrayList<UltimateImage> battleBackgroundSources)
     {
         this.battleBackgroundSources = battleBackgroundSources;
     }
@@ -3377,22 +3298,22 @@ public class UserInterface
         this.shopGidNums = shopGidNums;
     }
 
-    public ArrayList<BufferedImage> getShopBackgroundSources()
+    public ArrayList<UltimateImage> getShopBackgroundSources()
     {
         return shopBackgroundSources;
     }
 
-    public void setShopBackgroundSources(ArrayList<BufferedImage> shopBackgroundSources)
+    public void setShopBackgroundSources(ArrayList<UltimateImage> shopBackgroundSources)
     {
         this.shopBackgroundSources = shopBackgroundSources;
     }
 
-    public ArrayList<BufferedImage> getShopKeeperSources()
+    public ArrayList<UltimateImage> getShopKeeperSources()
     {
         return shopKeeperSources;
     }
 
-    public void setShopKeeperSources(ArrayList<BufferedImage> shopKeeperSources)
+    public void setShopKeeperSources(ArrayList<UltimateImage> shopKeeperSources)
     {
         this.shopKeeperSources = shopKeeperSources;
     }
@@ -3417,12 +3338,12 @@ public class UserInterface
         this.allHeroRequiredAbilities = allHeroRequiredAbilities;
     }
 
-    public HashMap<String, BufferedImage> getHeroFaces()
+    public HashMap<String, UltimateImage> getHeroFaces()
     {
         return heroFaces;
     }
 
-    public void setHeroFaces(HashMap<String, BufferedImage> heroFaces)
+    public void setHeroFaces(HashMap<String, UltimateImage> heroFaces)
     {
         this.heroFaces = heroFaces;
     }
@@ -3437,12 +3358,12 @@ public class UserInterface
         this.heroEnteringMessage = heroEnteringMessage;
     }
 
-    public ArrayList<BufferedImage> getAbilityUpgradeBackgroundSources()
+    public ArrayList<UltimateImage> getAbilityUpgradeBackgroundSources()
     {
         return abilityUpgradeBackgroundSources;
     }
 
-    public void setAbilityUpgradeBackgroundSources(ArrayList<BufferedImage> abilityUpgradeBackgroundSources)
+    public void setAbilityUpgradeBackgroundSources(ArrayList<UltimateImage> abilityUpgradeBackgroundSources)
     {
         this.abilityUpgradeBackgroundSources = abilityUpgradeBackgroundSources;
     }
@@ -3467,22 +3388,22 @@ public class UserInterface
         this.storyGidNums = storyGidNums;
     }
 
-    public ArrayList<BufferedImage> getStoryBackgroundSources()
+    public ArrayList<UltimateImage> getStoryBackgroundSources()
     {
         return storyBackgroundSources;
     }
 
-    public void setStoryBackgroundSources(ArrayList<BufferedImage> storyBackgroundSources)
+    public void setStoryBackgroundSources(ArrayList<UltimateImage> storyBackgroundSources)
     {
         this.storyBackgroundSources = storyBackgroundSources;
     }
 
-    public BufferedImage getGameOverBackground()
+    public UltimateImage getGameOverBackground()
     {
         return gameOverBackground;
     }
 
-    public void setGameOverBackground(BufferedImage gameOverBackground)
+    public void setGameOverBackground(UltimateImage gameOverBackground)
     {
         this.gameOverBackground = gameOverBackground;
     }
@@ -3515,5 +3436,45 @@ public class UserInterface
     public void setDoorsAndTheirKeys(HashMap<Integer, Integer> doorsAndTheirKeys)
     {
         this.doorsAndTheirKeys = doorsAndTheirKeys;
+    }
+
+    public ArrayList<String> getAttributesWithMax()
+    {
+        return attributesWithMax;
+    }
+
+    public void setAttributesWithMax(ArrayList<String> attributesWithMax)
+    {
+        this.attributesWithMax = attributesWithMax;
+    }
+
+    public ArrayList<String> getAttributeWithTemp()
+    {
+        return attributeWithTemp;
+    }
+
+    public void setAttributeWithTemp(ArrayList<String> attributeWithTemp)
+    {
+        this.attributeWithTemp = attributeWithTemp;
+    }
+
+    public HashMap<String, String> getItemDescription()
+    {
+        return ItemDescription;
+    }
+
+    public void setItemDescription(HashMap<String, String> itemDescription)
+    {
+        ItemDescription = itemDescription;
+    }
+
+    public HashMap<String, String> getAbilityDescription()
+    {
+        return abilityDescription;
+    }
+
+    public void setAbilityDescription(HashMap<String, String> abilityDescription)
+    {
+        this.abilityDescription = abilityDescription;
     }
 }

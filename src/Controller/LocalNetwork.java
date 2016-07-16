@@ -28,8 +28,9 @@ public class LocalNetwork
     private ArrayList<Hero> herosTwo;
     private NetworkScenario networkScenario1;
     private NetworkScenario networkScenario2;
-
-    public LocalNetwork(GameScenario gameScenario1, GameScenario gameScenario2, Scanner scanner, NetworkScenario networkScenario1, NetworkScenario networkScenario2)
+//    private ExecutorService service = Executors.new
+//
+    public LocalNetwork(GameScenario gameScenario1,GameScenario gameScenario2, Scanner scanner, NetworkScenario networkScenario1, NetworkScenario networkScenario2)
     {
         this.scanner = scanner;
         this.gameScenario1 = gameScenario1;
@@ -42,8 +43,7 @@ public class LocalNetwork
 
     public void LocalNetworkStart()
     {
-        if (turn == 0)
-        {
+        if(turn == 0){
             host();
             System.out.println("Enter Your Name");
             setFirstName(scanner.nextLine());
@@ -52,8 +52,7 @@ public class LocalNetwork
             turn++;
             System.out.println("Turn is changed");
         }
-        if (turn == 1)
-        {
+        if(turn == 1) {
             System.out.println("Enter Your Name");
             setSecondName(scanner.nextLine());
             //shopping
@@ -61,28 +60,23 @@ public class LocalNetwork
             turn++;
             System.out.println("turn is changed");
         }
-        while (true)
-        {
+        while(true) {
             EPRefill(herosOne);
             EPRefill(herosTwo);
-            if (turn % 2 == 0)
-            {
-                if (turn == 2)
-                {
-                    for (Hero hero : herosOne)
-                    {
-                        HashMap<String, Integer> data = hero.getData();
-                        data.put("current EP", data.get("current EP") / 2);
-                        data.put("max EP", data.get("max EP") / 2);
-                    }
+            if(turn % 2 == 0){
+                if(turn == 2){
+                            for (Hero hero : herosOne)
+                            {
+                                HashMap<String, Integer> data = hero.getData();
+                                data.put("current EP", data.get("current EP") / 2);
+                                data.put("max EP", data.get("max EP") / 2);
+                            }
 
-                }
+                    }
                 StartFighting(0);
                 turn++;
                 System.out.println("turn is changed");
-            } else
-            {
-
+            } else {
                 StartFighting(1);
                 turn++;
                 System.out.println("turn is changed");
@@ -91,20 +85,17 @@ public class LocalNetwork
 
     }
 
-    private void StartFighting(int i)
-    {
+    private void StartFighting(int i) {
         ArrayList<Hero> enemies = new ArrayList<>();
         int enemyImmortalityPotionNum = 0;
         ArrayList<Hero> heros = new ArrayList<>();
-        if (i == 0)
-        {
+        if(i == 0){
             enemies = herosTwo;
             enemyImmortalityPotionNum = secondImmortalityPotionNum;
             heros = herosOne;
             networkScenario1.setEnemyHeros(enemies);
             networkScenario1.setHeros(heros);
-        } else
-        {
+        } else {
             enemies = herosOne;
             enemyImmortalityPotionNum = firstImmortalityPotionNum;
             heros = herosTwo;
@@ -134,10 +125,10 @@ public class LocalNetwork
                     showStartFighting(enemies, heros);
                     break;
                 default:
-                    if (i == 0)
-                        networkScenario1.parseOrder(order, "fighting", new ArrayList<>());
+                    if(i == 0)
+                   networkScenario1.parseOrder(order, "fighting", new ArrayList<>());
                     else
-                        networkScenario2.parseOrder(order, "fighting", new ArrayList<>());
+                    networkScenario2.parseOrder(order, "fighting", new ArrayList<>());
                     break;
             }
 
@@ -148,24 +139,22 @@ public class LocalNetwork
                     if (enemyImmortalityPotionNum == 0)
                     {
                         System.out.println("his " + enemy.getName() + " is dead");
-                        if (i == 0)
-                            System.out.println(firstName + " win");
-                        if (i == 1)
-                            System.out.println(secondName + " win");
-                        System.exit(0);
+                        return;
                     } else
                     {
                         enemyImmortalityPotionNum = enemyImmortalityPotionNum - 1;
-                        if (i == 0)
-                        {
+                        if(i == 0){
                             secondImmortalityPotionNum--;
-                        } else
-                        {
+                        } else {
                             firstImmortalityPotionNum--;
                         }
                         gameScenario1.reviveHero(enemy);
                         System.out.println("his " + enemy.getName() + " is dying, immortality potion was used for reincarnation process, he now has “" +
                                 enemyImmortalityPotionNum + " immortality potions left");
+//                        message.setMessage("your " + enemy.getName() + " is dying, immortality potion was used for reincarnation process, you now have “" +
+//                                getEnemyImmortalityPotionNum() + " immortality potions left");
+//                        ntwhandler.setMessage(message);
+//                        ntwhandler.sendMessage();
                     }
                 }
             }
@@ -242,8 +231,7 @@ public class LocalNetwork
         }
     }
 
-    private void EPRefill(ArrayList<Hero> heros)
-    {
+    private void EPRefill(ArrayList<Hero> heros) {
         for (Hero hero : heros)
         {
             HashMap<String, Integer> userData = gameScenario1.userInterface.getHeroClassDatas().get(hero.getHeroClassName());
@@ -255,8 +243,7 @@ public class LocalNetwork
 
     }
 
-    private void host()
-    {
+    private void host() {
         System.out.println("You are host... Enter XP");
         int xp = Integer.parseInt(scanner.nextLine());
         setFirstXP(xp);

@@ -22,18 +22,18 @@ public class NetworkScenario
     Scanner scanner;
     private String name = "";
     private String enemyName = "";
-    private int enemyImmortalityPotionNum = 0;
+    public int enemyImmortalityPotionNum = 0;
     private int myImmortalityPotionNum = 0;
     private GameScenario gameScenario;
     private ArrayList<Hero> heros;
     private ArrayList<Hero> enemyHeros;
     private ObjectInputStream in;
     private ObjectOutputStream out;
-    private NetworkHandler ntwhandler;
+    public NetworkHandler ntwhandler;
     private HostJoin hostJoin;
-    private CommonMsg commonMsg;
+    public CommonMsg commonMsg;
     //vahid "choice is 1 if client and 0 if server
-    private int choice;
+    public int choice;
     private Callable<Object> startFightingss = new Callable<Object>()
     {
 
@@ -125,13 +125,14 @@ public class NetworkScenario
     {
         this.scanner = scanner;
         this.gameScenario = gameScenario;
+        this.gameScenario.setNetworkScenario(this);
         heros = this.gameScenario.getHeros();
         commonMsg = new CommonMsg(heros);
         hostJoin = new HostJoin(commonMsg);
-        hostJoinHandle(hostJoin);
-        this.in = hostJoin.getIn();
-        this.out = hostJoin.getOut();
-        ntwhandler = new NetworkHandler(commonMsg, this.in, this.out);
+//        hostJoinHandle(hostJoin);
+//        this.in = hostJoin.getIn();
+//        this.out = hostJoin.getOut();
+//        ntwhandler = new NetworkHandler(commonMsg, this.in, this.out);
     }
 
 
@@ -145,7 +146,7 @@ public class NetworkScenario
         } else if (order.equals("join"))
         {
             choice = 1;
-            hostJoin.setClient(2000);
+//            hostJoin.setClient(2000);
 
         }
     }
@@ -243,7 +244,7 @@ public class NetworkScenario
 
             if (choice == 1)
             {
-                hostJoin.setClient(i);
+//                hostJoin.setClient(i);
                 i++;
             }
             this.in = hostJoin.getIn();
@@ -553,7 +554,7 @@ public class NetworkScenario
     }
 
 
-    private void waitforOther()
+    public void waitforOther()
     {
         commonMsg.setEnemyHeros(heros);
         ntwhandler.setCommonMsg(commonMsg);
@@ -613,7 +614,7 @@ public class NetworkScenario
 
     public void startNetworking()
     {
-        hostJoinHandle(hostJoin);
+//        hostJoinHandle(hostJoin);
 //        modifyXPMoneyImmortal();
 //        chooseName();
 //        isReady();
@@ -671,7 +672,7 @@ public class NetworkScenario
 
     }
 
-    private int chooseStarter()
+    public int chooseStarter()
     {
         boolean x = Luck.isLikely(50);
         if (x)
@@ -912,7 +913,7 @@ public class NetworkScenario
         }
     }
 
-    private boolean checkUseItemSpecific(String command)
+    public boolean checkUseItemSpecific(String command)
     {
         ArrayList<String> heroNames = new ArrayList<>();
         String[] commands = command.split(" ");
@@ -941,7 +942,7 @@ public class NetworkScenario
         }
     }
 
-    private boolean checkHeroAttack(String command)
+    public boolean checkHeroAttack(String command)
     {
         String[] commands = command.split(" ");
         ArrayList<String> enemyNames = new ArrayList<>();
@@ -960,7 +961,7 @@ public class NetworkScenario
         return false;
     }
 
-    private boolean checkCastSpecieficAbility(String command)
+    public boolean checkCastSpecieficAbility(String command)
     {
         ArrayList<String> heroNames = new ArrayList<>();
         ArrayList<String> enemyFullNames = new ArrayList<>();
@@ -1164,7 +1165,7 @@ public class NetworkScenario
     }
 
     //Ok
-    private void heroEPRefills()
+    public void heroEPRefills()
     {
         for (Hero hero : heros)
         {

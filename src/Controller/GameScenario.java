@@ -14,6 +14,7 @@ public class GameScenario implements Serializable
     public UserInterface userInterface;
     private ArrayList<Warrior> warrior = new ArrayList<>();
     private Scanner scanner;
+    private NetworkScenario networkScenario;
     private ArrayList<EnemyGroup> enemyGroups = new ArrayList<>();
     private ArrayList<Hero> heros = new ArrayList<>();
     private ArrayList<Shop> shop = new ArrayList<>();
@@ -27,7 +28,7 @@ public class GameScenario implements Serializable
         {
             shop.add(new Shop(this.userInterface.getAllShopInflationValues().get(i), this.userInterface.getAllShopItemMoneyCosts().get(i)));
         }
-        //        shop = new Shop(this.userInterface.getShopInflationValue(), this.userInterface.getShopItemMoneyCosts());
+//        shop = new Shop(this.userInterface.getShopInflationValue(), this.userInterface.getShopItemMoneyCosts());
         Hero.setXP(this.userInterface.getInitialXP());
         Hero.setMoney(this.userInterface.getInitialMoney());
         Hero.setImmortalityPotionNum(this.userInterface.getImmortalityPotionNum());
@@ -82,15 +83,14 @@ public class GameScenario implements Serializable
                 if (!isInstantEffect) // is this correct
                 {
                     abilities.add(new ActiveAbility(abilityName, abilityTarget, upgradeXP, luckPercents,
-                            abilityCooldownNums, requiredAbilities, formulas));
+                            abilityCooldownNums, requiredAbilities, formulas, this.userInterface.getAbilityDescription().get(abilityName)));
                 } else
                 {
                     abilities.add(new PassiveAbility(abilityName, abilityTarget, upgradeXP, luckPercents,
-                            abilityCooldownNums, requiredAbilities, formulas));
+                            abilityCooldownNums, requiredAbilities, formulas, this.userInterface.getAbilityDescription().get(abilityName)));
                 }
             }
-            Warrior hero = new Hero(heroName, heroClassName, heroData, inventorySize, abilities, userInterface.getAllRequiredAbilities());
-
+            Warrior hero = new Hero(heroName, heroClassName, heroData, inventorySize, abilities, heroAbilityRequirements);
             warrior.add(hero);
             heros.add((Hero) hero);
 
@@ -107,45 +107,33 @@ public class GameScenario implements Serializable
         }
     }
 
-    //vahid
-    public ArrayList<Hero> getHeros()
-    {
-        return heros;
-    }
-
-    public void setHeros(ArrayList<Hero> heros)
-    {
-        this.heros = heros;
-    }
-
     public void scenario() throws NoMoreUpgradeException, NotStrongEnoughException, NotEnoughXPException, NotEnoughMoneyException, NotEnoughRequiredAbilitiesException, AbilityCooldownException, AbilityNotAcquieredException, FullInventoryException
     {
-        System.out.println(heros.get(0).getHeroTrate());
-        //        Hero.setXP(userInterface.getInitialXP());
-        //        Hero.setMoney(userInterface.getInitialMoney());
-        //        Hero.setImmortalityPotionNum(userInterface.getImmortalityPotionNum());
+//        Hero.setXP(userInterface.getInitialXP());
+//        Hero.setMoney(userInterface.getInitialMoney());
+//        Hero.setImmortalityPotionNum(userInterface.getImmortalityPotionNum());
 
-        //        introduceHeros();//ok
+//        introduceHeros();//ok
 
-        //        for (int i = 0; i < userInterface.getBattleId(); i++)
-        //        {
-        //            enemyGroups.add(new EnemyGroup(createEnemies(i), userInterface.getEnemyGroupXPs().get(i), userInterface.getEnemyGroupMoneys().get(i), i));
-        //        }
+//        for (int i = 0; i < userInterface.getBattleId(); i++)
+//        {
+//            enemyGroups.add(new EnemyGroup(createEnemies(i), userInterface.getEnemyGroupXPs().get(i), userInterface.getEnemyGroupMoneys().get(i), i));
+//        }
 
-        //        for (int i = 0; i < userInterface.getBattleId(); i++)
-        //        {
-        //            tellStory(i);
-        //            showEnemyData(i);
-        //            startUpgrading();
-        //            shopping();
-        //            startFighting(i);
-        //        }
-        //
-        //        tellStory(userInterface.getBattleId());
+//        for (int i = 0; i < userInterface.getBattleId(); i++)
+//        {
+//            tellStory(i);
+//            showEnemyData(i);
+//            startUpgrading();
+//            shopping();
+//            startFighting(i);
+//        }
+//
+//        tellStory(userInterface.getBattleId());
 
     }
 
-    //target is needed in creatign enemy (consructor)
+    //target is needed in creating enemy (constructor)
     private ArrayList<Enemy> createEnemies(int gameTurn)
     {
         ArrayList<Enemy> enemies = new ArrayList<>();
@@ -221,7 +209,7 @@ public class GameScenario implements Serializable
         String heroIntroduction = "";
         for (int i = 0; i < heros.size() - 1; i++)
         {
-            //            System.out.printf("%s (%s) -", heros.get(i).getName(), heros.get(i).getHeroClassName());
+//            System.out.printf("%s (%s) -", heros.get(i).getName(), heros.get(i).getHeroClassName());
             heroIntroduction += heros.get(i).getName() + " (" + heros.get(i).getHeroClassName() + ") -";
         }
         System.out.printf("%s (%s)\n", heros.get(heros.size() - 1).getName(), heros.get(heros.size() - 1).getHeroClassName());
@@ -232,7 +220,7 @@ public class GameScenario implements Serializable
     private void tellStory(int storyPart)
     {
         String story = userInterface.getGameStory().get(storyPart);
-        //        System.out.println(story);
+//        System.out.println(story);
         allLog.add(story);
     }
 
@@ -246,7 +234,7 @@ public class GameScenario implements Serializable
             switch (order)
             {
                 case "help":
-                    //                    System.out.println("(enemy name) + ? \uF0E0 (enemy description)");
+//                    System.out.println("(enemy name) + ? \uF0E0 (enemy description)");
                     allLog.add("(enemy name) + ? \uF0E0 (enemy description)");
                     break;
                 case "again":
@@ -320,78 +308,62 @@ public class GameScenario implements Serializable
 
     public void showingEnemyData(int gameTurn)
     {
-        EnemyGroup enemyGroup;
-        enemyGroup = this.enemyGroups.get(gameTurn);
-        ArrayList<Enemy> enemies = enemyGroup.getEnemies();
-        ArrayList<NormalEnemy> normalEnemies = new ArrayList<>();
-        ArrayList<BossEnemy> bossEnemies = new ArrayList<>();
-        for (Enemy enemy : enemies)
-        {
-            if (enemy instanceof NormalEnemy)
-            {
-                normalEnemies.add((NormalEnemy) enemy);
-            } else if (enemy instanceof BossEnemy)
-            {
-                bossEnemies.add((BossEnemy) enemy);
-            }
-        }
-        ArrayList<String> normalEnemiesNames = new ArrayList<>();
-        ArrayList<String> bossEnemiesNames = new ArrayList<>();
-        normalEnemiesNames = normalEnemyFullNames(gameTurn);
-        bossEnemiesNames = bossEnemyFullNames(gameTurn);
+//        EnemyGroup enemyGroup;
+//        enemyGroup = this.enemyGroups.get(gameTurn);
+//        ArrayList<Enemy> enemies = enemyGroup.getEnemies();
+//        ArrayList<NormalEnemy> normalEnemies = new ArrayList<>();
+//        ArrayList<BossEnemy> bossEnemies = new ArrayList<>();
+//        for (Enemy enemy : enemies)
+//        {
+//            if (enemy instanceof NormalEnemy)
+//            {
+//                normalEnemies.add((NormalEnemy) enemy);
+//            } else if (enemy instanceof BossEnemy)
+//            {
+//                bossEnemies.add((BossEnemy) enemy);
+//            }
+//        }
+        ArrayList<String> normalEnemiesNames = normalEnemyFullNames(gameTurn);
+        ArrayList<String> bossEnemiesNames = bossEnemyFullNames(gameTurn);
+//        normalEnemiesNames = normalEnemyFullNames(gameTurn);
+//        bossEnemiesNames = bossEnemyFullNames(gameTurn);
+        String encounteredEnemyNames = "You've encountered";
 
-        //        for (NormalEnemy normalEnemy : normalEnemies)
-        //        {
-        //            if (normalEnemy.getID() == 0)
-        //            {
-        //                normalEnemiesNames.add(normalEnemy.getVersion() + normalEnemy.getName());
-        //            } else
-        //            {
-        //                normalEnemiesNames.add(normalEnemy.getVersion() + normalEnemy.getName() + normalEnemy.getID());
-        //            }
-        //        }
-        //        for (BossEnemy bossEnemy : bossEnemies)
-        //        {
-        //            if (bossEnemy.getID() == 0)
-        //            {
-        //                bossEnemiesNames.add(bossEnemy.getName());
-        //            } else
-        //            {
-        //                bossEnemiesNames.add(bossEnemy.getName() + bossEnemy.getID());
-        //            }
-        //        }
-        System.out.printf("You've encountered");
+//        System.out.printf("You've encountered");
         for (String normalEnemiesName : normalEnemiesNames)
         {
-            System.out.printf(" %s, ", normalEnemiesName);
+//            System.out.printf(" %s, ", normalEnemiesName);
+            encounteredEnemyNames += " " + normalEnemiesName + " ";
         }
         for (String bossEnemiesName : bossEnemiesNames)
         {
-            System.out.printf(" %s, ", bossEnemiesName);
+//            System.out.printf(" %s, ", bossEnemiesName);
+            encounteredEnemyNames += " " + bossEnemiesName + " ";
         }
-        System.out.printf("\n");
+//        System.out.printf("\n");
+        allLog.add(encounteredEnemyNames);
     }
 
     public void startUpgrading(String order) throws NoMoreUpgradeException, AbilityNotAcquieredException, NotStrongEnoughException, NotEnoughXPException, NotEnoughRequiredAbilitiesException, AbilityCooldownException, NotEnoughMoneyException, FullInventoryException
     {
-        //        showHeroUpgrade();
-        //        while (!order.equals("done"))
-        //        {
-        //            switch (order)
-        //            {
-        //                case "help":
-        //                    System.out.println("(hero name) +(ability name) + ?\uF0E0 (ability description)");
-        //                    System.out.println(" Acquire + (ability name) +  for  + (hero name)\uF0E0 (acquiring ability)");
-        //                    break;
-        //                case "again":
-        //                    showHeroUpgrade();
-        //                    break;
-        //                default:
+//        showHeroUpgrade();
+//        while (!order.equals("done"))
+//        {
+//            switch (order)
+//            {
+//                case "help":
+//                    System.out.println("(hero name) +(ability name) + ?\uF0E0 (ability description)");
+//                    System.out.println(" Acquire + (ability name) +  for  + (hero name)\uF0E0 (acquiring ability)");
+//                    break;
+//                case "again":
+//                    showHeroUpgrade();
+//                    break;
+//                default:
         parseOrder(order, "start upgrading", 0, 0);
-        //                    break;
-        //            }
-        //            order = normalizer(this.scanner.nextLine());
-        //        }
+//                    break;
+//            }
+//            order = normalizer(this.scanner.nextLine());
+//        }
 
     }
 
@@ -399,13 +371,13 @@ public class GameScenario implements Serializable
     {
         for (Hero hero : heros)
         {
-            //            System.out.println(hero.getName());
-            //            String[] heroTraits = new String[hero.getData().keySet().size()];
-            //            hero.getData().keySet().toArray(heroTraits);
-            //            for (String heroTrait : heroTraits)
-            //            {
-            //                System.out.printf("%s : %d\n", heroTrait, hero.getData().get(heroTrait));
-            //            }
+//            System.out.println(hero.getName());
+//            String[] heroTraits = new String[hero.getData().keySet().size()];
+//            hero.getData().keySet().toArray(heroTraits);
+//            for (String heroTrait : heroTraits)
+//            {
+//                System.out.printf("%s : %d\n", heroTrait, hero.getData().get(heroTrait));
+//            }
             System.out.printf("%s\n", hero.getName());
             System.out.printf("Health: %d/%d\n", hero.getData().get("current health"), hero.getData().get("max health"));
             System.out.printf("Magic: %d/%d\n", hero.getData().get("current magic"), hero.getData().get("max magic"));
@@ -436,71 +408,162 @@ public class GameScenario implements Serializable
     public void startFighting(int BattleId, String order) throws NoMoreUpgradeException, AbilityNotAcquieredException, NotStrongEnoughException, NotEnoughXPException, NotEnoughRequiredAbilitiesException, AbilityCooldownException, NotEnoughMoneyException, FullInventoryException
     {
         ArrayList<Enemy> enemies = enemyGroups.get(BattleId).getEnemies();
-        //        showStartFighting(gameTurn);
+//        showStartFighting(gameTurn);
 
-        //        while (enemies.size() != 0)
-        //        {
-        //            String order = normalizer(this.scanner.nextLine());
-        ArrayList<Enemy> deadEnemies = new ArrayList<>();
-        //            while (!order.equals("done"))
-        //            {
+//        while (enemies.size() != 0)
+//        {
+//            String order = normalizer(this.scanner.nextLine());
+            ArrayList<Enemy> deadEnemies = new ArrayList<>();
+//            while (!order.equals("done"))
+//            {
 
-        //                switch (order)
-        //                {
-        //                    case "help":
-        //                        System.out.println("(item name) + “?” \uF0E0 (item description)\n" +
-        //                                "(ability name) + “?”\uF0E0 (ability description)\n" +
-        //                                "(hero name) + “?” \uF0E0 (hero description)\n" +
-        //                                "(enemy name) + “?”\uF0E0 (enemy description)\n" +
-        //                                "(hero name) + “ cast “ + (ability name) + “ on “ + (hero name / enemy name and id)\uF0E0\n" +
-        //                                "(ability success message)\n" +
-        //                                "(hero name) + “ use “ + (item name) + “ on “ + (hero name / enemy name and id) \uF0E0\n" +
-        //                                "(item success message)");
-        //                        System.out.println("(hero name) + “ attack “ + (enemy name and id) \uF0E0");
-        //                        break;
-        //                    case "again":
-        //                        showStartFighting(gameTurn);
-        //                        break;
-        //                    default:
-        parseOrder(order, "fighting", BattleId, 0);
-        //                        break;
-        //                }
+//                switch (order)
+//                {
+//                    case "help":
+//                        System.out.println("(item name) + “?” \uF0E0 (item description)\n" +
+//                                "(ability name) + “?”\uF0E0 (ability description)\n" +
+//                                "(hero name) + “?” \uF0E0 (hero description)\n" +
+//                                "(enemy name) + “?”\uF0E0 (enemy description)\n" +
+//                                "(hero name) + “ cast “ + (ability name) + “ on “ + (hero name / enemy name and id)\uF0E0\n" +
+//                                "(ability success message)\n" +
+//                                "(hero name) + “ use “ + (item name) + “ on “ + (hero name / enemy name and id) \uF0E0\n" +
+//                                "(item success message)");
+//                        System.out.println("(hero name) + “ attack “ + (enemy name and id) \uF0E0");
+//                        break;
+//                    case "again":
+//                        showStartFighting(gameTurn);
+//                        break;
+//                    default:
+                        parseOrder(order, "fighting", BattleId, 0);
+//                        break;
+//                }
 
-        for (Enemy enemy : enemies) // LOL
-        {
-            if (enemy.getData().get("current health") <= 0)
-            {
-                //                        System.out.println(enemy.getFullName() + " has died"); // LOL
-                allLog.add(enemy.getFullName() + " has died");
-                deadEnemies.add(enemy);
-            }
-        }
-
-        enemies.removeAll(deadEnemies);
-
-        //                if(enemies.size() == 0)
-        //                {
-        //                    break;
-        //                }
-
-        for (Enemy enemy : enemies)
-        {
-            if (enemy instanceof BossEnemy && !((BossEnemy) enemy).isAngry())
-            {
-                BossEnemy boss = (BossEnemy) enemy;
-                int currentHealth = boss.getData().get("current health");
-                int angerPoint = boss.getAngerPoint();
-                if (currentHealth <= angerPoint)
+                for (Enemy enemy : enemies) // LOL
                 {
-                    //                            System.out.println(boss.getFullName() + " has mutated"); // LOL
-                    allLog.add(boss.getFullName() + " has mutated");
-                    boss.getAngry();
+                    if (enemy.getData().get("current health") <= 0)
+                    {
+//                        System.out.println(enemy.getFullName() + " has died"); // LOL
+                        allLog.add(enemy.getFullName() + " has died");
+                        deadEnemies.add(enemy);
+                    }
                 }
 
+                enemies.removeAll(deadEnemies);
+
+//                if(enemies.size() == 0)
+//                {
+//                    break;
+//                }
+
+                for (Enemy enemy : enemies)
+                {
+                    if (enemy instanceof BossEnemy && !((BossEnemy)enemy).isAngry())
+                    {
+                        BossEnemy boss = (BossEnemy) enemy;
+                        int currentHealth = boss.getData().get("current health");
+                        int angerPoint = boss.getAngerPoint();
+                        if (currentHealth <= angerPoint)
+                        {
+//                            System.out.println(boss.getFullName() + " has mutated"); // LOL
+                            allLog.add(boss.getFullName() + " has mutated");
+                            boss.getAngry();
+                        }
+
+                    }
+                }
+//                order = normalizer(this.scanner.nextLine());
+//            }
+            //FK
+            for (Hero hero : heros)
+            {
+                for (int j = 0; j < hero.getAbilities().size(); j++)
+                {
+                    if (hero.getAbilities().get(j).getCooldownTurn() > 0)
+                    {
+                        hero.getAbilities().get(j).setCooldownTurn(hero.getAbilities().get(j).getCooldownTurn() - 1);
+                    }
+                }
             }
-        }
-        //                order = normalizer(this.scanner.nextLine());
-        //            }
+            //FK
+
+//        enemyTurn(gameTurn, enemies);
+
+//            for(Enemy enemy : enemies)
+//            {
+//                if(enemy instanceof BossEnemy)
+//                {
+//                    ((BossEnemy) enemy).earlyTurnEffect(heros);
+//                }
+//            }
+
+//        }
+//        System.out.println("Victory! You've defeated all of your enemies"); // LOL
+
+//        battleEnded(gameTurn);
+
+        // print wanted lines
+    }
+
+    public void startNetworkFighting(String order) throws NoMoreUpgradeException, AbilityNotAcquieredException, NotStrongEnoughException, NotEnoughXPException, NotEnoughRequiredAbilitiesException, AbilityCooldownException, NotEnoughMoneyException, FullInventoryException
+    {
+
+        ArrayList<Hero> enemies = networkScenario.getEnemyHeros();
+//        showStartFighting();
+//        String order = gameScenario.normalizer(this.scanner.nextLine());
+
+//            switch (order)
+//            {
+//                case "help":
+//                    System.out.println("(item name) + “?” \uF0E0 (item description)\n" +
+//                            "(ability name) + “?”\uF0E0 (ability description)\n" +
+//                            "(hero name) + “?” \uF0E0 (hero description)\n" +
+//                            "(enemy name) + “?”\uF0E0 (enemy description)\n" +
+//                            "(hero name) + “ cast “ + (ability name) + “ on “ + (hero name / enemy name and id)\uF0E0\n" +
+//                            "(ability success message)\n" +
+//                            "(hero name) + “ use “ + (item name) + “ on “ + (hero name / enemy name and id) \uF0E0\n" +
+//                            "(item success message)");
+//                    System.out.println("(hero name) + “ attack “ + (enemy name and id) \uF0E0");
+//                    break;
+//                case "again":
+//                    showStartFighting();
+//                    break;
+//                default:
+                    parseOrder(order, "networkFighting", 0,0);
+//                    break;
+//            }
+
+            for (Hero enemy : enemies) // LOL
+            {
+                if (enemy.getData().get("current health") <= 0)
+                {
+                    if (networkScenario.enemyImmortalityPotionNum == 0)
+                    {
+                        allLog.add("his " + enemy.getName() + " is dead");
+//                        message.setMessage("your "+ enemy.getName()+" is dead");
+//                        ntwhandler.setMessage(message);
+//                        ntwhandler.sendMessage();
+                        networkScenario.commonMsg.setWinner(networkScenario.choice);
+                        return;
+                    } else
+                    {
+                        networkScenario.setEnemyImmortalityPotionNum(networkScenario.getEnemyImmortalityPotionNum() - 1);
+                        reviveHero(enemy);
+                      allLog.add("his " + enemy.getName() + " is dying, immortality potion was used for reincarnation process, he now has “" +
+                                networkScenario.getEnemyImmortalityPotionNum() + " immortality potions left");
+//                        message.setMessage("your " + enemy.getName() + " is dying, immortality potion was used for reincarnation process, you now have “" +
+//                                getEnemyImmortalityPotionNum() + " immortality potions left");
+//                        ntwhandler.setMessage(message);
+//                        ntwhandler.sendMessage();
+                    }
+                }
+            }
+
+            order = normalizer(this.scanner.nextLine());
+
+        networkScenario.commonMsg.setEnemyHeros(heros);
+        networkScenario.commonMsg.setHeros(enemies);
+        networkScenario.ntwhandler.setCommonMsg(networkScenario.commonMsg);
+        networkScenario.ntwhandler.send();
         //FK
         for (Hero hero : heros)
         {
@@ -512,32 +575,14 @@ public class GameScenario implements Serializable
                 }
             }
         }
-        //FK
-
-        //        enemyTurn(gameTurn, enemies);
-
-        //            for(Enemy enemy : enemies)
-        //            {
-        //                if(enemy instanceof BossEnemy)
-        //                {
-        //                    ((BossEnemy) enemy).earlyTurnEffect(heros);
-        //                }
-        //            }
-
-        //        }
-        //        System.out.println("Victory! You've defeated all of your enemies"); // LOL
-
-        //        battleEnded(gameTurn);
-
-        // print wanted lines
-    }
+        }
 
     public void earlyEffects(int BattleId)
     {
         ArrayList<Enemy> enemies = enemyGroups.get(BattleId).getEnemies();
-        for (Enemy enemy : enemies)
+        for(Enemy enemy : enemies)
         {
-            if (enemy instanceof BossEnemy)
+            if(enemy instanceof BossEnemy)
             {
                 allLog.addAll(((BossEnemy) enemy).earlyTurnEffect(heros));
             }
@@ -550,7 +595,7 @@ public class GameScenario implements Serializable
         enemiesMakeMove(gameTurn);
         correctCurrentAttributes(enemies);
         heroRefills();
-        if (Hero.getImmortalityPotionNum() != -1)
+        if(Hero.getImmortalityPotionNum() != -1)
         {
             earlyEffects(gameTurn);
         }
@@ -563,18 +608,16 @@ public class GameScenario implements Serializable
         int moneyAmount = userInterface.getEnemyGroupMoneys().get(gameTurn);
         Hero.setXP(Hero.getXP() + xpAmount);
         Hero.setMoney((Hero.getMoney() + moneyAmount));
-        for (Hero hero : heros)
+        for(Hero hero : heros)
         {
             setCurrentAttributesToMax(hero);
         }
         setTempToZero();
-
-        // print wanted lines
     }
 
     private void setTempToZero()
     {
-        for (Hero hero : heros)
+        for(Hero hero : heros)
         {
             HashMap<String, Integer> userData = hero.getData();
             userData.put("temp attack", 0);
@@ -583,10 +626,10 @@ public class GameScenario implements Serializable
 
     private void correctCurrentAttributes(ArrayList<Enemy> enemies)
     {
-        for (Enemy enemy : enemies)
+        for(Enemy enemy : enemies)
         {
             HashMap<String, Integer> data = enemy.getData();
-            for (String attribute : data.keySet())
+            for(String attribute : data.keySet())
             {
                 String[] attributeNameParts = attribute.split(" ");
                 if (attributeNameParts[0].equals("current"))
@@ -599,10 +642,11 @@ public class GameScenario implements Serializable
                     }
                     int maxAmount = data.get(attributeMax);
                     int currentAmount = data.get(attribute);
-                    if (currentAmount > maxAmount)
+                    if(currentAmount > maxAmount)
                     {
                         data.put(attribute, maxAmount);
-                    } else if (currentAmount < 0)
+                    }
+                    else if(currentAmount < 0)
                     {
                         data.put(attribute, 0);
                     }
@@ -613,13 +657,13 @@ public class GameScenario implements Serializable
 
     private void heroRefills()
     {
-        for (Hero hero : heros)
+        for(Hero hero : heros)
         {
             HashMap<String, Integer> userData = hero.getData();
-            for (String attribute : userData.keySet())
+            for(String attribute : userData.keySet())
             {
                 String[] attributeNameParts = attribute.split(" ");
-                if (attributeNameParts.length > 1 && attributeNameParts[1].equals("refill"))
+                if(attributeNameParts.length > 1 && attributeNameParts[1].equals("refill"))
                 {
                     String maxAttribute = "max " + attributeNameParts[0];
                     String currentAttribute = "current " + attributeNameParts[0];
@@ -627,10 +671,11 @@ public class GameScenario implements Serializable
                     int maxAttributeAmount = userData.get(maxAttribute);
                     int currentAttributeAmount = userData.get(currentAttribute);
                     effectAmount = currentAttributeAmount + (maxAttributeAmount * effectAmount) / 100;
-                    if (effectAmount > maxAttributeAmount)
+                    if(effectAmount > maxAttributeAmount)
                     {
                         userData.put(currentAttribute, maxAttributeAmount);
-                    } else
+                    }
+                    else
                     {
                         userData.put(currentAttribute, effectAmount);
                     }
@@ -644,13 +689,13 @@ public class GameScenario implements Serializable
     private void enemiesMakeMove(int gameTurn)
     {
         ArrayList<Enemy> enemies = enemyGroups.get(gameTurn).getEnemies();
-        //        for (Enemy enemy : enemies)
-        //        {
-        //            if (enemy instanceof BossEnemy)
-        //            {
-        //                ((BossEnemy) enemy).earlyTurnEffect(heros);
-        //            }
-        //        }
+//        for (Enemy enemy : enemies)
+//        {
+//            if (enemy instanceof BossEnemy)
+//            {
+//                ((BossEnemy) enemy).earlyTurnEffect(heros);
+//            }
+//        }
         for (Enemy enemy : enemies)
         {
 
@@ -662,19 +707,19 @@ public class GameScenario implements Serializable
                 {
                     if (Hero.getImmortalityPotionNum() == 0)
                     {
-                        //                        System.out.println(hero.getName() + " is dead and so is the spirit of this adventure, Game Over!");
+//                        System.out.println(hero.getName() + " is dead and so is the spirit of this adventure, Game Over!");
                         Hero.setImmortalityPotionNum(Hero.getImmortalityPotionNum() - 1);
                         allLog.add(hero.getName() + " is dead and so is the spirit of this adventure...");
-                        //                        System.exit(0);
+//                        System.exit(0);
                         return;
                     } else
                     {
                         Hero.setImmortalityPotionNum(Hero.getImmortalityPotionNum() - 1);
                         reviveHero(hero);
-                        //                        System.out.println(hero.getName() + " is dying, immortality potion was used for reincarnation process, you now have “" +
-                        //                                Hero.getImmortalityPotionNum()+ " immortality potions left");
+//                        System.out.println(hero.getName() + " is dying, immortality potion was used for reincarnation process, you now have “" +
+//                                Hero.getImmortalityPotionNum()+ " immortality potions left");
                         allLog.add(hero.getName() + " is dying, immortality potion was used for reincarnation process, you now have “" +
-                                Hero.getImmortalityPotionNum() + " immortality potions left");
+                                Hero.getImmortalityPotionNum()+ " immortality potions left");
                     }
                 }
             }
@@ -702,7 +747,6 @@ public class GameScenario implements Serializable
 
         data.put("temp attack", 0);
     }
-    //VAHIDCHECK
 
     //VAHIDCHECK
     private void showStartFighting(int gameTurn)
@@ -775,6 +819,7 @@ public class GameScenario implements Serializable
             System.out.println(bossEnemiesNames.get(i) + " Health: " + bossEnemies.get(i).getData().get("current health") + " / " + bossEnemies.get(i).getData().get("max health"));
         }
     }
+    //VAHIDCHECK
 
     /***********/
 
@@ -785,12 +830,11 @@ public class GameScenario implements Serializable
         result = input.toLowerCase();
         return result;
     }
-    //VAHIDCHECK
 
     //VAHIDCHECK
     private void parseOrder(String command, String situation, int BattleTurn, int shopId) throws NotEnoughXPException, NotEnoughMoneyException, FullInventoryException, AbilityNotAcquieredException, AbilityCooldownException, NotStrongEnoughException, NoMoreUpgradeException, NotEnoughRequiredAbilitiesException
     {
-        Controller.GameScenario.commandsOrder order = whatIsOrder(command, situation, BattleTurn);
+        commandsOrder order = whatIsOrder(command, situation, BattleTurn);
         if (order != null)
         {
             switch (order)
@@ -837,6 +881,21 @@ public class GameScenario implements Serializable
                 case acquireAbility:
                     aquireAbility(command);
                     break;
+                case networkHeroAttack:
+                    networkHeroAttack(command);
+                    break;
+                case networkHeroCastAbilityOnSpecieficTarget:
+                    networkHeroCastSpecieficAbility(command);
+                    break;
+                case networkUseItemSpecific:
+                    networkUseItemSpecific(command);
+                    break;
+                case networkHeroCastAbilityOnEveryone:
+                   networkHeroCastEveryoneAbility(command);
+                    break;
+                case netwrokUseItemEveryone:
+                    networkUseItemEveryone(command);
+                    break;
 
                 default:
                     System.out.println("Invalid command");
@@ -848,6 +907,7 @@ public class GameScenario implements Serializable
             System.out.println("Invalid command");
         }
     }
+    //VAHIDCHECK
 
     private void useItemSpecific(String command, int gameTurn)
     {
@@ -888,14 +948,55 @@ public class GameScenario implements Serializable
         {
             System.out.println("You don’t have this item");
         }
+        // Add Item Cooldown
+    }
+
+    private void networkUseItemSpecific(String command) {
+        String[] commands = command.split(" ");
+        Hero hero = null;
+        for (Hero hero1 : heros)
+        {
+            if (hero1.getName().equals(commands[0]))
+                hero = hero1;
+        }
+        Item item = null;
+        if (hero != null)
+        {
+            item = hero.findItem(commands[2]);
+        }
+        if (hero != null && item != null)
+        {
+            if (item instanceof NonInstantEffectItem)
+            {
+                ArrayList<Hero> heroEnemies = networkScenario.getEnemyHeros();
+                ArrayList<Warrior> realEnemies = new ArrayList<>();
+                for (Hero enemy : heroEnemies)
+                {
+                    realEnemies.add(enemy);
+                }
+                allLog.addAll(hero.useItem(item.getName(), realEnemies, heros, commands[4]));
+                correctCurrentAttributes(); // LOL
+            } else
+            {
+                // LOL
+                System.out.println("This item is not usable!");
+            }
+        } else if (hero == null)
+        {
+            // LOL
+            System.out.println("Invalid command");
+        } else
+        {
+            System.out.println("You don’t have this item");
+        }
     }
 
     public void correctCurrentAttributes() // LOL
     {
-        for (Hero hero : heros)
+        for(Hero hero : heros)
         {
             HashMap<String, Integer> data = hero.getData();
-            for (String attribute : data.keySet())
+            for(String attribute : data.keySet())
             {
                 String[] attributeNameParts = attribute.split(" ");
                 if (attributeNameParts[0].equals("current"))
@@ -908,7 +1009,7 @@ public class GameScenario implements Serializable
                     }
                     int maxAmount = data.get(attributeMax);
                     int currentAmount = data.get(attribute);
-                    if (currentAmount > maxAmount)
+                    if(currentAmount > maxAmount)
                     {
                         data.put(attribute, maxAmount);
                     } else if (currentAmount < 0)
@@ -959,6 +1060,45 @@ public class GameScenario implements Serializable
         }
     }
 
+    private void networkUseItemEveryone(String command) {
+
+        String[] commands = command.split(" ");
+        Hero hero = null;
+        for (Hero hero1 : heros)
+        {
+            if (hero1.getName().equals(commands[0]))
+                hero = hero1;
+        }
+        Item item = null;
+        if (hero != null)
+        {
+            item = hero.findItem(commands[2]);
+        }
+        if (hero != null && item != null)
+        {
+            if (item instanceof NonInstantEffectItem)
+            {
+                ArrayList<Hero> heroEnemies = networkScenario.getEnemyHeros();
+                ArrayList<Warrior> realEnemies = new ArrayList<>();
+                for (Hero enemy : heroEnemies)
+                {
+                    realEnemies.add(enemy);
+                }
+                allLog.addAll(hero.useItem(item.getName(), realEnemies, heros, "everyone"));
+                correctCurrentAttributes(); // LOL
+            } else
+            {
+                System.out.println("You don't have this item");
+            }
+        } else if (hero == null)
+        {
+            System.out.println("Invalid command");
+        } else
+        {
+            System.out.println("You don’t have this item");
+        }
+    }
+
     private void aquireAbility(String command) throws NotEnoughXPException, NoMoreUpgradeException, NotEnoughRequiredAbilitiesException, AbilityNotAcquieredException, NotStrongEnoughException, AbilityCooldownException
     {
         String[] commands = command.split(" ");
@@ -979,26 +1119,26 @@ public class GameScenario implements Serializable
                 hero.useAbility(ability.getName(), new ArrayList<>(), heros, "himself");
             }
 
-            //            if (ability != null)
-            //            {
-            //                if (ability.isUpgradeValid())
-            //                {
-            //                    ability.setCurrentUpgradeNum(ability.getCurrentUpgradeNum() + 1);
-            //                    if (ability instanceof PassiveAbility)
-            //                    {
-            //                        hero.useAbility(ability.getName(), new ArrayList<>(), heros, "himself");
-            //                    }
-            //                    setCurrentAttributesToMax(hero);
-            //                    //bugable no
-            //                    Hero.setXP(Hero.getXP() - ability.getUpgradeXPs().get(ability.getCurrentUpgradeNum() - 1));
-            //                    if (ability.getCurrentUpgradeNum() == 1)
-            ////                        System.out.printf("%s acquired successfully, your current experience is: %d\n", ability.getName(), Hero.getXP());
-            //                        allLog.add(ability.getName() + " acquired successfully, your current experience is: " + Hero.getXP());
-            //                    else if (ability.getCurrentUpgradeNum() > 1)
-            ////                        System.out.printf("%s upgraded successfully, your current experience is: %d\n", ability.getName(), Hero.getXP());
-            //                        allLog.add(ability.getName() + " upgraded successfully, your current experience is: " + Hero.getXP());
-            //                }
-            //            }
+//            if (ability != null)
+//            {
+//                if (ability.isUpgradeValid())
+//                {
+//                    ability.setCurrentUpgradeNum(ability.getCurrentUpgradeNum() + 1);
+//                    if (ability instanceof PassiveAbility)
+//                    {
+//                        hero.useAbility(ability.getName(), new ArrayList<>(), heros, "himself");
+//                    }
+//                    setCurrentAttributesToMax(hero);
+//                    //bugable no
+//                    Hero.setXP(Hero.getXP() - ability.getUpgradeXPs().get(ability.getCurrentUpgradeNum() - 1));
+//                    if (ability.getCurrentUpgradeNum() == 1)
+////                        System.out.printf("%s acquired successfully, your current experience is: %d\n", ability.getName(), Hero.getXP());
+//                        allLog.add(ability.getName() + " acquired successfully, your current experience is: " + Hero.getXP());
+//                    else if (ability.getCurrentUpgradeNum() > 1)
+////                        System.out.printf("%s upgraded successfully, your current experience is: %d\n", ability.getName(), Hero.getXP());
+//                        allLog.add(ability.getName() + " upgraded successfully, your current experience is: " + Hero.getXP());
+//                }
+//            }
         } else if (hero == null)
         {
             System.out.println("Invalid command");
@@ -1064,6 +1204,42 @@ public class GameScenario implements Serializable
         }
     }
 
+    private void networkHeroCastEveryoneAbility(String command) throws AbilityNotAcquieredException, NotStrongEnoughException, AbilityCooldownException
+    {
+        String[] commands = command.split(" ");
+        Hero hero = null;
+        for (Hero hero1 : heros)
+        {
+            if (hero1.getName().equals(commands[0]))
+                hero = hero1;
+        }
+        if (hero != null && userInterface.getHerosAndTheirAbilities().get(hero.getName()).contains(commands[2]))
+        {
+            Ability ability = hero.findAbility(commands[2]);
+            if (ability != null && ability instanceof ActiveAbility) // LOL
+            {
+                ArrayList<Hero> heroEnemies = networkScenario.getEnemyHeros();
+                ArrayList<Warrior> realEnemies = new ArrayList<>();
+                for (Hero enemy : heroEnemies)
+                {
+                    realEnemies.add(enemy);
+                }
+                    allLog.addAll(hero.useAbility(ability.getName(), realEnemies, heros, "everyone"));
+                correctCurrentAttributes(); // LOL
+            } else
+            {
+                System.out.println("This ability is not castable");
+            }
+        } else if (!userInterface.getHerosAndTheirAbilities().get(hero.getName()).contains(commands[2]))
+        {
+            // LOL
+            System.out.println("This hero can not cast this ability");
+        } else
+        {
+            System.out.println("Invalid Command"); // LOL
+        }
+    }
+
     private void heroCastSpecieficAbility(String command, int gameTurn) throws AbilityNotAcquieredException, NotStrongEnoughException, AbilityCooldownException
     {
         String[] commands = command.split(" ");
@@ -1085,6 +1261,42 @@ public class GameScenario implements Serializable
                     realEnemies.add(enemy);
                 }
                 allLog.addAll(hero.useAbility(ability.getName(), realEnemies, heros, commands[4]));
+                correctCurrentAttributes();
+            } else
+            {
+                System.out.println("This ability is not castable"); // LOL
+            }
+        } else if (!userInterface.getHerosAndTheirAbilities().get(hero.getName()).contains(commands[2]))
+        {
+            // LOL
+            System.out.println("This hero can not cast this ability");
+        } else
+        {
+            System.out.println("Invalid Command"); // LOL
+        }
+    }
+
+    private void networkHeroCastSpecieficAbility(String command) throws AbilityNotAcquieredException, NotStrongEnoughException, AbilityCooldownException
+    {
+        String[] commands = command.split(" ");
+        Hero hero = null;
+        for (Hero hero1 : heros)
+        {
+            if (hero1.getName().equals(commands[0]))
+                hero = hero1;
+        }
+        ArrayList<Hero> heroEnemies = networkScenario.getEnemyHeros();
+        ArrayList<Warrior> realEnemies = new ArrayList<>();
+        for (Hero enemy : heroEnemies)
+        {
+            realEnemies.add(enemy);
+        }
+        if (hero != null && userInterface.getHerosAndTheirAbilities().get(hero.getName()).contains(commands[2]) && commands[3].equals("on"))
+        {
+            Ability ability = hero.findAbility(commands[2]);
+            if (ability != null && ability instanceof ActiveAbility) // LOL
+            {
+                    allLog.addAll(hero.useAbility(ability.getName(), realEnemies, heros, commands[4]));
                 correctCurrentAttributes();
             } else
             {
@@ -1160,21 +1372,26 @@ public class GameScenario implements Serializable
         {
             if (userInterface.getInflationedItems().contains(commands[1]))
             {
-                item = new InflationedItem(commands[1], userInterface.getItemTargets().get(commands[1]), userInterface.getItemDatas().get(commands[1]));
+                item = new InflationedItem(commands[1], userInterface.getItemTargets().get(commands[1]),
+                        userInterface.getItemDatas().get(commands[1]));
             } else
             {
-                item = new NonInflationedItem(commands[1], userInterface.getItemTargets().get(commands[1]), userInterface.getItemDatas().get(commands[1]));
+                item = new NonInflationedItem(commands[1], userInterface.getItemTargets().get(commands[1]),
+                        userInterface.getItemDatas().get(commands[1]));
             }
         } else
         {
             item = new NonInstantEffectItem(commands[1], userInterface.getItemTargets().get(commands[1]), userInterface.getNonInstantEffectItemsUseLimit().get(commands[1]), userInterface.getItemDatas().get(commands[1]));
             item.setSuccessMessage(userInterface.getAllItemSuccessMessages().get(item.getName()));
         }
+
+        item.setItemDescription(userInterface.getItemDescription().get(commands[1]));
+
         allLog.add(shop.get(shopId).sell(hero, item));
         if (hero != null && item instanceof InstantEffectItem)
         {
-            allLog.addAll(hero.useItem(item.getName(), new ArrayList<Warrior>(), heros, "himself"));
-            if (item instanceof InflationedItem)
+            allLog.addAll(hero.useItem(item.getName(), new ArrayList<>(), heros, "himself"));
+            if(item instanceof InflationedItem)
             {
                 hero.getInventory().removeItem(item);
             }
@@ -1605,61 +1822,112 @@ public class GameScenario implements Serializable
         }
     }
 
-    private Controller.GameScenario.commandsOrder whatIsOrder(String command, String situation, int BattleId)
+    private void networkHeroAttack(String command) throws NotStrongEnoughException
+    {
+        String[] commands = command.split(" ");
+        Hero hero = null;
+        for (Hero hero1 : heros)
+        {
+            if (hero1.getName().equals(commands[0]))
+                hero = hero1;
+        }
+        ArrayList<Hero> heroEnemies = networkScenario.getEnemyHeros();
+        ArrayList<Warrior> realEnemies = new ArrayList<>();
+        for (Hero enemy : heroEnemies)
+        {
+            realEnemies.add(enemy);
+        }
+        ArrayList<String> enemyHerosName = new ArrayList<>();
+        for (Hero heroEnemy : heroEnemies)
+        {
+            enemyHerosName.add(heroEnemy.getName());
+        }
+        if (hero != null && commands[1].equals("attack") && (enemyHerosName.contains(commands[2])))
+        {
+                allLog.addAll(hero.regularAttack(realEnemies, commands[2]));
+//                System.out.println(hero.getAttackSuccessMessage());
+//            String message = hero.getAttackSuccessMessage();
+//            message = message.replaceFirst("his", "your");
+//            String messagess[] = message.split(" ");
+//            messagess[0] = "his";
+//            message = String.join(" ", messagess);
+        } else
+        {
+            System.out.println("Invalid command");
+        }
+    }
+
+
+    private commandsOrder whatIsOrder(String command, String situation, int BattleId)
     {
         String[] commands = command.split(" ");
         if (commands.length == 4 && commands[0].equals("acquire") && checkBuyAbility(command) && situation.equals("start upgrading"))
         {
-            return Controller.GameScenario.commandsOrder.acquireAbility;
+            return commandsOrder.acquireAbility;
         } else if (commands.length == 4 && commands[0].equals("sell") && checkSellItem(command) && situation.equals("shopping"))
         {
-            return Controller.GameScenario.commandsOrder.itemSell;
+            return commandsOrder.itemSell;
         } else if (commands.length == 4 && commands[0].equals("buy") && checkBuyItem(command) && situation.equals("shopping"))
         {
-            return Controller.GameScenario.commandsOrder.itemBuy;
+            return commandsOrder.itemBuy;
         } else if (commands.length == 3 && commands[1].equals("cast") && checkCastEveryoneAbility(command, BattleId) && situation.equals("fighting"))
         {
-            return Controller.GameScenario.commandsOrder.heroCastAbilityOnEveryone;
+            return commandsOrder.heroCastAbilityOnEveryone;
         } else if (commands.length == 5 && commands[1].equals("cast") && checkCastSpecieficAbility(command, BattleId) && situation.equals("fighting"))
         {
-            return Controller.GameScenario.commandsOrder.heroCastAbilityOnSpecieficTarget;
+            return commandsOrder.heroCastAbilityOnSpecieficTarget;
         } else if (commands.length == 3 && commands[1].equals("use") && checkUseItemEveryone(command, BattleId) && situation.equals("fighting"))
         {
-            return Controller.GameScenario.commandsOrder.useItemEveryone;
+            return commandsOrder.useItemEveryone;
 
         } else if (commands.length == 5 && commands[1].equals("use") && checkUseItemSpecific(command, BattleId) && situation.equals("fighting"))
         {
-            return Controller.GameScenario.commandsOrder.useItemSpecific;
-        } else if (commands.length == 2 && commands[1].equals("?") && checkHeroDescription(command) && (situation.equals("introduce heros") ||
-                situation.equals("fighting")))
+            return commandsOrder.useItemSpecific;
+        } else if (commands.length == 2 && commands[1].equals("?") && checkHeroDescription(command) && ((situation.equals("introduce heros") ||
+                situation.equals("fighting")) || situation.equals("networkFighting")))
         {
-            return Controller.GameScenario.commandsOrder.heroDescription;
-        } else if (commands.length == 2 && commands[1].equals("?") && checkAbilityDescription(command) && situation.equals("fighting"))
+            return commandsOrder.heroDescription;
+        } else if (commands.length == 2 && commands[1].equals("?") && checkAbilityDescription(command) && (situation.equals("fighting") || situation.equals("networkFighting")))
         {
-            return Controller.GameScenario.commandsOrder.abilityDescription;
-        } else if (commands.length == 2 && commands[1].equals("?") && checkItemDescription(command) && ((situation.equals("shopping")) ||
-                situation.equals("fighting")))
+            return commandsOrder.abilityDescription;
+        } else if (commands.length == 2 && commands[1].equals("?") && checkItemDescription(command) && (((situation.equals("shopping")) ||
+                situation.equals("fighting")) || situation.equals("networkFighting")))
         {
-            return Controller.GameScenario.commandsOrder.ItemDescription;
-        } else if (commands.length == 2 && commands[1].equals("?") && checkEnemyDescription(command) && (situation.equals("fighting")) ||
-                situation.equals("show enemy data"))
+            return commandsOrder.ItemDescription;
+        } else if (commands.length == 2 && commands[1].equals("?") && checkEnemyDescription(command) && ((situation.equals("fighting")) ||
+                situation.equals("show enemy data") || situation.equals("networkFighting")))
         {
-            return Controller.GameScenario.commandsOrder.enemyDescription;
+            return commandsOrder.enemyDescription;
         } else if (commands.length == 2 && commands[1].equals("?") && checkHeroClassDescription(command) && situation.equals("introduce heros"))
         {
-            return Controller.GameScenario.commandsOrder.heroClassDescription;
+            return commandsOrder.heroClassDescription;
         } else if (commands.length == 3 && commands[1].equals("attack") && checkHeroAttack(command, BattleId) && situation.equals("fighting"))
         {
-            return Controller.GameScenario.commandsOrder.heroAttack;
+            return commandsOrder.heroAttack;
         } else if (commands.length == 3 && commands[2].equals("?") && checkHeroAbilityDescription(command) && situation.equals("start upgrading"))
         {
-            return Controller.GameScenario.commandsOrder.heroAbilityDescription;
-        } else
+            return commandsOrder.heroAbilityDescription;
+        } else if(commands.length == 3 && commands[1].equals("attack") && networkScenario.checkHeroAttack(command) && situation.equals("networkFighting")){
+            return  commandsOrder.networkHeroAttack;
+        } else if (commands.length == 5 && commands[1].equals("cast") && networkScenario.checkCastSpecieficAbility(command) && situation.equals("networkFighting"))
+        {
+            return commandsOrder.networkHeroCastAbilityOnSpecieficTarget;
+        }  else if (commands.length == 5 && commands[1].equals("use") && networkScenario.checkUseItemSpecific(command) && situation.equals("networkFighting"))
+        {
+            return commandsOrder.networkUseItemSpecific;
+        } else if (commands.length == 3 && commands[1].equals("cast") && checkCastEveryoneAbility(command, BattleId) && situation.equals("networkFighting"))
+        {
+            return commandsOrder.networkHeroCastAbilityOnEveryone;
+        } else if (commands.length == 3 && commands[1].equals("use") && checkUseItemEveryone(command, BattleId) && situation.equals("networkFighting"))
+        {
+            return commandsOrder.netwrokUseItemEveryone;
+
+        }
+        else
         {
             return null;
         }
     }
-    //VAHIDCHECK
 
     //VAHIDCHECK
     private boolean checkUseItemSpecific(String command, int gameTurn)
@@ -1688,6 +1956,7 @@ public class GameScenario implements Serializable
             return false;
         }
     }
+    //VAHIDCHECK
 
     public boolean checkUseItemEveryone(String command, int gameTurn)
     {
@@ -1838,6 +2107,36 @@ public class GameScenario implements Serializable
         return userInterface.getAbilityNames().contains(commands[1]) && commands[2].equals("for") && heroNames.contains(commands[3]);
     }
 
+    public void setNetworkScenario(NetworkScenario networkScenario)
+    {
+        this.networkScenario = networkScenario;
+    }
+
+    /***********/
+    public enum commandsOrder
+    {
+        heroAttack,
+        ItemDescription,
+        abilityDescription,
+        heroDescription,
+        heroClassDescription,
+        enemyDescription,
+        itemSell,
+        itemBuy,
+        heroAbilityDescription,
+        acquireAbility, heroCastAbilityOnEveryone, heroCastAbilityOnSpecieficTarget, useItemEveryone, useItemSpecific, networkHeroAttack, networkHeroCastAbilityOnSpecieficTarget, networkUseItemSpecific, networkHeroCastAbilityOnEveryone, netwrokUseItemEveryone;
+    }
+
+    public ArrayList<Hero> getHeros()
+    {
+        return heros;
+    }
+
+    public void setHeros(ArrayList<Hero> heros)
+    {
+        this.heros = heros;
+    }
+
     public ArrayList<EnemyGroup> getEnemyGroups()
     {
         return enemyGroups;
@@ -1867,20 +2166,5 @@ public class GameScenario implements Serializable
     public void setShop(ArrayList<Shop> shop)
     {
         this.shop = shop;
-    }
-
-    /***********/
-    public enum commandsOrder
-    {
-        heroAttack,
-        ItemDescription,
-        abilityDescription,
-        heroDescription,
-        heroClassDescription,
-        enemyDescription,
-        itemSell,
-        itemBuy,
-        heroAbilityDescription,
-        acquireAbility, heroCastAbilityOnEveryone, heroCastAbilityOnSpecieficTarget, useItemEveryone, useItemSpecific;
     }
 }
