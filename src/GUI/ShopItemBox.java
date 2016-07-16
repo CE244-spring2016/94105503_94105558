@@ -136,13 +136,14 @@ public class ShopItemBox
                 @Override
                 public void mouseEntered(MouseEvent e)
                 {
-
+                    String itemDescription = controller.findItemDescription(data.get(finalI));
+                    shopScenario.getShopTextBox().addText(itemDescription);
                 }
 
                 @Override
                 public void mouseExited(MouseEvent e)
                 {
-
+                    shopScenario.getShopTextBox().addText("Choose an item");
                 }
             });
             myScrollPanel.add(label);

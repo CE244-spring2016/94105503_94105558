@@ -1,5 +1,6 @@
 package GUI;
 
+import Auxiliary.Luck;
 import Exceptions.*;
 import Model.Shop;
 
@@ -14,7 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.StringJoiner;
+import Controller.*;
 
 /**
  * Created by ruhollah on 7/8/2016.
@@ -28,22 +29,25 @@ public class ShopScenario
     private JPanel panel = new JPanel();
     private ArrayList<HeroSprite> heroSprites = new ArrayList<>();
     private GamePanel gamePanel;
+    private Controller controller;
     private int width = (int) (Toolkit.getDefaultToolkit().getScreenSize().getWidth() * 2) / 3;
     private int height = (int) (Toolkit.getDefaultToolkit().getScreenSize().getHeight() * 2) / 3;
     private int heroWidth;
     private int heroHeight;
     private int id;
     private BufferedImage selectedItem;
-    private BufferedImage selectedHero;
+    private UltimateImage selectedHero;
     private BufferedImage selectedTargetHero;
+    private boolean isNetwork = false;
 
-    public ShopScenario(int id, ArrayList<HeroSprite> heroSprites, GamePanel gamePanel, BufferedImage background, BufferedImage shopKeeper)
+    public ShopScenario(int id, ArrayList<HeroSprite> heroSprites, GamePanel gamePanel, BufferedImage background, BufferedImage shopKeeper, Controller controller)
     {
         this.id = id;
         this.heroSprites = heroSprites;
         this.gamePanel = gamePanel;
         this.background = background;
         this.shopKeeper = shopKeeper;
+        this.controller = controller;
         panel.setLayout(null);
         panel.setSize(width, height);
         panel.setPreferredSize(new Dimension(width, height));
@@ -55,10 +59,77 @@ public class ShopScenario
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                Controller controller = gamePanel.getController();
                 shopTextBox.welcome();
                 end();
                 controller.setPanel(gamePanel);
+            }
+        });
+        panel.add(closeButton);
+        panel.addMouseListener(new MouseListener()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                System.out.println(e.getX() + " " + e.getY());
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e)
+            {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e)
+            {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e)
+            {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e)
+            {
+
+            }
+        });
+
+
+        showItemBox();
+        showTextBox();
+        setHeroSize();
+        showHeros();
+        showShopKeeper();
+        showBackground();
+    }
+
+    public ShopScenario(ArrayList<HeroSprite> heroSprites, UltimateImage background, UltimateImage shopKeeper, 
+                        Controller controller)
+    {
+        this.id = Luck.getRandom(1, 3);
+        this.heroSprites = heroSprites;
+        this.background = background.makeImage();
+        this.shopKeeper = shopKeeper.makeImage();
+        this.controller = controller;
+        this.isNetwork = true;
+        panel.setLayout(null);
+        panel.setSize(width, height);
+        panel.setPreferredSize(new Dimension(width, height));
+
+        JButton closeButton = new JButton("close");
+        closeButton.setBounds(850, 0, 100, 100);
+        closeButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                shopTextBox.welcome();
+                end(controller.getUserInterface().getAbilityUpgradeBackgroundSources().get(Luck.getRandom(0, 2)));
+//                controller.setPanel(new AbilityUpgradeScenario(heroSprites, abilityUpgradeBackground, controller));
             }
         });
         panel.add(closeButton);
@@ -111,7 +182,7 @@ public class ShopScenario
         {
             textBoxImage = ImageIO.read(new File("Main Pics/ShopTextBox/ShopItemBox.png"));
             Image resizedTextBox = textBoxImage.getScaledInstance((width * 720) / 1920, (height * 750) / 1070, Image.SCALE_SMOOTH);
-            shopItemBox = new ShopItemBox((width * 1200) / 1920, 0, (width * 720) / 1920, (height * 750) / 1070, gamePanel.getController(), this);
+            shopItemBox = new ShopItemBox((width * 1200) / 1920, 0, (width * 720) / 1920, (height * 750) / 1070, controller, this);
             shopItemBox.setBoxImage(resizedTextBox);
 //            textBox.addText("Choose a hero");
 //            textBox.setScrollSituation(BattleTextBox.ScrollSituation.Default);
@@ -122,8 +193,8 @@ public class ShopScenario
 //            panel.add(shopTextBox.getTextLabel());
             panel.add(shopItemBox.getScrollPane());
             panel.add(shopItemBox.getItemBox());
-//            gamePanel.getController().enemyIntroduction(getId() - 1);
-//            textBox.showMoveExplanation(gamePanel.getController().getTurnLog());
+//            controller.enemyIntroduction(getId() - 1);
+//            textBox.showMoveExplanation(controller.getTurnLog());
         } catch (IOException e)
         {
             e.printStackTrace();
@@ -149,8 +220,8 @@ public class ShopScenario
                     {
                         if(shopTextBox.getScrollSituation() == ShopTextBox.ScrollSituation.ChoosingSellerHero)
                         {
-                            selectedHero = label.getBufferedImage();
-                            ArrayList<String> itemNames = gamePanel.getController().findItemNamesOfAHero(selectedHero);
+                            selectedHero = label.getUltimateImage();
+                            ArrayList<String> itemNames = controller.findItemNamesOfAHero(selectedHero);
                             shopTextBox.setScrollSituation(ShopTextBox.ScrollSituation.Sell);
                             if(itemNames.size() != 0)
                             {
@@ -168,9 +239,9 @@ public class ShopScenario
                         }
                         else if (shopTextBox.getScrollSituation() == ShopTextBox.ScrollSituation.ChoosingBuyerHero)
                         {
-                            selectedHero = label.getBufferedImage();
-                            gamePanel.getController().buyItem(selectedHero, getShopItemBox().getSelectedItem(), id - 1);
-                            shopTextBox.showMoveExplanation(gamePanel.getController().getTurnLog());
+                            selectedHero = label.getUltimateImage();
+                            controller.buyItem(selectedHero, getShopItemBox().getSelectedItem(), id - 1);
+                            shopTextBox.showMoveExplanation(controller.getTurnLog());
                         }
                     } catch (FullInventoryException | AbilityNotAcquieredException | NotStrongEnoughException |
                             AbilityCooldownException | NotEnoughRequiredAbilitiesException | NoMoreUpgradeException |
@@ -223,9 +294,9 @@ public class ShopScenario
         {
             textBoxImage = ImageIO.read(new File("Main Pics/ShopTextBox/ShopTextBox.png"));
             Image resizedTextBox = textBoxImage.getScaledInstance(width, (height - (height * 750) / 1070), Image.SCALE_SMOOTH);
-            shopTextBox = new ShopTextBox(0, (height * 750) / 1070, width, (height - (height * 750) / 1070), gamePanel.getController(), this);
+            shopTextBox = new ShopTextBox(0, (height * 750) / 1070, width, (height - (height * 750) / 1070), controller, this);
             shopTextBox.setBoxImage(resizedTextBox);
-//            shopTextBox.addText(gamePanel.getController().getWelcomeMessage(id - 1));
+//            shopTextBox.addText(controller.getWelcomeMessage(id - 1));
 //            textBox.setScrollSituation(BattleTextBox.ScrollSituation.Default);
             shopTextBox.welcome();
 //            shopTextBox.addScrollObjects(possibleMoves);
@@ -234,8 +305,8 @@ public class ShopScenario
             panel.add(shopTextBox.getTextLabel());
             shopTextBox.setScrollSituation(ShopTextBox.ScrollSituation.Default);
             panel.add(shopTextBox.getDescriptionTextBox());
-//            gamePanel.getController().enemyIntroduction(getId() - 1);
-//            textBox.showMoveExplanation(gamePanel.getController().getTurnLog());
+//            controller.enemyIntroduction(getId() - 1);
+//            textBox.showMoveExplanation(controller.getTurnLog());
         } catch (IOException e)
         {
             e.printStackTrace();
@@ -281,12 +352,12 @@ public class ShopScenario
         this.selectedItem = selectedItem;
     }
 
-    public BufferedImage getSelectedHero()
+    public UltimateImage getSelectedHero()
     {
         return selectedHero;
     }
 
-    public void setSelectedHero(BufferedImage selectedHero)
+    public void setSelectedHero(UltimateImage selectedHero)
     {
         this.selectedHero = selectedHero;
     }
@@ -331,8 +402,26 @@ public class ShopScenario
         this.shopTextBox = shopTextBox;
     }
 
+    public boolean isNetwork()
+    {
+        return isNetwork;
+    }
+
+    public void setNetwork(boolean network)
+    {
+        isNetwork = network;
+    }
+
     public void end()
     {
-        gamePanel.getController().setPanel(gamePanel);
+        if (!isNetwork)
+        {
+            controller.setPanel(gamePanel);
+        }
+    }
+
+    public void end(UltimateImage abilityUpgradeBackground)
+    {
+        controller.setPanel(new AbilityUpgradeScenario(heroSprites, abilityUpgradeBackground, controller).getPanel());
     }
 }

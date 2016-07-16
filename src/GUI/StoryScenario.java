@@ -56,7 +56,7 @@ public class StoryScenario
             {
                 if(gamePanel.getStoryParts().get(gamePanel.getStoryParts().size() - 1).equals(storyPart))
                 {
-                    UserInterface userInterface = new UserInterface(new Scanner(System.in));
+                    UserInterface userInterface = new UserInterface();
                     gamePanel.getController().setPanel(OpeningPanel.getInstance());
                     gamePanel.getController().setUserInterface(userInterface);
                     gamePanel.getController().setGameScenario(new GameScenario(userInterface, new Scanner(System.in)));

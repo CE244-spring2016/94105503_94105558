@@ -1,5 +1,6 @@
 package GUI;
 
+import Auxiliary.Luck;
 import Exceptions.*;
 
 import javax.swing.*;
@@ -9,6 +10,7 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
+import Controller.*;
 
 /**
  * Created by ruhollah on 7/8/2016.
@@ -129,7 +131,15 @@ public class ShopTextBox
                         }
                         else  if (data.get(finalI).equals("Exit"))
                         {
-                            shopScenario.end();
+                            if (shopScenario.isNetwork())
+                            {
+                                shopScenario.end(controller.getUserInterface().getAbilityUpgradeBackgroundSources().get(Luck.getRandom(0, 2)));
+                            }
+                            else
+                            {
+                                shopScenario.end();
+                            }
+
                             welcome();
                         }
                     }
