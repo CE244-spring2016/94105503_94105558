@@ -483,6 +483,17 @@ public class BattleScenario
                                 selectedTarget = label.getUltimateImage();
                                 controller.useSingleTargetedItem(selectedHero, selectedTarget, label.getId(), getId() - 1, selectedItem);
                             }
+                            else if (textBox.getScrollSituation() == BattleTextBox.ScrollSituation.Info)
+                            {
+                                String enemyInfo = "";
+                                enemyInfo = controller.findEnemyInfo(label.getUltimateImage(), id - 1);
+                                ArrayList<String> organizedInfo = new ArrayList<String>();
+                                for (String infoPart : enemyInfo.split("\\n"))
+                                {
+                                    organizedInfo.add(infoPart);
+                                }
+                                textBox.showMoveExplanation(organizedInfo);
+                            }
                         } catch (NoMoreUpgradeException | NotStrongEnoughException | NotEnoughXPException | NotEnoughMoneyException |
                                 AbilityCooldownException | AbilityNotAcquieredException | FullInventoryException |
                                 NotEnoughRequiredAbilitiesException e1)

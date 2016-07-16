@@ -620,4 +620,29 @@ public class Controller
 
         return result;
     }
+
+    public String findEnemyInfo(UltimateImage ultimateImage, int id)
+    {
+        ArrayList<Enemy> enemies = gameScenario.getEnemyGroups().get(id).getEnemies();
+
+        for (Enemy enemy : enemies)
+        {
+            if (enemy instanceof NormalEnemy)
+            {
+                if (findEnemyImage(((NormalEnemy) enemy).getVersion() + " " + enemy.getName()).equals(ultimateImage))
+                {
+                    return enemy.getEnemyTrate();
+                }
+            }
+            else
+            {
+                if (findEnemyImage(enemy.getName()).equals(ultimateImage))
+                {
+                    return enemy.getEnemyTrate();
+                }
+            }
+        }
+
+        return null;
+    }
 }
