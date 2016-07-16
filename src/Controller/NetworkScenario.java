@@ -29,6 +29,7 @@ public class NetworkScenario
     private ArrayList<Hero> enemyHeros;
     private ObjectInputStream in;
     private ObjectOutputStream out;
+    private String IP;
     public NetworkHandler ntwhandler;
     private HostJoin hostJoin;
     public CommonMsg commonMsg;
@@ -125,6 +126,7 @@ public class NetworkScenario
     {
         this.scanner = scanner;
         this.gameScenario = gameScenario;
+//        this.gameScenario.setHeros(heros);
         this.gameScenario.setNetworkScenario(this);
         heros = this.gameScenario.getHeros();
         commonMsg = new CommonMsg(heros);
@@ -1328,5 +1330,15 @@ public class NetworkScenario
     public void setEnemyImmortalityPotionNum(int enemyImmortalityPotionNum)
     {
         this.enemyImmortalityPotionNum = enemyImmortalityPotionNum;
+    }
+
+    public String getIP()
+    {
+        return IP;
+    }
+
+    public void setIP(String IP)
+    {
+        this.IP = IP;
     }
 }

@@ -1,14 +1,19 @@
 package GUI;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.*;
-
 import Auxiliary.Luck;
-import Controller.*;
+import Controller.GameScenario;
+import Controller.NetworkScenario;
+import Controller.UltimateImage;
+import Controller.UserInterface;
 import Exceptions.*;
 import Model.*;
 import javafx.util.Pair;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Scanner;
 
 /**
  * Created by ruhollah on 6/29/2016.
@@ -24,6 +29,7 @@ public class Controller
     private UserInterface userInterface;
     private MainCustomPanel mainCustomPanel;
     private NetworkPanel networkPanel;
+    private GamePanel gamePanel;
 
     public Controller(JFrame jFrame)
     {
@@ -573,6 +579,37 @@ public class Controller
         String result = "";
         String heroName = findHeroName(heroImage);
         ArrayList<Hero> heros = gameScenario.getHeros();
+        for (Hero hero : heros)
+        {
+            if (hero.getName().equals(heroName))
+            {
+                result = hero.getHeroTrate();
+            }
+        }
+
+        return result;
+    }
+    public void startLoadGame()
+    {
+        gamePanel = new GamePanel(this, userInterface.getMap(), userInterface.getMapWidth(), userInterface.getMapHeight());
+        this.setPanel(gamePanel);
+    }
+
+    public GamePanel getGamePanel()
+    {
+        return gamePanel;
+    }
+
+    public void setGamePanel(GamePanel gamePanel)
+    {
+        this.gamePanel = gamePanel;
+    }
+
+    public String findNetworkHeroInfo(UltimateImage ultimateImage)
+    {
+        String result = "";
+        String heroName = findHeroName(ultimateImage);
+        ArrayList<Hero> heros = networkScenario.getHeros();
         for (Hero hero : heros)
         {
             if (hero.getName().equals(heroName))

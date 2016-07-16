@@ -1,5 +1,6 @@
 package GUI;
 
+import Controller.UltimateImage;
 import Exceptions.*;
 import Model.Hero;
 
@@ -9,10 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
-import Controller.*;
 
 /**
  * Created by ruhollah on 7/4/2016.
@@ -51,6 +50,7 @@ public class BattleTextBox
             {
                 if (battleScenario.isNetwork())
                 {
+                    if(battleScenario.getSemaphore().availablePermits() == 0)
                     battleScenario.getSemaphore().release();
                 }
                 else
@@ -323,6 +323,10 @@ public class BattleTextBox
                 {
                     battleScenario.gameOver();
                 }
+                else if (scrollSituation == ScrollSituation.NetworkWinner)
+                {
+                    controller.setPanel(OpeningPanel.getInstance());
+                }
                 addText("Choose a hero");
                 if (!battleScenario.isNetwork())
                 {
@@ -454,7 +458,7 @@ public class BattleTextBox
     {
         Move, Ability, Attack, Default, ChooseAbilityEnemyTarget, ChooseAbilityHeroTarget,
         Item, ShowingMessage, End, ChooseItemEnemyTarget, ChooseItemHeroTarget, GameOver,
-        OpponentNetworkTurn, YourNetworkTurn, Info
+        OpponentNetworkTurn, NetworkWinner, Info
     }
 
 }

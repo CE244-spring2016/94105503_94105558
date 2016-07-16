@@ -2,9 +2,9 @@ package Controller;
 
 import Auxiliary.Formula;
 import Model.EnemyVersion;
-
 import javafx.util.Pair;
 
+import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,9 +27,11 @@ public class UserInterface implements Serializable
     private int immortalityPotionNum;
     private int startingX;
     private int startingY;
+    private int mapWidth;
+    private int mapHeight;
     private String mapAddress;
     private UltimateImage gameOverBackground;
-
+    private ArrayList<ArrayList<JLabel>> map = new ArrayList<>();
     private ArrayList<String> heroClassNames = new ArrayList<>(); // new it in the constructor
     private HashMap<String, HashMap<String, Integer>> heroClassDatas = new HashMap<>(); // new it in the constructor
     private HashMap<String, ArrayList<String>> heroClassAbilities = new HashMap<>();
@@ -37,21 +39,17 @@ public class UserInterface implements Serializable
     private HashMap<String, String> ItemDescription = new HashMap<>();
     private ArrayList<String> heroNames = new ArrayList<>();
     private ArrayList<String> heroAttributes = new ArrayList<>();                         // must make this fully in the constructor
-
     private HashMap<String, String> herosAndTheirClasses = new HashMap<>();
     private HashMap<String, ArrayList<String>> herosAndTheirAbilities = new HashMap<>();
     private HashMap<UltimateImage, String> herosAndTheirImages = new HashMap<>();
     private HashMap<String, HashMap<String, ArrayList<HashMap<String, Integer>>>> allHeroRequiredAbilities = new HashMap<>();
-
     private ArrayList<String> normalEnemyNames = new ArrayList<>();
     private HashMap<String, ArrayList<EnemyVersion>> normalEnemyDatas = new HashMap<>();
     private HashMap<UltimateImage, String> allNormalEnemyImages = new HashMap<>();
     private HashMap<String, String> abilityDescription = new HashMap<>();
     private ArrayList<String> enemyAttributes = new ArrayList<>();                        // must make this fully in the constructor
     private ArrayList<String> possibleNormalEnemyTargets = new ArrayList<>(); // A new variable
-
     private HashMap<String, ArrayList<String>> enemyVersionNames = new HashMap<>();
-
     private ArrayList<String> bossEnemyNames = new ArrayList<>();
     private HashMap<String, HashMap<String, Integer>> bossEnemyDatas = new HashMap<>();
     private ArrayList<String> bossEnemyAttributes = new ArrayList<>();
@@ -62,7 +60,6 @@ public class UserInterface implements Serializable
     private ArrayList<String> possibleBossEnemyTargets = new ArrayList<>();
     private HashMap<String, String> bossEnemyTargets = new HashMap<>();
     private HashMap<UltimateImage, String> bossEnemyImages = new HashMap<>();
-
     private ArrayList<String> itemNames = new ArrayList<>();
     private HashMap<String, HashMap<String, Integer>> itemDatas = new HashMap<>();
     private HashMap<String, String> itemTargets = new HashMap<>();
@@ -71,7 +68,6 @@ public class UserInterface implements Serializable
     private ArrayList<String> inflationedItems = new ArrayList<>();
     private ArrayList<String> instantEffectItems = new ArrayList<>();
     private HashMap<String, Integer> nonInstantEffectItemsUseLimit = new HashMap<>();
-
     private ArrayList<String> abilityNames = new ArrayList<>();
     private HashMap<String, HashMap<String, ArrayList<Formula>>> allAbiliyFormulas = new HashMap<>(); // Even non targeted enemy share and cooldown is handled here
     private HashMap<String, String> abilityTargets = new HashMap<>();
@@ -84,20 +80,16 @@ public class UserInterface implements Serializable
     private HashMap<String, ArrayList<Integer>> secondaryTargetShares = new HashMap<>();
     private HashMap<String, ArrayList<Integer>> allAbilityCooldowns = new HashMap<>();
     private ArrayList<String> instantEffectConditionAbilities = new ArrayList<>();
-
     private ArrayList<ArrayList<String>> allShopItemNames = new ArrayList<>();
     private ArrayList<HashMap<String, Integer>> allShopItemMoneyCosts = new ArrayList<>();
     private ArrayList<Integer> allShopInflationValues = new ArrayList<>();
-
     private ArrayList<String> gameStory = new ArrayList<>();
     private ArrayList<ArrayList<String>> storyEnemyGroups = new ArrayList<>();
     private ArrayList<Integer> enemyGroupXPs = new ArrayList<>();
     private ArrayList<Integer> enemyGroupMoneys = new ArrayList<>();
-
     private HashMap<String, String> allAbilitySuccessMessages = new HashMap<>();
     private HashMap<String, String> allEnemySuccessMessages = new HashMap<>();
     private HashMap<String, String> allItemSuccessMessages = new HashMap<>();
-
     private ArrayList<String> tileSources = new ArrayList<>();
     private ArrayList<Integer> battleGidNums = new ArrayList<>();
     private ArrayList<UltimateImage> battleBackgroundSources = new ArrayList<>();
@@ -114,15 +106,23 @@ public class UserInterface implements Serializable
     private HashMap<Integer, Integer> doorsAndTheirDirections = new HashMap<>();
     private HashMap<Integer, Integer> doorsAndTheirKeys = new HashMap<>();
     private ArrayList<Integer> keyGidNums = new ArrayList<>();
-
     private ArrayList<String> attributesWithMax = new ArrayList<>();
     private ArrayList<String> attributeWithTemp = new ArrayList<>();
-
     public UserInterface()
     {
         // create stuff
 
 //        checkCustom(customed);
+    }
+
+    public ArrayList<ArrayList<JLabel>> getMap()
+    {
+        return map;
+    }
+
+    public void setMap(ArrayList<ArrayList<JLabel>> map)
+    {
+        this.map = map;
     }
 
     public void checkCustom(boolean customed)
@@ -1351,7 +1351,7 @@ public class UserInterface implements Serializable
             ArrayList<EnemyVersion> enemyVersions = normalEnemyDatas.get(enemyName);
             for (EnemyVersion enemyVersion : enemyVersions)
             {
-                UltimateImage ultimateImage= null;
+                UltimateImage ultimateImage = null;
                 if (enemyName.toLowerCase().equals("thug"))
                 {
                     switch (enemyVersion.getName())
@@ -3476,5 +3476,25 @@ public class UserInterface implements Serializable
     public void setAbilityDescription(HashMap<String, String> abilityDescription)
     {
         this.abilityDescription = abilityDescription;
+    }
+
+    public int getMapWidth()
+    {
+        return mapWidth;
+    }
+
+    public void setMapWidth(int mapWidth)
+    {
+        this.mapWidth = mapWidth;
+    }
+
+    public int getMapHeight()
+    {
+        return mapHeight;
+    }
+
+    public void setMapHeight(int mapHeight)
+    {
+        this.mapHeight = mapHeight;
     }
 }

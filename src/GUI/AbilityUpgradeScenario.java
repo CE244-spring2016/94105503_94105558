@@ -1,5 +1,8 @@
 package GUI;
 
+import Auxiliary.Luck;
+import Controller.UltimateImage;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -11,9 +14,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import Auxiliary.Luck;
-import Controller.*;
 
 /**
  * Created by ruhollah on 7/9/2016.
@@ -145,22 +145,27 @@ public class AbilityUpgradeScenario
                             int chance = controller.getNetworkScenario().chooseStarter();
                             controller.getNetworkScenario().getCommonMsg().setChance(chance);
                             controller.getNetworkScenario().getNtwhandler().setCommonMsg(controller.getNetworkScenario().getCommonMsg());
-                            controller.setPanel(new BattleScenario(heroSprites, chance,
-                                    controller.getUserInterface().getBattleBackgroundSources().get(Luck.getRandom(0, 5)).makeImage(),
-                                    controller).getPanel());
-                            dialog.dispose();
                             controller.getNetworkScenario().getNtwhandler().send();
-                            controller.getNetworkScenario().getNtwhandler().receive();
+
+                           BattleScenario battleScenario = new BattleScenario(heroSprites, chance,
+                                    controller.getUserInterface().getBattleBackgroundSources().get(Luck.getRandom(0, 5)).makeImage(),
+                                    controller);
+                            JPanel panel = battleScenario.getPanel();
+                            controller.setPanel(panel);
+                            dialog.dispose();
+                            battleScenario.startFighting();
                         }
                         else if (controller.getNetworkScenario().getChoice() == 1)
                         {
                             controller.getNetworkScenario().getNtwhandler().receive();
-                            controller.setPanel(new BattleScenario(heroSprites,
-                                    controller.getNetworkScenario().getNtwhandler().getCommonMsg().getChance(),
+                            controller.getNetworkScenario().setCommonMsg(controller.getNetworkScenario().getNtwhandler().getCommonMsg());
+                            BattleScenario battleScenario = new BattleScenario(heroSprites, controller.getNetworkScenario().getNtwhandler().getCommonMsg().getChance(),
                                     controller.getUserInterface().getBattleBackgroundSources().get(Luck.getRandom(0, 5)).makeImage(),
-                                    controller).getPanel());
+                                    controller);
+                            JPanel panel = battleScenario.getPanel();
+                            controller.setPanel(panel);
                             dialog.dispose();
-                            controller.getNetworkScenario().getNtwhandler().send();
+                            battleScenario.startFighting();
                         }
                     }
                 });
@@ -462,6 +467,68 @@ public class AbilityUpgradeScenario
         if (!isNetwork)
         {
             controller.setPanel(gamePanel);
+        }
+        else
+        {
+            JOptionPane optionPane = new JOptionPane("Ready for battle?",
+                    JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION,
+                    null);
+            JDialog dialog = optionPane.createDialog("Children Of Time");
+            JButton readyButton = new JButton("Yes");
+            readyButton.addActionListener(new ActionListener()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    if (controller.getNetworkScenario().getChoice() == 0)
+                    {
+                        int chance = controller.getNetworkScenario().chooseStarter();
+                        controller.getNetworkScenario().getCommonMsg().setChance(chance);
+                        controller.getNetworkScenario().getNtwhandler().setCommonMsg(controller.getNetworkScenario().getCommonMsg());
+                        controller.getNetworkScenario().getNtwhandler().send();
+
+                        BattleScenario battleScenario = new BattleScenario(heroSprites, chance,
+                                controller.getUserInterface().getBattleBackgroundSources().get(Luck.getRandom(0, 5)).makeImage(),
+                                controller);
+                        JPanel panel = battleScenario.getPanel();
+                        controller.setPanel(panel);
+                        dialog.dispose();
+                        battleScenario.startFighting();
+                    }
+                    else if (controller.getNetworkScenario().getChoice() == 1)
+                    {
+                        controller.getNetworkScenario().getNtwhandler().receive();
+                        controller.getNetworkScenario().setCommonMsg(controller.getNetworkScenario().getNtwhandler().getCommonMsg());
+                        BattleScenario battleScenario = new BattleScenario(heroSprites, controller.getNetworkScenario().getNtwhandler().getCommonMsg().getChance(),
+                                controller.getUserInterface().getBattleBackgroundSources().get(Luck.getRandom(0, 5)).makeImage(),
+                                controller);
+                        JPanel panel = battleScenario.getPanel();
+                        controller.setPanel(panel);
+                        dialog.dispose();
+                        battleScenario.startFighting();
+                    }
+                }
+            });
+
+            JButton noButton = new JButton("No");
+            noButton.addActionListener(new ActionListener()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    dialog.dispose();
+                }
+            });
+
+            Object[] options = { readyButton };
+            optionPane.setOptions(options);
+            optionPane.setInitialValue(options[0]);
+            dialog.setVisible(true);
+//                JOptionPane.showOptionDialog(controller.getFrame().getContentPane(), "Click ready when you are ready", null,
+//                        JOptionPane.CLOSED_OPTION, JOptionPane.PLAIN_MESSAGE,
+//                        null, options, options[0]);
+//                Controller controller = controller;
+//                controller.setPanel(gamePanel);
         }
     }
 }

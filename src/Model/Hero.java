@@ -69,11 +69,13 @@ public class Hero extends Warrior implements Serializable
 
     public String getHeroTrate()
     {
+        setHeroTrate();
         return heroTrate;
     }
 
     public void setHeroTrate()
     {
+        heroTrate = "";
         Set<String> effect = this.data.keySet();
         String[] keys = new String[effect.size()];
         effect.toArray(keys);

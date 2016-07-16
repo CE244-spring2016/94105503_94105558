@@ -1,15 +1,22 @@
 package GUI;
 
+import Controller.UltimateImage;
+import Controller.UserInterface;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import Controller.*;
 
 /**
  * Created by ruhollah on 6/27/2016.
@@ -255,8 +262,8 @@ public class GamePanel extends JPanel/* implements ActionListener*/
                     if (battleGidNums.contains(j))
                     {
                         int num = battleGidNums.indexOf(j);
-                        battleSetter(gid, num);
                         battleScenarios[num] = new BattleScenario(num + 1, heroSprites, this, battleBackgrounds.get(num).makeImage());
+                        battleSetter(gid, num);
                     } else if (shopGidNums.contains(j))
                     {
                         int num = shopGidNums.indexOf(j);

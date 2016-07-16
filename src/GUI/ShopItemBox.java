@@ -143,7 +143,10 @@ public class ShopItemBox
                 @Override
                 public void mouseExited(MouseEvent e)
                 {
-                    shopScenario.getShopTextBox().addText("Choose an item");
+                    if (shopScenario.getShopTextBox().getScrollSituation() != ShopTextBox.ScrollSituation.ChoosingBuyerHero)
+                    {
+                        shopScenario.getShopTextBox().addText("Choose an item");
+                    }
                 }
             });
             myScrollPanel.add(label);

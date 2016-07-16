@@ -543,6 +543,9 @@ public class GameScenario implements Serializable
 //                        ntwhandler.setMessage(message);
 //                        ntwhandler.sendMessage();
                         networkScenario.commonMsg.setWinner(networkScenario.choice);
+                        networkScenario.ntwhandler.setCommonMsg(networkScenario.commonMsg);
+                        networkScenario.ntwhandler.send();
+
                         return;
                     } else
                     {
@@ -558,7 +561,7 @@ public class GameScenario implements Serializable
                 }
             }
 
-            order = normalizer(this.scanner.nextLine());
+//            order = normalizer(this.scanner.nextLine());
 
         networkScenario.commonMsg.setEnemyHeros(heros);
         networkScenario.commonMsg.setHeros(enemies);
