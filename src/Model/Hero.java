@@ -67,16 +67,6 @@ public class Hero extends Warrior implements Serializable
         Hero.immortalityPotionNum = immortalityPotionNum;
     }
 
-    public static void addTeamItem(Item item)
-    {
-        teamItems.add(item);
-    }
-
-    public static ArrayList<Item> getTeamItems()
-    {
-        return teamItems;
-    }
-
     public String getHeroTrate()
     {
         return heroTrate;
@@ -182,35 +172,42 @@ public class Hero extends Warrior implements Serializable
         return inventory;
     }
 
+
     public void setInventory(Inventory inventory)
     {
         this.inventory = inventory;
     }
+
 
     public ArrayList<Ability> getAbilities()
     {
         return abilities;
     }
 
+
     public void setAbilities(ArrayList<Ability> abilities)
     {
         this.abilities = abilities;
     }
+
 
     public HashMap<String, Integer> getData()
     {
         return data;
     }
 
+
     public void setData(HashMap<String, Integer> data)
     {
         this.data = data;
     }
 
+
     public String getHeroClassName()
     {
         return heroClassName;
     }
+
 
     public void setHeroClassName(String heroClassName)
     {
@@ -395,6 +392,7 @@ public class Hero extends Warrior implements Serializable
         return new ArrayList<>();
     }
 
+
     public Ability findAbility(String abilityName)
     {
         for (Ability ability : abilities)
@@ -408,10 +406,12 @@ public class Hero extends Warrior implements Serializable
         return null;
     }
 
+
     public Item findItem(String itemName)
     {
         return inventory.getItem(itemName);
     }
+
 
     public void sell(Item item)
     {
@@ -419,6 +419,7 @@ public class Hero extends Warrior implements Serializable
         inventory.setCurrentSize(inventory.getCurrentSize() - item.getItemSize());
         // Is it really done?
     }
+
 
     public void buy(Item item)
     {
@@ -565,7 +566,14 @@ public class Hero extends Warrior implements Serializable
             result.add("No more upgrades available");
         } else
         {
+            if (abilityRequirements.get(abilityName) == null || abilityRequirements.get(abilityName).get(ability.getCurrentUpgradeNum()) == null)
+            {
+                result.add("No requirements for next upgrade");
+                return result;
+            }
+
             HashMap<String, Integer> requirements = abilityRequirements.get(abilityName).get(ability.getCurrentUpgradeNum());
+
             if (requirements.size() == 0)
             {
                 result.add("No requirements for next upgrade");
@@ -580,6 +588,16 @@ public class Hero extends Warrior implements Serializable
         }
 
         return result;
+    }
+
+    public static void addTeamItem(Item item)
+    {
+        teamItems.add(item);
+    }
+
+    public static ArrayList<Item> getTeamItems()
+    {
+        return teamItems;
     }
 
     public HashMap<String, ArrayList<HashMap<String, Integer>>> getAbilityRequirements()

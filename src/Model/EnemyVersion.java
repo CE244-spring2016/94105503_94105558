@@ -1,9 +1,10 @@
 package Model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class EnemyVersion
+public class EnemyVersion implements Serializable
 {
     private String name;
     private String mainEnemyName;

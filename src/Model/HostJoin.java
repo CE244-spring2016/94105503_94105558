@@ -32,18 +32,18 @@ public class HostJoin
         return out;
     }
 
-    public void setClient(int i)
+    public void setClient(int i, String IP)
     {
         Socket socket = null;
         try
         {
-            socket = new Socket("127.0.0.1", i);
+            socket = new Socket(IP, i);
         } catch (UnknownHostException e)
         {
-//            System.out.println("IP is not correct");
+            System.out.println("IP is not correct");
         } catch (ConnectException e)
         {
-            setClient(i);
+            setClient(i,IP);
         } catch (IOException e)
         {
             e.printStackTrace();
@@ -56,13 +56,13 @@ public class HostJoin
                 in = new ObjectInputStream(socket.getInputStream());
             } else
             {
-//                System.out.println("socket is null");
+                System.out.println("socket is null");
             }
         } catch (IOException e)
         {
             e.printStackTrace();
         }
-//        System.out.println("success");
+        System.out.println("success");
         try
         {
             out.writeObject(commonMsg);
@@ -82,19 +82,19 @@ public class HostJoin
             servsock = new ServerSocket(i);
         } catch (IOException e)
         {
-//            System.out.println("couldn't make a host");
+            System.out.println("couldn't make a host");
         }
 
-//        System.out.println("Waiting for your opponet to connect");
+        System.out.println("Waiting for your opponet to connect");
 
         try
         {
             sock = servsock.accept();
         } catch (IOException e)
         {
-//            System.out.println("couldn't connect");
+            System.out.println("couldn't connect");
         }
-//        System.out.println("connected");
+        System.out.println("connected");
         try
         {
             if (sock != null)
@@ -103,7 +103,7 @@ public class HostJoin
                 in = new ObjectInputStream(sock.getInputStream());
             } else
             {
-//                System.out.println("socket is null");
+                System.out.println("socket is null");
             }
         } catch (IOException e)
         {
