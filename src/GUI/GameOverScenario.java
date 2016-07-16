@@ -43,7 +43,7 @@ public class GameOverScenario
             @Override
             public void mouseClicked(MouseEvent e)
             {
-                UserInterface userInterface = new UserInterface(new Scanner(System.in));
+                UserInterface userInterface = new UserInterface();
                 gamePanel.getController().setPanel(OpeningPanel.getInstance());
                 gamePanel.getController().setUserInterface(userInterface);
                 gamePanel.getController().setGameScenario(new GameScenario(userInterface, new Scanner(System.in)));

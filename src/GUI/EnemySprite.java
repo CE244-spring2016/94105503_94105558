@@ -1,28 +1,29 @@
 package GUI;
 
 import java.awt.image.BufferedImage;
+import Controller.*;
 
 /**
  * Created by ruhollah on 7/7/2016.
  */
 public class EnemySprite
 {
-    private BufferedImage enemyImage;
+    private UltimateImage enemyImage;
     private Integer id;
     private BattleScenario.EnemyLabel enemyLabel;
 
-    public EnemySprite(BufferedImage bufferedImage, Integer id)
+    public EnemySprite(UltimateImage ultimateImage, Integer id)
     {
-        this.enemyImage = bufferedImage;
+        this.enemyImage = ultimateImage;
         this.id = id;
     }
 
-    public BufferedImage getEnemyImage()
+    public UltimateImage getEnemyImage()
     {
         return enemyImage;
     }
 
-    public void setEnemyImage(BufferedImage enemyImage)
+    public void setEnemyImage(UltimateImage enemyImage)
     {
         this.enemyImage = enemyImage;
     }

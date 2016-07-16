@@ -1,6 +1,8 @@
 package GUI;
 
 import Exceptions.*;
+import Model.Hero;
+import Model.NetworkHandler;
 import javafx.util.Pair;
 
 import javax.imageio.ImageIO;
@@ -14,6 +16,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.*;
+
+import Controller.*;
 
 /**
  * Created by ruhollah on 6/30/2016.
@@ -23,6 +28,7 @@ public class BattleScenario
     private JPanel panel = new JPanel();
     private BattleTextBox textBox;
     private GamePanel gamePanel;
+    private Controller controller;
     private BufferedImage backGround;
     private ArrayList<HeroSprite> heroSprites = new ArrayList<>();
     private ArrayList<EnemySprite> enemySprites = new ArrayList<>();
@@ -33,8 +39,16 @@ public class BattleScenario
     private int heroWidth;
     private int heroHeight;
     private int id;
-    private BufferedImage selectedHero;
-    private BufferedImage selectedTarget;
+
+    private int badChance = 0;
+    private int chance;
+    private int lolPort = 2001; // LOL THIS IS NOT A JOKE
+    private int turn;
+    private Semaphore semaphore = new Semaphore(0);
+    private boolean isNetwork = false;
+
+    private UltimateImage selectedHero;
+    private UltimateImage selectedTarget;
     private String selectedItem;
     private String selectedAbility;
 
@@ -44,6 +58,7 @@ public class BattleScenario
         this.id = id;
         this.heroSprites = heroSprites;
         this.backGround = backGround;
+        this.controller = gamePanel.getController();
         panel.setLayout(null);
         panel.setSize(width, height);
         panel.setPreferredSize(new Dimension(width, height));
@@ -56,7 +71,7 @@ public class BattleScenario
             @Override
             public void actionPerformed(ActionEvent e)
             {
-//                Controller controller = gamePanel.getController();
+//                Controller controller = controller;
 //                controller.setPanel(gamePanel);
                 end();
             }
@@ -90,10 +105,270 @@ public class BattleScenario
         showBackground();
     }
 
+    public BattleScenario(ArrayList<HeroSprite> heroSprites, int chance, BufferedImage backGround, Controller controller)
+    {
+        this.heroSprites = heroSprites;
+        this.backGround = backGround;
+        this.turn = controller.getNetworkScenario().getChoice();
+        this.controller = controller;
+        this.chance = chance;
+        this.isNetwork = true;
+        panel.setLayout(null);
+        panel.setSize(width, height);
+        panel.setPreferredSize(new Dimension(width, height));
+
+        JButton closeButton = new JButton("close");
+        closeButton.setBounds(850, 500, 100, 100);
+        closeButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+//                Controller controller = controller;
+//                controller.setPanel(gamePanel);
+                end();
+            }
+        });
+        panel.add(closeButton);
+
+        enemyHeight = height / 7;
+        enemyWidth = width / 12;
+        
+        heroHeight = height / 7;
+        heroWidth = width / 12;
+
+        showHeros();
+        showOpponentHeroes();
+        showTextBox();
+        showBackground();
+        showStarter();
+        startFighting();
+    }
+
+    private void startFighting()
+    {
+        new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    Thread.sleep(1000);
+                    while (true)
+                    {
+//                            ExecutorService service = Executors.newSingleThreadExecutor();
+                        controller.getNetworkScenario().heroEPRefills();
+                        if (turn == badChance)
+                        {
+                            textBox.setScrollSituation(BattleTextBox.ScrollSituation.OpponentNetworkTurn);
+                            waitforOther();
+                            controller.getNetworkScenario().heroEPRefills();
+                            if (turn == 1)
+                                turn--;
+                            else if (turn == 0)
+                                turn++;
+                        } else if (turn == chance)
+                        {
+                            if (lolPort == 2001 && controller.getNetworkScenario().getChoice() == chance)
+                            {
+                                controller.getNetworkScenario().costEP(0);
+                            }
+                                fightOther();
+//                                service.shutdown();
+                            controller.getNetworkScenario().heroEPRefills();
+
+                            if (turn == 1)
+                                turn--;
+                            else if (turn == 0)
+                                turn++;
+                        }
+
+                        if (controller.getNetworkScenario().getChoice() == 0)
+                        {
+                            controller.getNetworkScenario().getHostJoin().setServer(lolPort);
+                            lolPort++;
+                            try
+                            {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        if (controller.getNetworkScenario().getChoice() == 1)
+                        {// TODO
+//                            controller.getNetworkScenario().getHostJoin().setClient(lolPort, );
+//                hostJoin.setClient(i);
+                            lolPort++;
+                        }
+                        controller.getNetworkScenario().setIn(controller.getNetworkScenario().getHostJoin().getIn());
+                        controller.getNetworkScenario().setOut(controller.getNetworkScenario().getHostJoin().getOut());
+
+                    }
+                } catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    private void waitforOther()
+    {
+        ArrayList<Hero> heros = controller.getNetworkScenario().getHeros();
+        controller.getNetworkScenario().getCommonMsg().setEnemyHeros(heros);
+        controller.getNetworkScenario().getNtwhandler().setCommonMsg(controller.getNetworkScenario().getCommonMsg());
+        controller.getNetworkScenario().getNtwhandler().send();
+        controller.getNetworkScenario().getNtwhandler().receive();
+        controller.getNetworkScenario().setCommonMsg(controller.getNetworkScenario().getNtwhandler().getCommonMsg());
+        controller.getNetworkScenario().setHeros(controller.getNetworkScenario().getCommonMsg().getHeros());
+        controller.getNetworkScenario().setEnemyHeros(controller.getNetworkScenario().getCommonMsg().getEnemyHeros());
+        if (controller.getNetworkScenario().getCommonMsg().getWinner() != -1)
+        {
+//            System.out.println("You Lose");
+//            System.exit(0);
+            ArrayList<String> loseMessage = new ArrayList<>();
+            loseMessage.add("You Lose!");
+            textBox.setScrollSituation(BattleTextBox.ScrollSituation.End);
+            textBox.showMoveExplanation(loseMessage);
+        }
+    }
+
+    private void fightOther()
+    {
+        NetworkScenario networkScenario = controller.getNetworkScenario();
+        NetworkHandler networkHandler = networkScenario.getNtwhandler();
+
+        networkHandler.receive();
+        networkScenario.setCommonMsg(networkHandler.getCommonMsg());
+        networkScenario.setEnemyHeros(networkScenario.getCommonMsg().getEnemyHeros());
+
+        //  startFightings();
+        try
+        {
+            semaphore.acquire();
+        } catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+
+        if (networkScenario.getCommonMsg().getWinner() == networkScenario.getChoice())
+        {
+            networkScenario.getCommonMsg().setEnemyHeros(networkScenario.getHeros());
+            networkScenario.getCommonMsg().setHeros(networkScenario.getHeros());
+            networkHandler.setCommonMsg(networkScenario.getCommonMsg());
+            networkHandler.send();
+
+            System.out.println("You Win");
+            System.exit(0);
+        }
+        networkScenario.getCommonMsg().setEnemyHeros(networkScenario.getHeros());
+        networkScenario.getCommonMsg().setHeros(networkScenario.getEnemyHeros());
+        //commonMsg.setMessages(messages);
+        networkHandler.setCommonMsg(networkScenario.getCommonMsg());
+        networkHandler.send();
+    }
+
+    private void showStarter()
+    {
+        if (chance == controller.getNetworkScenario().getChoice())
+        {
+            ArrayList<String> startingMessage = new ArrayList<>();
+            startingMessage.add("You are the starter");
+            textBox.showMoveExplanation(startingMessage);
+        }else
+        {
+            ArrayList<String> startingMessage = new ArrayList<>();
+            startingMessage.add("He is the starter");
+            textBox.showMoveExplanation(startingMessage);
+        }
+    }
+
+    private void showOpponentHeroes()
+    {
+        for (int i = 0; i < heroSprites.size(); i++)
+        {
+            HeroLabel label = new HeroLabel(heroSprites.get(i).getAllImages());
+            label.setBounds(width * 1 / 10, (i % 4) * (heroHeight + 20), heroWidth, heroHeight);
+            label.addMouseListener(new MouseListener()
+            {
+                @Override
+                public void mouseClicked(MouseEvent e)
+                {
+                    try
+                    {
+                        if (textBox.getScrollSituation() == BattleTextBox.ScrollSituation.Attack)
+                        {
+                            selectedTarget = label.getUltimateImage();
+
+                            controller.networkRegularAttack(selectedHero, selectedTarget);
+
+                            textBox.getScrollPane().setVisible(false);
+                            ArrayList<String> thisTurnLog = controller.getTurnLog();
+                            textBox.showMoveExplanation(thisTurnLog);
+                        } else if (textBox.getScrollSituation() == BattleTextBox.ScrollSituation.ChooseAbilityEnemyTarget)
+                        {
+                            selectedTarget = label.getUltimateImage();
+//                            controller.useSingleTargetedAbility(selectedHero, selectedTarget, label.getId(), getId() - 1, selectedAbility);
+
+                            textBox.getScrollPane().setVisible(false);
+                            ArrayList<String> thisTurnLog = controller.getTurnLog();
+                            textBox.showMoveExplanation(thisTurnLog);
+                        }
+                        else if (textBox.getScrollSituation() == BattleTextBox.ScrollSituation.ChooseItemEnemyTarget)
+                        {
+                            selectedTarget = label.getUltimateImage();
+//                            controller.useSingleTargetedItem(selectedHero, selectedTarget, label.getId(), getId() - 1, selectedItem);
+                        }
+                    } catch (NoMoreUpgradeException | NotStrongEnoughException | NotEnoughXPException | NotEnoughMoneyException |
+                            AbilityCooldownException | AbilityNotAcquieredException | FullInventoryException |
+                            NotEnoughRequiredAbilitiesException e1)
+                    {
+                        ArrayList<String> exceptionMessage = new ArrayList<>();
+                        exceptionMessage.add(e1.getMessage());
+                        textBox.showMoveExplanation(exceptionMessage);
+//                        textBox.setScrollSituation(BattleTextBox.ScrollSituation.Default);
+                    }
+                }
+
+                @Override
+                public void mousePressed(MouseEvent e)
+                {
+
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e)
+                {
+
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e)
+                {
+
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e)
+                {
+
+                }
+            });
+            ImageIcon icon = (ImageIcon) heroSprites.get(i).getFirstRightImage().getIcon();
+            BufferedImage bufferedHero = (BufferedImage) icon.getImage();
+            Image resizedHero = bufferedHero.getScaledInstance(label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH);
+            label.setIcon(new ImageIcon(resizedHero));
+            panel.add(label);
+        }
+    }
+
     private void createEnemySprites()
     {
-        ArrayList<Pair<BufferedImage, Integer>> enemyImageAndId = gamePanel.getController().getEnemyGroupImage(id - 1);
-        for (Pair<BufferedImage, Integer> enemy : enemyImageAndId)
+        ArrayList<Pair<UltimateImage, Integer>> enemyImageAndId = controller.getEnemyGroupImage(id - 1);
+        for (Pair<UltimateImage, Integer> enemy : enemyImageAndId)
         {
             EnemySprite enemySprite = new EnemySprite(enemy.getKey(), enemy.getValue());
             enemySprites.add(enemySprite);
@@ -107,7 +382,7 @@ public class BattleScenario
         {
             textBoxImage = ImageIO.read(new File("Main Pics/BattleTextBox/BattleTextBox.png"));
             Image resizedTextBox = textBoxImage.getScaledInstance(width, (height - enemyHeight * 4 - 80), Image.SCALE_SMOOTH);
-            textBox = new BattleTextBox(0, enemyHeight * 4 + 80, width, (height - enemyHeight * 4 - 80), gamePanel.getController(), this);
+            textBox = new BattleTextBox(0, enemyHeight * 4 + 80, width, (height - enemyHeight * 4 - 80), controller, this);
             textBox.setBoxImage(resizedTextBox);
 //            textBox.addText("Choose a hero");
 //            textBox.setScrollSituation(BattleTextBox.ScrollSituation.Default);
@@ -117,8 +392,8 @@ public class BattleScenario
             panel.add(textBox.getScrollPane());
             panel.add(textBox.getTextLabel());
             panel.add(textBox.getBox());
-//            gamePanel.getController().enemyIntroduction(getId() - 1);
-//            textBox.showMoveExplanation(gamePanel.getController().getTurnLog());
+//            controller.enemyIntroduction(getId() - 1);
+//            textBox.showMoveExplanation(controller.getTurnLog());
         } catch (IOException e)
         {
             e.printStackTrace();
@@ -142,9 +417,9 @@ public class BattleScenario
             {
                 EnemyLabel label = new EnemyLabel(enemySprites.get(i).getId());
                 label.setBounds(enemyWidth * (i / 4), (i % 4) * (enemyHeight + 20), enemyWidth, enemyHeight);
-                Image resizedEnemy = enemySprites.get(i).getEnemyImage().getScaledInstance(label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH);
+                Image resizedEnemy = enemySprites.get(i).getEnemyImage().makeImage().getScaledInstance(label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH);
                 label.setIcon(new ImageIcon(resizedEnemy));
-                label.setBufferedImage(enemySprites.get(i).getEnemyImage());
+                label.setUltimateImage(enemySprites.get(i).getEnemyImage());
                 label.addMouseListener(new MouseListener()
                 {
                     @Override
@@ -154,26 +429,26 @@ public class BattleScenario
                         {
                             if (textBox.getScrollSituation() == BattleTextBox.ScrollSituation.Attack)
                             {
-                                selectedTarget = label.getBufferedImage();
+                                selectedTarget = label.getUltimateImage();
 
-                                gamePanel.getController().regularAttack(selectedHero, selectedTarget, label.getId(), getId() - 1);
+                                controller.regularAttack(selectedHero, selectedTarget, label.getId(), getId() - 1);
 
                                 textBox.getScrollPane().setVisible(false);
-                                ArrayList<String> thisTurnLog = gamePanel.getController().getTurnLog();
+                                ArrayList<String> thisTurnLog = controller.getTurnLog();
                                 textBox.showMoveExplanation(thisTurnLog);
                             } else if (textBox.getScrollSituation() == BattleTextBox.ScrollSituation.ChooseAbilityEnemyTarget)
                             {
-                                selectedTarget = label.getBufferedImage();
-                                gamePanel.getController().useSingleTargetedAbility(selectedHero, selectedTarget, label.getId(), getId() - 1, selectedAbility);
+                                selectedTarget = label.getUltimateImage();
+                                controller.useSingleTargetedAbility(selectedHero, selectedTarget, label.getId(), getId() - 1, selectedAbility);
 
                                 textBox.getScrollPane().setVisible(false);
-                                ArrayList<String> thisTurnLog = gamePanel.getController().getTurnLog();
+                                ArrayList<String> thisTurnLog = controller.getTurnLog();
                                 textBox.showMoveExplanation(thisTurnLog);
                             }
                             else if (textBox.getScrollSituation() == BattleTextBox.ScrollSituation.ChooseItemEnemyTarget)
                             {
-                                selectedTarget = label.getBufferedImage();
-                                gamePanel.getController().useSingleTargetedItem(selectedHero, selectedTarget, label.getId(), getId() - 1, selectedItem);
+                                selectedTarget = label.getUltimateImage();
+                                controller.useSingleTargetedItem(selectedHero, selectedTarget, label.getId(), getId() - 1, selectedItem);
                             }
                         } catch (NoMoreUpgradeException | NotStrongEnoughException | NotEnoughXPException | NotEnoughMoneyException |
                                 AbilityCooldownException | AbilityNotAcquieredException | FullInventoryException |
@@ -218,9 +493,9 @@ public class BattleScenario
         {
             EnemyLabel label = new EnemyLabel(enemySprites.get(0).getId());
             label.setBounds(enemyWidth, enemyHeight + 20, 2 * enemyWidth, 2 * enemyHeight);
-            Image resizedEnemy = enemySprites.get(0).getEnemyImage().getScaledInstance(label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH);
+            Image resizedEnemy = enemySprites.get(0).getEnemyImage().makeImage().getScaledInstance(label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH);
             label.setIcon(new ImageIcon(resizedEnemy));
-            label.setBufferedImage(enemySprites.get(0).getEnemyImage());
+            label.setUltimateImage(enemySprites.get(0).getEnemyImage());
             label.addMouseListener(new MouseListener()
             {
                 @Override
@@ -230,26 +505,26 @@ public class BattleScenario
                     {
                         if (textBox.getScrollSituation() == BattleTextBox.ScrollSituation.Attack)
                         {
-                            selectedTarget = label.getBufferedImage();
+                            selectedTarget = label.getUltimateImage();
 
-                            gamePanel.getController().regularAttack(selectedHero, selectedTarget, label.getId(), getId() - 1);
+                            controller.regularAttack(selectedHero, selectedTarget, label.getId(), getId() - 1);
 
                             textBox.getScrollPane().setVisible(false);
-                            ArrayList<String> thisTurnLog = gamePanel.getController().getTurnLog();
+                            ArrayList<String> thisTurnLog = controller.getTurnLog();
                             textBox.showMoveExplanation(thisTurnLog);
                         } else if (textBox.getScrollSituation() == BattleTextBox.ScrollSituation.ChooseAbilityEnemyTarget)
                         {
-                            selectedTarget = label.getBufferedImage();
-                            gamePanel.getController().useSingleTargetedAbility(selectedHero, selectedTarget, label.getId(), getId() - 1, selectedAbility);
+                            selectedTarget = label.getUltimateImage();
+                            controller.useSingleTargetedAbility(selectedHero, selectedTarget, label.getId(), getId() - 1, selectedAbility);
 
                             textBox.getScrollPane().setVisible(false);
-                            ArrayList<String> thisTurnLog = gamePanel.getController().getTurnLog();
+                            ArrayList<String> thisTurnLog = controller.getTurnLog();
                             textBox.showMoveExplanation(thisTurnLog);
                         }
                         else if (textBox.getScrollSituation() == BattleTextBox.ScrollSituation.ChooseItemEnemyTarget)
                         {
-                            selectedTarget = label.getBufferedImage();
-                            gamePanel.getController().useSingleTargetedItem(selectedHero, selectedTarget, label.getId(), getId() - 1, selectedItem);
+                            selectedTarget = label.getUltimateImage();
+                            controller.useSingleTargetedItem(selectedHero, selectedTarget, label.getId(), getId() - 1, selectedItem);
                         }
                     } catch (NoMoreUpgradeException | NotStrongEnoughException | NotEnoughXPException | NotEnoughMoneyException |
                             AbilityCooldownException | AbilityNotAcquieredException | FullInventoryException |
@@ -309,31 +584,42 @@ public class BattleScenario
                                 textBox.getScrollSituation() == BattleTextBox.ScrollSituation.Move ||
                                 textBox.getScrollSituation() == BattleTextBox.ScrollSituation.Item)
                         {
-                            selectedHero = label.getBufferedImage();
-                            textBox.addText("What should " + gamePanel.getController().findHeroName(selectedHero) + " do?");
+                            selectedHero = label.getUltimateImage();
+                            textBox.addText("What should " + controller.findHeroName(selectedHero) + " do?");
                             ArrayList<String> heroPossibleMoves = new ArrayList<>();
                             heroPossibleMoves.add("Attack?");
                             heroPossibleMoves.add("Cast An Ability?");
                             heroPossibleMoves.add("Use An Item?");
+                            heroPossibleMoves.add("Info");
                             textBox.addScrollObjects(heroPossibleMoves);
                             textBox.setScrollSituation(BattleTextBox.ScrollSituation.Move);
                         } else if (textBox.getScrollSituation() == BattleTextBox.ScrollSituation.ChooseAbilityHeroTarget)
                         {
-                            selectedTarget = label.getBufferedImage();
-                            gamePanel.getController().useSingleTargetedAbility(selectedHero, selectedTarget, getId() - 1, selectedAbility);
+                            selectedTarget = label.getUltimateImage();
+                            controller.useSingleTargetedAbility(selectedHero, selectedTarget, getId() - 1, selectedAbility);
 
                             textBox.getScrollPane().setVisible(false);
-                            ArrayList<String> thisTurnLog = gamePanel.getController().getTurnLog();
+                            ArrayList<String> thisTurnLog = controller.getTurnLog();
                             textBox.showMoveExplanation(thisTurnLog);
                         }
                         else if (textBox.getScrollSituation() == BattleTextBox.ScrollSituation.ChooseItemHeroTarget)
                         {
-                            selectedTarget = label.getBufferedImage();
-                            gamePanel.getController().useSingleTargetedItem(selectedHero, selectedTarget, getId() - 1, selectedItem);
+                            selectedTarget = label.getUltimateImage();
+                            controller.useSingleTargetedItem(selectedHero, selectedTarget, getId() - 1, selectedItem);
 
                             textBox.getScrollPane().setVisible(false);
-                            ArrayList<String> thisTurnLog = gamePanel.getController().getTurnLog();
+                            ArrayList<String> thisTurnLog = controller.getTurnLog();
                             textBox.showMoveExplanation(thisTurnLog);
+                        }
+                        else if (textBox.getScrollSituation() == BattleTextBox.ScrollSituation.Info)
+                        {
+                            String heroInfo = controller.findHeroInfo(label.getUltimateImage());
+                            ArrayList<String> organizedInfo = new ArrayList<String>();
+                            for (String infoPart : heroInfo.split("\\n"))
+                            {
+                                organizedInfo.add(infoPart);
+                            }
+                            textBox.showMoveExplanation(organizedInfo);
                         }
                     } catch (FullInventoryException | AbilityNotAcquieredException | NotStrongEnoughException |
                             NotEnoughMoneyException | NotEnoughRequiredAbilitiesException | NoMoreUpgradeException |
@@ -409,9 +695,9 @@ public class BattleScenario
 
     public void startEnemyIntroduction()
     {
-        gamePanel.getController().enemyIntroduction(getId() - 1);
-        gamePanel.getController().earlyBossEffects(getId() - 1);
-        textBox.showMoveExplanation(gamePanel.getController().getTurnLog());
+        controller.enemyIntroduction(getId() - 1);
+        controller.earlyBossEffects(getId() - 1);
+        textBox.showMoveExplanation(controller.getTurnLog());
     }
 
     public void deleteDeadEnemies()
@@ -420,8 +706,8 @@ public class BattleScenario
 
         for (EnemySprite enemySprite : enemySprites)
         {
-            BufferedImage bufferedImage = enemySprite.getEnemyImage();
-            if (!gamePanel.getController().isAlive(bufferedImage, getId() - 1, enemySprite.getId()))
+            UltimateImage ultimateImage = enemySprite.getEnemyImage();
+            if (!controller.isAlive(ultimateImage, getId() - 1, enemySprite.getId()))
             {
                 deadEnemies.add(enemySprite);
                 panel.remove(enemySprite.getEnemyLabel());
@@ -432,21 +718,21 @@ public class BattleScenario
         enemySprites.removeAll(deadEnemies);
         if(enemySprites.size() == 0)
         {
-            gamePanel.getController().endBattle(getId() - 1);
+            controller.endBattle(getId() - 1);
             textBox.setScrollSituation(BattleTextBox.ScrollSituation.End);
-            textBox.showMoveExplanation(gamePanel.getController().getTurnLog());
+            textBox.showMoveExplanation(controller.getTurnLog());
         }
     }
 
     public void end()
     {
-        if(gamePanel.getController().getGameScenario().getEnemyGroups().size() != id)
+        if(controller.getGameScenario().getEnemyGroups().size() != id)
         {
-            gamePanel.getController().setPanel(gamePanel);
+            controller.setPanel(gamePanel);
         }
         else
         {
-            gamePanel.getController().setPanel(gamePanel.getFinalStoryPanel());
+            controller.setPanel(gamePanel.getFinalStoryPanel());
         }
     }
 
@@ -460,10 +746,20 @@ public class BattleScenario
         gamePanel.gameOver();
     }
 
+    public boolean isNetwork()
+    {
+        return isNetwork;
+    }
+
+    public void setNetwork(boolean network)
+    {
+        isNetwork = network;
+    }
+
     public class EnemyLabel extends JLabel
     {
         private Integer id;
-        private BufferedImage bufferedImage;
+        private UltimateImage ultimateImage;
 
         public EnemyLabel(Integer id)
         {
@@ -480,24 +776,34 @@ public class BattleScenario
             this.id = id;
         }
 
-        public BufferedImage getBufferedImage()
+        public UltimateImage getUltimateImage()
         {
-            return bufferedImage;
+            return ultimateImage;
         }
 
-        public void setBufferedImage(BufferedImage bufferedImage)
+        public void setUltimateImage(UltimateImage ultimateImage)
         {
-            this.bufferedImage = bufferedImage;
+            this.ultimateImage = ultimateImage;
         }
     }
 
-    public BufferedImage getSelectedHero()
+    public UltimateImage getSelectedHero()
     {
         return selectedHero;
     }
 
-    public void setSelectedHero(BufferedImage selectedHero)
+    public void setSelectedHero(UltimateImage selectedHero)
     {
         this.selectedHero = selectedHero;
+    }
+
+    public Semaphore getSemaphore()
+    {
+        return semaphore;
+    }
+
+    public void setSemaphore(Semaphore semaphore)
+    {
+        this.semaphore = semaphore;
     }
 }

@@ -10,6 +10,7 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
+import Controller.*;
 
 /**
  * Created by ruhollah on 7/9/2016.
@@ -117,6 +118,13 @@ public class AbilityUpgradeTextBox
                         abilityUpgradeScenario.getInfoBox().getRequirementScrollTextPane().setContentType("text/html");
                         abilityUpgradeScenario.getInfoBox().getRequirementScrollTextPane().setText("<html><font size=\"10\" face=\"Chiller\">" +
                                 theRequirement + "</font></html>");
+
+                        String abilityDescription = controller.findAbilityDescription(data.get(finalI));
+                        abilityDescription = "Description:<br>" + abilityDescription;
+
+                        abilityUpgradeScenario.getInfoBox().getDescriptionScrollTextPane().setContentType("text/html");
+                        abilityUpgradeScenario.getInfoBox().getDescriptionScrollTextPane().setText("<html><font size=\"10\" face=\"Chiller\">" +
+                                abilityDescription + "</font></html>");
                     }
                 }
 
@@ -218,10 +226,10 @@ public class AbilityUpgradeTextBox
     public void welcome()
     {
         scrollSituation = ScrollSituation.Default;
-        Pair<BufferedImage, String> startingMessages = controller.getStartingMessages();
+        Pair<UltimateImage, String> startingMessages = controller.getStartingMessages();
         ArrayList<String> message = new ArrayList<>();
         message.add(startingMessages.getValue());
-        setFaceImage(startingMessages.getKey());
+        setFaceImage(startingMessages.getKey().makeImage());
         showMoveExplanation(message);
     }
 

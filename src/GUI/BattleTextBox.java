@@ -12,6 +12,7 @@ import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
+import Controller.*;
 
 /**
  * Created by ruhollah on 7/4/2016.
@@ -48,7 +49,14 @@ public class BattleTextBox
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                controller.enemyTurn(battleScenario.getId() - 1);
+                if (battleScenario.isNetwork())
+                {
+                    battleScenario.getSemaphore().release();
+                }
+                else
+                {
+                    controller.enemyTurn(battleScenario.getId() - 1);
+                }
                 ArrayList<String> turnLog = controller.getTurnLog();
                 if (Hero.getImmortalityPotionNum() == -1)
                 {
@@ -152,6 +160,12 @@ public class BattleTextBox
                             scrollSituation = ScrollSituation.Item;
                             addScrollObjects(itemNames);
                         }
+                        else if (data.get(finalI).equals("Info"))
+                        {
+                            addText("Choose someone");
+                            scrollSituation = ScrollSituation.Info;
+                            scrollPane.setVisible(false);
+                        }
                     }
                     else if(scrollSituation == ScrollSituation.Ability)
                     {
@@ -159,7 +173,7 @@ public class BattleTextBox
                             String target = controller.getAbilityTarget(data.get(finalI));
                             if(target.equals("all enemies") || target.equals("all allies") || target.equals("everyone"))
                             {
-                                BufferedImage selectedHero = battleScenario.getSelectedHero();
+                                UltimateImage selectedHero = battleScenario.getSelectedHero();
                                 controller.useMultiTargetedAbility(selectedHero, battleScenario.getId(), data.get(finalI));
 
                                 scrollPane.setVisible(false);
@@ -197,7 +211,7 @@ public class BattleTextBox
                             String target = controller.getItemTarget(data.get(finalI));
                             if(target.equals("all enemies") || target.equals("all allies") || target.equals("everyone"))
                             {
-                                BufferedImage selectedHero = battleScenario.getSelectedHero();
+                                UltimateImage selectedHero = battleScenario.getSelectedHero();
                                 controller.useMultiTargetedItem(selectedHero, battleScenario.getId(), data.get(finalI));
 
                                 scrollPane.setVisible(false);
@@ -310,8 +324,11 @@ public class BattleTextBox
                     battleScenario.gameOver();
                 }
                 addText("Choose a hero");
-                battleScenario.deleteDeadEnemies();
-                if(scrollSituation != ScrollSituation.End)
+                if (!battleScenario.isNetwork())
+                {
+                    battleScenario.deleteDeadEnemies();
+                }
+                if(scrollSituation != ScrollSituation.End && scrollSituation != ScrollSituation.OpponentNetworkTurn)
                 {
                     scrollSituation = ScrollSituation.Default;
                     doneButton.setVisible(true);
@@ -436,7 +453,8 @@ public class BattleTextBox
     enum ScrollSituation
     {
         Move, Ability, Attack, Default, ChooseAbilityEnemyTarget, ChooseAbilityHeroTarget,
-        Item, ShowingMessage, End, ChooseItemEnemyTarget, ChooseItemHeroTarget, GameOver
+        Item, ShowingMessage, End, ChooseItemEnemyTarget, ChooseItemHeroTarget, GameOver,
+        OpponentNetworkTurn, YourNetworkTurn, Info
     }
 
 }

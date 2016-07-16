@@ -1,7 +1,5 @@
 package GUI;
 
-import Exceptions.*;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -9,17 +7,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.AreaAveragingScaleFilter;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import Auxiliary.Luck;
+import Controller.*;
 
 /**
  * Created by ruhollah on 7/9/2016.
  */
 public class AbilityUpgradeScenario
 {
+    private Controller controller;
     private BufferedImage background;
     private AbilityUpgradeTextBox textBox;
     private AbilityUpgradeInfoBox infoBox;
@@ -44,13 +45,15 @@ public class AbilityUpgradeScenario
     private int heroHeight;
     private int id;
     private BufferedImage selectedAbility;
-    private BufferedImage selectedHero;
+    private UltimateImage selectedHero;
+    private boolean isNetwork = false;
 
     public AbilityUpgradeScenario(int id, ArrayList<HeroSprite> heroSprites, GamePanel gamePanel, BufferedImage background)
     {
         this.id = id;
         this.heroSprites = heroSprites;
         this.gamePanel = gamePanel;
+        this.controller = gamePanel.getController();
         this.background = background;
         panel.setLayout(null);
         panel.setSize(width, height);
@@ -63,8 +66,124 @@ public class AbilityUpgradeScenario
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                Controller controller = gamePanel.getController();
+//                Controller controller = controller;
                 controller.setPanel(gamePanel);
+            }
+        });
+        panel.add(closeButton);
+        panel.addMouseListener(new MouseListener()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                System.out.println(e.getX() + " " + e.getY());
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e)
+            {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e)
+            {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e)
+            {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e)
+            {
+
+            }
+        });
+
+        showTextBox();
+        showInfoBox();
+        setHeroSize();
+        showHeros();
+        showBackground();
+    }
+
+    public AbilityUpgradeScenario(ArrayList<HeroSprite> heroSprites, UltimateImage abilityUpgradeBackground, Controller controller)
+    {
+        this.id = Luck.getRandom(1, controller.getUserInterface().getAbilityUpgradeGidNums().size());
+        this.heroSprites = heroSprites;
+        this.background = abilityUpgradeBackground.makeImage();
+        this.controller = controller;
+        isNetwork = true;
+        panel.setLayout(null);
+        panel.setSize(width, height);
+        panel.setPreferredSize(new Dimension(width, height));
+
+
+        JButton closeButton = new JButton("close");
+        closeButton.setBounds(850, 0, 100, 100);
+        closeButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                JOptionPane optionPane = new JOptionPane("Ready for battle?",
+                        JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION,
+                        null);
+                JDialog dialog = optionPane.createDialog("Children Of Time");
+                JButton readyButton = new JButton("Yes");
+                readyButton.addActionListener(new ActionListener()
+                {
+                    @Override
+                    public void actionPerformed(ActionEvent e)
+                    {
+                        if (controller.getNetworkScenario().getChoice() == 0)
+                        {
+                            int chance = controller.getNetworkScenario().chooseStarter();
+                            controller.getNetworkScenario().getCommonMsg().setChance(chance);
+                            controller.getNetworkScenario().getNtwhandler().setCommonMsg(controller.getNetworkScenario().getCommonMsg());
+                            controller.setPanel(new BattleScenario(heroSprites, chance,
+                                    controller.getUserInterface().getBattleBackgroundSources().get(Luck.getRandom(0, 5)).makeImage(),
+                                    controller).getPanel());
+                            dialog.dispose();
+                            controller.getNetworkScenario().getNtwhandler().send();
+                            controller.getNetworkScenario().getNtwhandler().receive();
+                        }
+                        else if (controller.getNetworkScenario().getChoice() == 1)
+                        {
+                            controller.getNetworkScenario().getNtwhandler().receive();
+                            controller.setPanel(new BattleScenario(heroSprites,
+                                    controller.getNetworkScenario().getNtwhandler().getCommonMsg().getChance(),
+                                    controller.getUserInterface().getBattleBackgroundSources().get(Luck.getRandom(0, 5)).makeImage(),
+                                    controller).getPanel());
+                            dialog.dispose();
+                            controller.getNetworkScenario().getNtwhandler().send();
+                        }
+                    }
+                });
+
+                JButton noButton = new JButton("No");
+                noButton.addActionListener(new ActionListener()
+                {
+                    @Override
+                    public void actionPerformed(ActionEvent e)
+                    {
+                        dialog.dispose();
+                    }
+                });
+
+                Object[] options = { readyButton };
+                optionPane.setOptions(options);
+                optionPane.setInitialValue(options[0]);
+                dialog.setVisible(true);
+//                JOptionPane.showOptionDialog(controller.getFrame().getContentPane(), "Click ready when you are ready", null,
+//                        JOptionPane.CLOSED_OPTION, JOptionPane.PLAIN_MESSAGE,
+//                        null, options, options[0]);
+//                Controller controller = controller;
+//                controller.setPanel(gamePanel);
             }
         });
         panel.add(closeButton);
@@ -115,7 +234,7 @@ public class AbilityUpgradeScenario
         {
             textBoxImage = ImageIO.read(new File("Main Pics/ShopTextBox/ShopItemBox.png"));
             Image resizedTextBox = textBoxImage.getScaledInstance((width * 720) / 1920, (height * 750) / 1070, Image.SCALE_SMOOTH);
-            infoBox = new AbilityUpgradeInfoBox((width * 1200) / 1920, 0, (width * 720) / 1920, (height * 750) / 1070, gamePanel.getController(), this);
+            infoBox = new AbilityUpgradeInfoBox((width * 1200) / 1920, 0, (width * 720) / 1920, (height * 750) / 1070, controller, this);
             infoBox.setBoxImage(resizedTextBox);
 //            textBox.addText("Choose a hero");
 //            textBox.setScrollSituation(BattleTextBox.ScrollSituation.Default);
@@ -127,8 +246,8 @@ public class AbilityUpgradeScenario
             panel.add(infoBox.getDescriptionScrollPane());
             panel.add(infoBox.getRequirementScrollPane());
             panel.add(infoBox.getInfoBox());
-//            gamePanel.getController().enemyIntroduction(getId() - 1);
-//            textBox.showMoveExplanation(gamePanel.getController().getTurnLog());
+//            controller.enemyIntroduction(getId() - 1);
+//            textBox.showMoveExplanation(controller.getTurnLog());
         } catch (IOException e)
         {
             e.printStackTrace();
@@ -142,9 +261,9 @@ public class AbilityUpgradeScenario
         {
             textBoxImage = ImageIO.read(new File("Main Pics/AbilityUpgradeTextBox/AbilityUpgradeTextBox.png"));
             Image resizedTextBox = textBoxImage.getScaledInstance(width, (height - (height * 750) / 1070), Image.SCALE_SMOOTH);
-            textBox = new AbilityUpgradeTextBox(0, (height * 750) / 1070, width, (height - (height * 750) / 1070), gamePanel.getController(), this);
+            textBox = new AbilityUpgradeTextBox(0, (height * 750) / 1070, width, (height - (height * 750) / 1070), controller, this);
             textBox.setBoxImage(resizedTextBox);
-//            shopTextBox.addText(gamePanel.getController().getWelcomeMessage(id - 1));
+//            shopTextBox.addText(controller.getWelcomeMessage(id - 1));
 //            textBox.setScrollSituation(BattleTextBox.ScrollSituation.Default);
             textBox.welcome();
 //            shopTextBox.addScrollObjects(possibleMoves);
@@ -154,8 +273,8 @@ public class AbilityUpgradeScenario
             panel.add(textBox.getImageLabel());
             textBox.setScrollSituation(AbilityUpgradeTextBox.ScrollSituation.Default);
             panel.add(textBox.getDescriptionTextBox());
-//            gamePanel.getController().enemyIntroduction(getId() - 1);
-//            textBox.showMoveExplanation(gamePanel.getController().getTurnLog());
+//            controller.enemyIntroduction(getId() - 1);
+//            textBox.showMoveExplanation(controller.getTurnLog());
         } catch (IOException e)
         {
             e.printStackTrace();
@@ -190,8 +309,8 @@ public class AbilityUpgradeScenario
 //                    {
                         if(textBox.getScrollSituation() == AbilityUpgradeTextBox.ScrollSituation.Acquire)
                         {
-                            selectedHero = label.getBufferedImage();
-                            ArrayList<String> nonAcquiredAbilities = gamePanel.getController().findNonAcquiredAbilities(selectedHero);
+                            selectedHero = label.getUltimateImage();
+                            ArrayList<String> nonAcquiredAbilities = controller.findNonAcquiredAbilities(selectedHero);
                             if(nonAcquiredAbilities.size() != 0)
                             {
                                 textBox.addText("Choose an ability");
@@ -208,8 +327,8 @@ public class AbilityUpgradeScenario
                         }
                         else if (textBox.getScrollSituation() == AbilityUpgradeTextBox.ScrollSituation.Upgrade)
                         {
-                            selectedHero = label.getBufferedImage();
-                            ArrayList<String> acquiredAbilities = gamePanel.getController().findAcquiredAbilities(selectedHero);
+                            selectedHero = label.getUltimateImage();
+                            ArrayList<String> acquiredAbilities = controller.findAcquiredAbilities(selectedHero);
                             if(acquiredAbilities.size() != 0)
                             {
                                 textBox.addText("Choose an ability");
@@ -328,18 +447,21 @@ public class AbilityUpgradeScenario
         this.id = id;
     }
 
-    public BufferedImage getSelectedHero()
+    public UltimateImage getSelectedHero()
     {
         return selectedHero;
     }
 
-    public void setSelectedHero(BufferedImage selectedHero)
+    public void setSelectedHero(UltimateImage selectedHero)
     {
         this.selectedHero = selectedHero;
     }
 
     public void end()
     {
-        gamePanel.getController().setPanel(gamePanel);
+        if (!isNetwork)
+        {
+            controller.setPanel(gamePanel);
+        }
     }
 }
