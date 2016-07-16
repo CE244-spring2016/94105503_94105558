@@ -2,9 +2,7 @@ package Model;
 
 import Auxiliary.Formula;
 import Auxiliary.Luck;
-import Exceptions.AbilityCooldownException;
-import Exceptions.AbilityNotAcquieredException;
-import Exceptions.NotStrongEnoughException;
+import Exceptions.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,7 +13,7 @@ public abstract class Ability implements Serializable
     protected int cooldownTurn;
     protected int currentUpgradeNum;
 
-
+    protected String abilityDescription;
     protected String successMessage = "";
     protected String name = "";
     protected String abilityTarget = "";
@@ -30,7 +28,7 @@ public abstract class Ability implements Serializable
 
     public Ability(String name, String abilityTarget, ArrayList<Integer> upgradeXPs, ArrayList<Integer> luckPercents,
                    ArrayList<Integer> abilityCooldownNums, ArrayList<HashMap<String, Integer>> requiredAbilities,
-                   HashMap<String, ArrayList<Formula>> formulas)
+                   HashMap<String, ArrayList<Formula>> formulas, String abilityDescription)
     {
         cooldownTurn = 0;
         currentUpgradeNum = 0;
@@ -41,6 +39,7 @@ public abstract class Ability implements Serializable
         setAbilityCooldownNums(abilityCooldownNums);
         setRequiredAbilities(requiredAbilities);
         setFormulas(formulas);
+        setAbilityDescription(abilityDescription);
     }
 
 
@@ -188,7 +187,7 @@ public abstract class Ability implements Serializable
         HashMap<String, Integer> userData = hero.getData();
         for (Warrior warrior : mainTargets)
         {
-            HashMap<String, Integer> targetData = new HashMap<>();
+            HashMap<String, Integer> targetData;
             if (warrior instanceof Hero)
             {
                 targetData = ((Hero) warrior).getData();
@@ -243,53 +242,53 @@ public abstract class Ability implements Serializable
 //                targetData = ((Enemy) warrior).getData();
 //            }
 
-            for (String attribute : formulas.keySet())
-            {
-                Formula formula = formulas.get(attribute).get(currentUpgradeNum - 1);
-                int effectAmount = formula.parseFormula(userData);
-                String[] attributeNameParts = attribute.split(" ");
+        for (String attribute : formulas.keySet())
+        {
+            Formula formula = formulas.get(attribute).get(currentUpgradeNum - 1);
+            int effectAmount = formula.parseFormula(userData);
+            String[] attributeNameParts = attribute.split(" ");
 
-                if (attributeNameParts[0].equals("cost"))
+            if (attributeNameParts[0].equals("cost"))
+            {
+                attribute = attribute.substring(5);
+                attribute = "current " + attribute;
+                if (userData.keySet().contains(attribute))
                 {
-                    attribute = attribute.substring(5);
-                    attribute = "current " + attribute;
-                    if (userData.keySet().contains(attribute))
+                    int attributeAmount = userData.get(attribute);
+                    userData.put(attribute, attributeAmount + effectAmount);
+                }
+            } else if (attributeNameParts[0].equals("nontargetedshare"))
+            {
+                hero.setNonTargetedEnemiesShare(effectAmount);
+            } else if (attributeNameParts[0].equals("criticalchance"))
+            {
+                hero.setCriticalChance(effectAmount);
+            } else if (!attributeNameParts[0].equals("luck"))
+            {
+                for (Warrior warrior : mainTargets)
+                {
+                    HashMap<String, Integer> targetData;
+                    if (warrior instanceof Hero)
                     {
-                        int attributeAmount = userData.get(attribute);
-                        userData.put(attribute, attributeAmount + effectAmount);
+                        targetData = ((Hero) warrior).getData();
+                    } else
+                    {
+                        targetData = ((Enemy) warrior).getData();
                     }
-                } else if (attributeNameParts[0].equals("nontargetedshare"))
-                {
-                    hero.setNonTargetedEnemiesShare(effectAmount);
-                } else if (attributeNameParts[0].equals("criticalchance"))
-                {
-                    hero.setCriticalChance(effectAmount);
-                } else if (!attributeNameParts[0].equals("luck"))
-                {
-                    for(Warrior warrior : mainTargets)
+                    int attributeAmount;
+                    if ((warrior instanceof Enemy) && attribute.equals("current health") && (effectAmount < 0)) // LOL
                     {
-                        HashMap<String, Integer> targetData;
-                        if (warrior instanceof Hero)
-                        {
-                            targetData = ((Hero) warrior).getData();
-                        } else
-                        {
-                            targetData = ((Enemy) warrior).getData();
-                        }
-                        int attributeAmount = targetData.get(attribute);
-                        if ((warrior instanceof Enemy) && attribute.equals("current health") && (effectAmount < 0)) // LOL
-                        {
-                            ArrayList<Warrior> mainTarget = new ArrayList<>();
-                            mainTarget.add(warrior);
-                            doDamage(mainTarget, secondaryTargets, effectAmount); // LOL
-                        } else if (targetData.keySet().contains(attribute))
-                        {
-                            attributeAmount = targetData.get(attribute); // MUST CHECK WITH TEAMMATE
-                            targetData.put(attribute, attributeAmount + effectAmount);
-                        }
+                        ArrayList<Warrior> mainTarget = new ArrayList<>();
+                        mainTarget.add(warrior);
+                        doDamage(mainTarget, secondaryTargets, effectAmount); // LOL
+                    } else if (targetData.keySet().contains(attribute))
+                    {
+                        attributeAmount = targetData.get(attribute); // MUST CHECK WITH TEAMMATE
+                        targetData.put(attribute, attributeAmount + effectAmount);
                     }
                 }
             }
+        }
         //}
     }
 
@@ -469,5 +468,15 @@ public abstract class Ability implements Serializable
         }
 
         return result;
+    }
+
+    public void setAbilityDescription(String abilityDescription)
+    {
+        this.abilityDescription = abilityDescription;
+    }
+
+    public String getAbilityDescription()
+    {
+        return abilityDescription;
     }
 }
