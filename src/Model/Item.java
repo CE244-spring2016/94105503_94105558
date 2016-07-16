@@ -12,6 +12,7 @@ public abstract class Item implements Serializable
     protected int itemSize;
     protected String name;
     protected Hero itemHolder;
+    protected String itemDescription;
 
     public String getSuccessMessage()
     {
@@ -118,6 +119,16 @@ public abstract class Item implements Serializable
         }
 
         return log;
+    }
+
+    public String getItemDescription()
+    {
+        return itemDescription;
+    }
+
+    public void setItemDescription(String itemDescription)
+    {
+        this.itemDescription = itemDescription;
     }
 
     //public abstract void normalEffect(String effectType, HashMap<String, Integer> warriorData);
