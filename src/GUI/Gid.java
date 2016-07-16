@@ -20,11 +20,6 @@ public class Gid extends JLabel
         super(imageIcon);
     }
 
-    public void setImageIcon(ImageIcon imageIcon)
-    {
-        setImageIcon(imageIcon);
-    }
-
     public boolean isWall()
     {
         return wall;

@@ -1,13 +1,10 @@
 package GUI;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.nio.Buffer;
 import java.util.ArrayList;
+import Controller.*;
 
 /**
  * Created by ruhollah on 6/27/2016.
@@ -25,12 +22,12 @@ public class HeroSprite
     private int prevMoveCode = 0;
     private boolean walking = false;
     private WalkingForm walkingFormID = WalkingForm.SecondStep;
-    private BufferedImage allImages;
+    private UltimateImage allImages;
 
-    public HeroSprite(BufferedImage bufferedImage)
+    public HeroSprite(UltimateImage ultimateImage)
     {
-        this.allImages = bufferedImage;
-        show(bufferedImage);
+        this.allImages = ultimateImage;
+        show(ultimateImage.makeImage());
     }
 
     private void show(BufferedImage bufferedImage)
@@ -357,12 +354,12 @@ public class HeroSprite
         this.walking = walking;
     }
 
-    public BufferedImage getAllImages()
+    public UltimateImage getAllImages()
     {
         return allImages;
     }
 
-    public void setAllImages(BufferedImage allImages)
+    public void setAllImages(UltimateImage allImages)
     {
         this.allImages = allImages;
     }

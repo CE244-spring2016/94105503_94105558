@@ -1,31 +1,31 @@
 package GUI;
 
 import javax.swing.*;
-import java.awt.image.BufferedImage;
+import Controller.*;
 
 /**
  * Created by ruhollah on 7/8/2016.
  */
 public class HeroLabel extends JLabel
 {
-    private BufferedImage bufferedImage;
+    private UltimateImage ultimateImage;
 
     public HeroLabel()
     {
     }
 
-    public HeroLabel(BufferedImage bufferedImage)
+    public HeroLabel(UltimateImage ultimateImage)
     {
-        this.bufferedImage = bufferedImage;
+        this.ultimateImage = ultimateImage;
     }
 
-    public BufferedImage getBufferedImage()
+    public UltimateImage getUltimateImage()
     {
-        return bufferedImage;
+        return ultimateImage;
     }
 
-    public void setBufferedImage(BufferedImage bufferedImage)
+    public void setUltimateImage(UltimateImage ultimateImage)
     {
-        this.bufferedImage = bufferedImage;
+        this.ultimateImage = ultimateImage;
     }
 }

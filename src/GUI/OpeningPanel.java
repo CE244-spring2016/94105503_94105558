@@ -6,6 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Scanner;
+
+import Controller.*;
 
 /**
  * Created by ruhollah on 6/29/2016.
@@ -84,9 +87,40 @@ public final class OpeningPanel extends JPanel
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                controller.getUserInterface().checkCustom(false);
+                controller.setGameScenario(new GameScenario(controller.getUserInterface(), new Scanner(System.in)));
                 controller.startSinglePlayerGame();
             }
         });
         this.add(button);
+
+        JButton customButton = new JButton("<html><font size=\"5\">Custom</font></html>");
+        customButton.setBounds((getWidth() * 260) / 694, (getHeight() * 560) / 746, (getWidth() * 160) / 694, (getHeight() * 50) / 746);
+        customButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                controller.getUserInterface().checkCustom(true);
+                controller.startCustomMaking();
+            }
+        });
+        this.add(customButton);
+
+        JButton multiButton = new JButton("<html><font size=\"5\">MultiPlayer</font></html>");
+        multiButton.setBounds((getWidth() * 260) / 694, (getHeight() * 660) / 746, (getWidth() * 160) / 694, (getHeight() * 50) / 746);
+        multiButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                controller.getUserInterface().checkCustom(false);
+                controller.setGameScenario(new GameScenario(controller.getUserInterface(), new Scanner(System.in)));
+                controller.setNetworkScenario(new NetworkScenario(new Scanner(System.in), controller.getGameScenario()));
+                controller.startMultiPlayer();
+            }
+        });
+        this.add(multiButton);
+
     }
 }

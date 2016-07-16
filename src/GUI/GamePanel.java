@@ -42,19 +42,19 @@ public class GamePanel extends JPanel/* implements ActionListener*/
     private ArrayList<String> tileSources = new ArrayList<>();
     private HashMap<Gid, BattleScenario> battleMap = new HashMap<>();
     private ArrayList<Integer> battleGidNums = new ArrayList<>();
-    private ArrayList<BufferedImage> battleBackgrounds = new ArrayList<>();
+    private ArrayList<UltimateImage> battleBackgrounds = new ArrayList<>();
     private BattleScenario[] battleScenarios;
     private ArrayList<Integer> shopGidNums = new ArrayList<>();
-    private ArrayList<BufferedImage> shopBackgrounds = new ArrayList<>();
-    private ArrayList<BufferedImage> shopKeepers = new ArrayList<>();
+    private ArrayList<UltimateImage> shopBackgrounds = new ArrayList<>();
+    private ArrayList<UltimateImage> shopKeepers = new ArrayList<>();
     private ShopScenario[] shopScenarios;
     private HashMap<Gid, ShopScenario> shopMap = new HashMap<>();
     private ArrayList<Integer> abilityUpgradeGidNums = new ArrayList<>();
-    private ArrayList<BufferedImage> abilityUpgradeBackgrounds = new ArrayList<>();
+    private ArrayList<UltimateImage> abilityUpgradeBackgrounds = new ArrayList<>();
     private AbilityUpgradeScenario[] abilityUpgradeScenarios;
     private HashMap<Gid, AbilityUpgradeScenario> abilityUpgradeMap = new HashMap<>();
     private ArrayList<Integer> storyGidNums = new ArrayList<>();
-    private ArrayList<BufferedImage> storyBackgrounds = new ArrayList<>();
+    private ArrayList<UltimateImage> storyBackgrounds = new ArrayList<>();
     private ArrayList<String> storyParts = new ArrayList<>();
     private StoryScenario[] storyScenarios;
     private HashMap<Gid, StoryScenario> storyMap = new HashMap<>();
@@ -66,6 +66,8 @@ public class GamePanel extends JPanel/* implements ActionListener*/
     private HashMap<Gid, Integer> keyMap = new HashMap<>();
     private TAdapter ultimateListener = new TAdapter();
     private GameOverScenario gameOverScenario;
+
+    private ArrayList<ArrayList<JLabel>> layerLabels = new ArrayList<>();
 
     public GamePanel(Controller controller)
     {
@@ -90,9 +92,46 @@ public class GamePanel extends JPanel/* implements ActionListener*/
         this.doorDirections = userInterface.getDoorsAndTheirDirections();
         this.doorKeys = userInterface.getDoorsAndTheirKeys();
         this.keyGidNums = userInterface.getKeyGidNums();
-        gameOverScenario = new GameOverScenario(this.userInterface.getGameOverBackground(), this);
+        gameOverScenario = new GameOverScenario(this.userInterface.getGameOverBackground().makeImage(), this);
         startingX = userInterface.getStartingX();
         startingY = userInterface.getStartingY();
+
+        JLabel lifeSaver = new JLabel();
+        lifeSaver.setBounds(0, 0, 32, 32);
+        lifeSaver.addMouseListener(new MouseListener()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                GamePanel.this.setFocusable(true);
+                GamePanel.this.requestFocus();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e)
+            {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e)
+            {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e)
+            {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e)
+            {
+
+            }
+        });
+        this.add(lifeSaver);
 
         setLayout(null);
         this.addKeyListener(ultimateListener);
@@ -109,6 +148,149 @@ public class GamePanel extends JPanel/* implements ActionListener*/
         this.setSize(new Dimension(mapWidth, mapHeight));
         this.setPreferredSize(new Dimension(mapWidth, mapHeight));
         showStartingStory();
+    }
+
+    public GamePanel(Controller controller, ArrayList<ArrayList<JLabel>> layerLabels, int mapWidth, int mapHeight)
+    {
+        this.controller = controller;
+        this.userInterface = controller.getUserInterface();
+        this.battleGidNums = userInterface.getBattleGidNums();
+        this.battleBackgrounds = userInterface.getBattleBackgroundSources();
+        battleScenarios = new BattleScenario[battleGidNums.size()];
+        this.shopGidNums = userInterface.getShopGidNums();
+        this.shopBackgrounds = userInterface.getShopBackgroundSources();
+        this.shopKeepers = userInterface.getShopKeeperSources();
+        shopScenarios = new ShopScenario[shopGidNums.size()];
+        this.abilityUpgradeGidNums = userInterface.getAbilityUpgradeGidNums();
+        this.abilityUpgradeBackgrounds = userInterface.getAbilityUpgradeBackgroundSources();
+        abilityUpgradeScenarios = new AbilityUpgradeScenario[abilityUpgradeGidNums.size()];
+        this.storyGidNums = userInterface.getStoryGidNums();
+        this.storyBackgrounds = userInterface.getStoryBackgroundSources();
+        this.storyParts = userInterface.getGameStory();
+        storyScenarios = new StoryScenario[storyGidNums.size()];
+        this.doorDirections = userInterface.getDoorsAndTheirDirections();
+        this.doorKeys = userInterface.getDoorsAndTheirKeys();
+        this.keyGidNums = userInterface.getKeyGidNums();
+//        gameOverScenario = new GameOverScenario(this.userInterface.getGameOverBackground().makeImage(), this);
+        startingX = userInterface.getStartingX();
+        startingY = userInterface.getStartingY();
+        this.layerLabels = layerLabels;
+        this.mapWidth = mapWidth;
+        this.mapHeight = mapHeight;
+
+        JLabel lifeSaver = new JLabel();
+        lifeSaver.setBounds(0, 0, 32, 32);
+        lifeSaver.addMouseListener(new MouseListener()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                GamePanel.this.setFocusable(true);
+                GamePanel.this.requestFocus();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e)
+            {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e)
+            {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e)
+            {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e)
+            {
+
+            }
+        });
+        this.add(lifeSaver);
+
+        setLayout(null);
+        this.addKeyListener(ultimateListener);
+        this.setFocusable(true);
+        this.requestFocus();
+
+        makeHero();
+        readCustomMap();
+        showTextBox();
+        showMap();
+
+        this.setSize(new Dimension(mapWidth, mapHeight));
+        this.setPreferredSize(new Dimension(mapWidth, mapHeight));
+        showStartingStory();
+    }
+
+    private void readCustomMap()
+    {
+        for (int i = layerLabels.size() - 1; i >= 0; i--)
+        {
+            boolean wallFlag = false;
+            if (i == layerLabels.size() - 1)
+            {
+                wallFlag = true;
+            }
+            ArrayList<JLabel> thisLayer = layerLabels.get(i);
+            for (int j = 0; j < thisLayer.size(); j++)
+            {
+                if (thisLayer.get(j).getIcon() == null)
+                {
+                    gids.add(new Gid());
+                    continue;
+                }
+                ImageIcon imageIcon = (ImageIcon) layerLabels.get(i).get(j).getIcon();
+                Gid gid = new Gid(imageIcon);
+
+                if (i == 0)
+                {
+                    if (battleGidNums.contains(j))
+                    {
+                        int num = battleGidNums.indexOf(j);
+                        battleSetter(gid, num);
+                        battleScenarios[num] = new BattleScenario(num + 1, heroSprites, this, battleBackgrounds.get(num).makeImage());
+                    } else if (shopGidNums.contains(j))
+                    {
+                        int num = shopGidNums.indexOf(j);
+                        shopScenarios[num] = new ShopScenario(num + 1, heroSprites, this, shopBackgrounds.get(num).makeImage(), shopKeepers.get(num).makeImage(), controller);
+                        shopSetter(gid, num);
+                    } else if (abilityUpgradeGidNums.contains(j))
+                    {
+                        int num = abilityUpgradeGidNums.indexOf(j);
+                        abilityUpgradeScenarios[num] = new AbilityUpgradeScenario(num + 1, heroSprites, this, abilityUpgradeBackgrounds.get(num).makeImage());
+                        abilityUpgradeSetter(gid, num);
+                    } else if (storyGidNums.contains(j))
+                    {
+                        int num = storyGidNums.indexOf(j);
+                        storyScenarios[num] = new StoryScenario(storyBackgrounds.get(num + 1).makeImage(), storyParts.get(num + 1), this);
+                        storySetter(gid, num);
+                    } else if (doorDirections.containsKey(j))
+                    {
+                        doors.put(j, new Door(doorDirections.get(j), doorKeys.get(j)));
+                        doorSetter(gid, j);
+                    } else if (keyGidNums.contains(j))
+                    {
+                        keySetter(gid, keyGidNums.indexOf(j) + 1);
+                    }
+                }
+
+                gid.setWall(wallFlag);
+                gid.setBounds(thisLayer.get(j).getX() - 50, thisLayer.get(j).getY() - 50, 32, 32);
+                gids.add(gid);
+                if (wallFlag)
+                {
+                    gid.setVisible(false);
+                }
+            }
+        }
     }
 
     private void showTextBox()
@@ -128,15 +310,15 @@ public class GamePanel extends JPanel/* implements ActionListener*/
 
     public void showStartingStory()
     {
-        controller.setPanel(new StoryScenario(storyBackgrounds.get(0), storyParts.get(0), this).getPanel());
+        controller.setPanel(new StoryScenario(storyBackgrounds.get(0).makeImage(), storyParts.get(0), this).getPanel());
     }
 
     private void makeHero()
     {
-        ArrayList<String> heroNames = userInterface.getHeroNames();
-        for (BufferedImage bufferedImage : userInterface.getHerosAndTheirImages().keySet())
+//        ArrayList<String> heroNames = userInterface.getHeroNames();
+        for (UltimateImage ultimateImage : userInterface.getHerosAndTheirImages().keySet())
         {
-            heroSprites.add(new HeroSprite(bufferedImage));
+            heroSprites.add(new HeroSprite(ultimateImage));
         }
         heroSprite = heroSprites.get(0);
     }
@@ -169,20 +351,20 @@ public class GamePanel extends JPanel/* implements ActionListener*/
                         if (battleGidNums.contains(sprites.size() - 1))
                         {
                             int num = battleGidNums.indexOf(sprites.size() - 1);
-                            battleScenarios[num] = new BattleScenario(num + 1, heroSprites, this, battleBackgrounds.get(num));
+                            battleScenarios[num] = new BattleScenario(num + 1, heroSprites, this, battleBackgrounds.get(num).makeImage());
                         } else if (shopGidNums.contains(sprites.size() - 1))
                         {
                             int num = shopGidNums.indexOf(sprites.size() - 1);
-                            shopScenarios[num] = new ShopScenario(num + 1, heroSprites, this, shopBackgrounds.get(num), shopKeepers.get(num));
+                            shopScenarios[num] = new ShopScenario(num + 1, heroSprites, this, shopBackgrounds.get(num).makeImage(), shopKeepers.get(num).makeImage(), controller);
 //                            System.out.println((num + 1) + " " + (sprites.size() - 1));
                         } else if (abilityUpgradeGidNums.contains(sprites.size() - 1))
                         {
                             int num = abilityUpgradeGidNums.indexOf(sprites.size() - 1);
-                            abilityUpgradeScenarios[num] = new AbilityUpgradeScenario(num + 1, heroSprites, this, abilityUpgradeBackgrounds.get(num));
+                            abilityUpgradeScenarios[num] = new AbilityUpgradeScenario(num + 1, heroSprites, this, abilityUpgradeBackgrounds.get(num).makeImage());
                         } else if (storyGidNums.contains(sprites.size() - 1))
                         {
                             int num = storyGidNums.indexOf(sprites.size() - 1);
-                            storyScenarios[num] = new StoryScenario(storyBackgrounds.get(num + 1), storyParts.get(num + 1), this);
+                            storyScenarios[num] = new StoryScenario(storyBackgrounds.get(num + 1).makeImage(), storyParts.get(num + 1), this);
                         } else if (doorDirections.containsKey(sprites.size() - 1))
                         {
                             doors.put(sprites.size() - 1, new Door(doorDirections.get(sprites.size() - 1), doorKeys.get(sprites.size() - 1)));
@@ -399,7 +581,7 @@ public class GamePanel extends JPanel/* implements ActionListener*/
 
     public JPanel getFinalStoryPanel()
     {
-        return new StoryScenario(storyBackgrounds.get(storyBackgrounds.size() - 1), storyParts.get(storyParts.size() - 1), this).getPanel();
+        return new StoryScenario(storyBackgrounds.get(storyBackgrounds.size() - 1).makeImage(), storyParts.get(storyParts.size() - 1), this).getPanel();
     }
 
     public void gameOver()
@@ -433,19 +615,19 @@ public class GamePanel extends JPanel/* implements ActionListener*/
                     heroSprite.keyPressed(e);
                     heroSprite.move();
 
-                    if (!isKey())
-                    {
-                        if (!isStory())
-                        {
-                            if (!isBattle())
-                            {
-                                if (!isShop())
-                                {
-                                    isAbilityUpgrade();
-                                }
-                            }
-                        }
-                    }
+//                    if (!isKey())
+//                    {
+//                        if (!isStory())
+//                        {
+//                            if (!isBattle())
+//                            {
+//                                if (!isShop())
+//                                {
+//                                    isAbilityUpgrade();
+//                                }
+//                            }
+//                        }
+//                    }
 
                     if (isCollision())
                     {
@@ -453,6 +635,20 @@ public class GamePanel extends JPanel/* implements ActionListener*/
                         heroSprite.changeSide(e);
                     } else
                     {
+                        if (!isKey())
+                        {
+                            if (!isStory())
+                            {
+                                if (!isBattle())
+                                {
+                                    if (!isShop())
+                                    {
+                                        isAbilityUpgrade();
+                                    }
+                                }
+                            }
+                        }
+
                         if (isDoor(e))
                         {
                             repaint();
@@ -470,6 +666,7 @@ public class GamePanel extends JPanel/* implements ActionListener*/
                         else
                         {
                             heroSprite.moveBack();
+                            heroSprite.keyReleased(e);
                             heroSprite.changeSide(e);
                         }
                     }
@@ -497,6 +694,7 @@ public class GamePanel extends JPanel/* implements ActionListener*/
                 this.setComponentZOrder(topTextBox.getBox(), 1);
                 if (doorMap.get(gid).getDirection() != e.getKeyCode())
                 {
+//                    heroSprite.keyReleased(e);
                     this.removeKeyListener(ultimateListener);
                     this.setFocusable(false);
                     if (heroSprite.getX() > mapHeight / 2)
@@ -511,6 +709,7 @@ public class GamePanel extends JPanel/* implements ActionListener*/
                 }
                 else if (!controller.heroContainsKey(doorMap.get(gid).getId()))
                 {
+//                    heroSprite.keyReleased(e);
                     this.removeKeyListener(ultimateListener);
                     this.setFocusable(false);
                     if (heroSprite.getX() > mapHeight / 2)
